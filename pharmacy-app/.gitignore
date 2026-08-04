@@ -1,0 +1,16 @@
+node_modules/
+.expo/
+dist/
+build/
+web-build/
+android/
+ios/
+.env
+.env*.local
+*.jks
+*.keystore
+*.p12
+*.key
+*.pem
+credentials.json
+

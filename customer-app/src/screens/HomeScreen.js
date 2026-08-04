@@ -1,0 +1,1120 @@
+import React, { useState, useEffect, useMemo } from 'react';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+  SafeAreaView,
+  ScrollView,
+  Platform,
+  Modal,
+  ActivityIndicator,
+} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import * as Location from 'expo-location';
+import { colors } from '../theme/colors';
+import { db, auth } from '../config/firebase';
+import { signOut } from 'firebase/auth';
+import { collection, onSnapshot } from 'firebase/firestore';
+import { calculateHaversineDistance } from '../utils/distance';
+import { isValidCoord } from '../components/BarikoiCustomerMap';
+import {
+  isApprovedPharmacy,
+  getDeliveryStatus,
+  formatDistanceText,
+} from '../utils/pharmacyValidation';
+
+export default function HomeScreen({
+  userProfile,
+  selectedPharmacy,
+  onOpenPharmacyMap,
+  onLogout,
+  activeTab = 'home',
+  onNavigateTab,
+  onSelectPharmacy,
+  onOpenMedicineDetails,
+}) {
+  const [pharmacies, setPharmacies] = useState([]);
+  const [isLoadingPharmacies, setIsLoadingPharmacies] = useState(true);
+  const [pharmacyError, setPharmacyError] = useState('');
+  const [customerLocation, setCustomerLocation] = useState(null);
+  const [isGettingGps, setIsGettingGps] = useState(false);
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isProfileMenuVisible, setIsProfileMenuVisible] = useState(false);
+  const [infoBanner, setInfoBanner] = useState('');
+
+  // 1. Subscribe to Firestore pharmacies collection with cleanup
+  useEffect(() => {
+    setIsLoadingPharmacies(true);
+    setPharmacyError('');
+
+    const unsubscribe = onSnapshot(
+      collection(db, 'pharmacies'),
+      (snapshot) => {
+        let totalDocs = snapshot.docs.length;
+        let approvedCount = 0;
+        let validCoordCount = 0;
+
+        const docs = snapshot.docs
+          .map((d) => {
+            const data = d.data() || {};
+            const numLat = data.latitude != null ? Number(data.latitude) : NaN;
+            const numLng = data.longitude != null ? Number(data.longitude) : NaN;
+
+            if (data.approvalStatus === 'approved') approvedCount++;
+            if (isValidCoord(numLat, numLng)) validCoordCount++;
+
+            return {
+              id: d.id,
+              pharmacyUid: d.id,
+              ...data,
+              latitude: numLat,
+              longitude: numLng,
+            };
+          })
+          .filter(isApprovedPharmacy);
+
+        setPharmacies(docs);
+        setIsLoadingPharmacies(false);
+      },
+      (err) => {
+        console.error('Error listening to pharmacies in HomeScreen:', err);
+        setPharmacyError('Failed to load approved pharmacies.');
+        setIsLoadingPharmacies(false);
+      }
+    );
+
+    return () => unsubscribe();
+  }, []);
+
+  // 2. Request GPS location safely
+  useEffect(() => {
+    let isMounted = true;
+    (async () => {
+      try {
+        const { status } = await Location.getForegroundPermissionsAsync();
+        if (status === 'granted') {
+          const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
+          if (isMounted && loc?.coords && isValidCoord(loc.coords.latitude, loc.coords.longitude)) {
+            setCustomerLocation({
+              latitude: Number(loc.coords.latitude),
+              longitude: Number(loc.coords.longitude),
+            });
+          }
+        }
+      } catch (err) {
+        console.log('GPS init check error:', err);
+      }
+    })();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const handleRequestGPS = async () => {
+    setIsGettingGps(true);
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setInfoBanner('Location permission denied. Showing all approved pharmacies alphabetically.');
+        setTimeout(() => setInfoBanner(''), 4000);
+        setCustomerLocation(null);
+        return;
+      }
+      const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
+      if (loc?.coords && isValidCoord(loc.coords.latitude, loc.coords.longitude)) {
+        setCustomerLocation({
+          latitude: Number(loc.coords.latitude),
+          longitude: Number(loc.coords.longitude),
+        });
+      } else {
+        setCustomerLocation(null);
+      }
+    } catch (err) {
+      console.log('GPS Error:', err);
+      setCustomerLocation(null);
+    } finally {
+      setIsGettingGps(false);
+    }
+  };
+
+  // 3. Process, calculate distances, and sort pharmacies using useMemo
+  const processedPharmacies = useMemo(() => {
+    const hasLocation = customerLocation && isValidCoord(customerLocation.latitude, customerLocation.longitude);
+
+    const list = pharmacies.map((p) => {
+      const dist = hasLocation
+        ? calculateHaversineDistance(customerLocation.latitude, customerLocation.longitude, p.latitude, p.longitude)
+        : null;
+      const deliveryInfo = getDeliveryStatus(dist, p.deliveryRadius);
+
+      return {
+        ...p,
+        distance: dist,
+        deliveryInfo,
+      };
+    });
+
+    if (hasLocation) {
+      // Sort nearest first, farthest last
+      list.sort((a, b) => {
+        if (a.distance == null) return 1;
+        if (b.distance == null) return -1;
+        return a.distance - b.distance;
+      });
+    } else {
+      // Sort alphabetically by pharmacyName
+      list.sort((a, b) => (a.pharmacyName || '').localeCompare(b.pharmacyName || ''));
+    }
+
+    return list;
+  }, [pharmacies, customerLocation]);
+
+  // Extract first name for greeting
+  const getFirstName = () => {
+    if (userProfile?.fullName) {
+      return userProfile.fullName.trim().split(' ')[0];
+    }
+    return 'Customer';
+  };
+
+  const handleTabPress = (tabKey) => {
+    if (tabKey === 'home' || tabKey === 'search') {
+      setInfoBanner('');
+      if (onNavigateTab) {
+        onNavigateTab(tabKey);
+      }
+    } else {
+      setInfoBanner('Coming soon.');
+      setTimeout(() => setInfoBanner(''), 2500);
+    }
+  };
+
+  const handlePharmacyClick = (pharmacy) => {
+    if (onSelectPharmacy) {
+      onSelectPharmacy(pharmacy, 'pharmacyDetails');
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      setIsProfileMenuVisible(false);
+      await signOut(auth);
+    } catch (error) {
+      console.log('Logout error:', error);
+    } finally {
+      if (onLogout) {
+        onLogout();
+      }
+    }
+  };
+
+  // Handle HomeScreen search input
+  const handleHomeSearchSubmit = () => {
+    if (!selectedPharmacy) {
+      setInfoBanner('Please select a partner pharmacy first to search its medicines.');
+      setTimeout(() => setInfoBanner(''), 3500);
+      onOpenPharmacyMap();
+    } else {
+      onSelectPharmacy(selectedPharmacy, 'pharmacyDetails');
+    }
+  };
+
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.outerContainer}>
+        {/* Main Content Scroll View */}
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.cardContainer}>
+            {/* Header Section */}
+            <View style={styles.header}>
+              <View style={styles.headerLeft}>
+                <View style={styles.avatarCircle}>
+                  <Ionicons name="person" size={20} color={colors.primary} />
+                </View>
+                <View style={styles.headerTextGroup}>
+                  <Text style={styles.greetingText}>Hello, {getFirstName()}!</Text>
+                  <TouchableOpacity style={styles.locationRow} onPress={handleRequestGPS} activeOpacity={0.7}>
+                    <Ionicons name="navigate-outline" size={12} color={colors.primary} />
+                    <Text style={styles.locationText}>
+                      {customerLocation ? 'GPS Location Set' : 'Tap to enable GPS distance'}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+              {/* Profile Avatar / Menu Button */}
+              <TouchableOpacity
+                style={styles.profileMenuButton}
+                onPress={() => setIsProfileMenuVisible(true)}
+                activeOpacity={0.8}
+              >
+                <Ionicons name="ellipsis-vertical" size={20} color={colors.onSurface} />
+              </TouchableOpacity>
+            </View>
+
+            {/* Selected Pharmacy Banner Card (Actionable with two distinct buttons) */}
+            <View style={styles.pharmacyBannerCard}>
+              <View style={styles.pharmacyBannerLeft}>
+                <Ionicons name="storefront" size={26} color={colors.primary} />
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.pharmacyBannerTitle}>
+                    {selectedPharmacy ? selectedPharmacy.pharmacyName : 'No Pharmacy Selected'}
+                  </Text>
+                  <Text style={styles.pharmacyBannerSub} numberOfLines={1}>
+                    {selectedPharmacy
+                      ? (selectedPharmacy.address || selectedPharmacy.locationAddress || 'Dhaka, Bangladesh')
+                      : 'Choose a partner pharmacy to order medicines'}
+                  </Text>
+                </View>
+              </View>
+
+              {/* Action Buttons: View Medicines & Change Pharmacy */}
+              <View style={styles.bannerActionsCol}>
+                {selectedPharmacy ? (
+                  <>
+                    <TouchableOpacity
+                      style={styles.bannerViewBtn}
+                      onPress={() => onSelectPharmacy && onSelectPharmacy(selectedPharmacy, 'pharmacyDetails')}
+                      activeOpacity={0.85}
+                    >
+                      <Ionicons name="medkit-outline" size={13} color="#FFFFFF" />
+                      <Text style={styles.bannerBtnText}>View Medicines</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.bannerChangeBtn}
+                      onPress={onOpenPharmacyMap}
+                      activeOpacity={0.85}
+                    >
+                      <Ionicons name="map-outline" size={13} color={colors.primary} />
+                      <Text style={styles.bannerChangeBtnText}>Change Store</Text>
+                    </TouchableOpacity>
+                  </>
+                ) : (
+                  <TouchableOpacity
+                    style={styles.bannerViewBtn}
+                    onPress={onOpenPharmacyMap}
+                    activeOpacity={0.85}
+                  >
+                    <Ionicons name="map-outline" size={14} color="#FFFFFF" />
+                    <Text style={styles.bannerBtnText}>Select Store</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            </View>
+
+            {/* Information Toast Banner */}
+            {infoBanner ? (
+              <View style={styles.infoBanner}>
+                <Ionicons name="information-circle-outline" size={18} color="#0284C7" />
+                <Text style={styles.infoText}>{infoBanner}</Text>
+              </View>
+            ) : null}
+
+            {/* Search Section (Guides customer to select pharmacy) */}
+            <TouchableOpacity
+              style={styles.searchContainer}
+              onPress={handleHomeSearchSubmit}
+              activeOpacity={0.9}
+            >
+              <Ionicons
+                name="search-outline"
+                size={18}
+                color={colors.onSurfaceVariant}
+                style={styles.searchIcon}
+              />
+              <TextInput
+                style={[
+                  styles.searchInput,
+                  Platform.OS === 'web' && { outlineStyle: 'none' },
+                ]}
+                placeholder={
+                  selectedPharmacy
+                    ? `Search medicines in ${selectedPharmacy.pharmacyName}...`
+                    : 'Select a pharmacy to search medicines...'
+                }
+                placeholderTextColor="rgba(62, 73, 70, 0.55)"
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                onFocus={handleHomeSearchSubmit}
+              />
+              <TouchableOpacity activeOpacity={0.7} onPress={handleHomeSearchSubmit}>
+                <Ionicons name="arrow-forward-circle" size={20} color={colors.primary} />
+              </TouchableOpacity>
+            </TouchableOpacity>
+
+            {/* Quick Actions Grid */}
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>Quick Actions</Text>
+            </View>
+            <View style={styles.quickActionsGrid}>
+              <TouchableOpacity
+                style={styles.actionCardPrimary}
+                onPress={() => handleTabPress('action')}
+                activeOpacity={0.8}
+              >
+                <Ionicons name="document-text" size={26} color={colors.primary} />
+                <Text style={styles.actionCardTitlePrimary}>Upload{'\n'}Prescription</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.actionCard}
+                onPress={() => {
+                  if (selectedPharmacy) {
+                    onSelectPharmacy(selectedPharmacy, 'pharmacyDetails');
+                  } else {
+                    onOpenPharmacyMap();
+                  }
+                }}
+                activeOpacity={0.8}
+              >
+                <Ionicons name="medkit-outline" size={26} color="#0284C7" />
+                <Text style={styles.actionCardTitle}>Browse{'\n'}Medicines</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.actionCard}
+                onPress={onOpenPharmacyMap}
+                activeOpacity={0.8}
+              >
+                <Ionicons name="location-outline" size={26} color="#7C3AED" />
+                <Text style={styles.actionCardTitle}>Find Nearby{'\n'}Pharmacy</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.actionCard}
+                onPress={() => handleTabPress('orders')}
+                activeOpacity={0.8}
+              >
+                <Ionicons name="receipt-outline" size={26} color="#EA580C" />
+                <Text style={styles.actionCardTitle}>My{'\n'}Orders</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* ALL APPROVED PHARMACIES SECTION */}
+            <View style={[styles.sectionHeader, { marginTop: 22 }]}>
+              <Text style={styles.sectionTitle}>All Approved Pharmacies</Text>
+              <TouchableOpacity onPress={onOpenPharmacyMap} activeOpacity={0.7}>
+                <Text style={styles.seeAllText}>View Map</Text>
+              </TouchableOpacity>
+            </View>
+
+            {pharmacyError ? (
+              <View style={styles.errorBanner}>
+                <Ionicons name="alert-circle-outline" size={18} color="#991B1B" />
+                <Text style={styles.errorText}>{pharmacyError}</Text>
+              </View>
+            ) : null}
+
+            {isLoadingPharmacies ? (
+              <View style={styles.loadingBox}>
+                <ActivityIndicator size="large" color={colors.primary} />
+                <Text style={styles.loadingText}>Fetching real approved pharmacies...</Text>
+              </View>
+            ) : processedPharmacies.length === 0 ? (
+              <View style={styles.emptyBox}>
+                <Ionicons name="storefront-outline" size={36} color={colors.outline} />
+                <Text style={styles.emptyTitle}>No approved pharmacies are available yet.</Text>
+                <Text style={styles.emptySubtext}>
+                  Registered partner pharmacies will appear here once approved by administrator.
+                </Text>
+              </View>
+            ) : (
+              <View style={styles.pharmaciesList}>
+                {processedPharmacies.map((pharmacy) => {
+                  const pUid = pharmacy.pharmacyUid || pharmacy.id;
+                  const isSelected = selectedPharmacy?.pharmacyUid === pUid || selectedPharmacy?.id === pUid;
+                  const isClosed = pharmacy.isOpen === false;
+
+                  const distText = formatDistanceText(pharmacy.distance);
+                  const deliveryInfo = pharmacy.deliveryInfo;
+
+                  return (
+                    <TouchableOpacity
+                      key={pUid}
+                      style={[styles.pharmacyCard, isSelected && styles.pharmacyCardSelected]}
+                      onPress={() => handlePharmacyClick(pharmacy)}
+                      activeOpacity={0.85}
+                    >
+                      <View style={styles.pharmacyHeaderRow}>
+                        <View style={styles.pharmacyIconBox}>
+                          <Ionicons name="medical-outline" size={24} color={colors.primary} />
+                        </View>
+                        <View style={styles.pharmacyInfoGroup}>
+                          <View style={styles.pharmacyTitleRow}>
+                            <Text style={styles.pharmacyName}>{pharmacy.pharmacyName}</Text>
+                            <Ionicons name="checkmark-circle" size={14} color={colors.primary} />
+                          </View>
+
+                          <Text style={styles.addressText} numberOfLines={1}>
+                            {pharmacy.address || pharmacy.locationAddress || 'Dhaka, Bangladesh'}
+                          </Text>
+
+                          {/* Status & Distance Meta Row */}
+                          <View style={styles.pharmacyMetaRow}>
+                            <View style={[styles.statusTag, isClosed ? styles.statusClosed : styles.statusOpen]}>
+                              <Text style={[styles.statusTagText, isClosed ? styles.statusClosedText : styles.statusOpenText]}>
+                                {isClosed ? 'Currently Closed' : 'Open Now'}
+                              </Text>
+                            </View>
+
+                            {distText ? (
+                              <>
+                                <Text style={styles.dotSeparator}>•</Text>
+                                <Text style={styles.distanceText}>{distText}</Text>
+                              </>
+                            ) : null}
+                          </View>
+                        </View>
+                      </View>
+
+                      {/* Delivery Radius Badge Row */}
+                      <View style={styles.pharmacyFooterRow}>
+                        <View style={[styles.deliveryBadge, styles[`badge_${deliveryInfo.badgeType}`]]}>
+                          <Ionicons
+                            name={
+                              deliveryInfo.badgeType === 'success'
+                                ? 'checkmark-circle-outline'
+                                : deliveryInfo.badgeType === 'danger'
+                                ? 'warning-outline'
+                                : 'information-circle-outline'
+                            }
+                            size={12}
+                            color={
+                              deliveryInfo.badgeType === 'success'
+                                ? '#065F46'
+                                : deliveryInfo.badgeType === 'danger'
+                                ? '#991B1B'
+                                : deliveryInfo.badgeType === 'warning'
+                                ? '#92400E'
+                                : '#0369A1'
+                            }
+                          />
+                          <Text style={[styles.deliveryBadgeText, styles[`badgeText_${deliveryInfo.badgeType}`]]}>
+                            {deliveryInfo.statusText}
+                            {deliveryInfo.hasRadius ? ` (${deliveryInfo.radiusNum} km radius)` : ''}
+                          </Text>
+                        </View>
+
+                        <View style={styles.viewPharmacyButton}>
+                          <Text style={styles.viewPharmacyText}>
+                            {isSelected ? 'Current Store' : 'Browse Medicines'}
+                          </Text>
+                          <Ionicons name="chevron-forward" size={14} color={colors.primary} />
+                        </View>
+                      </View>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            )}
+          </View>
+        </ScrollView>
+
+        {/* Bottom Navigation Bar */}
+        <View style={styles.bottomNavContainer}>
+          <View style={styles.bottomNav}>
+            <TouchableOpacity
+              style={styles.navItem}
+              onPress={() => handleTabPress('home')}
+              activeOpacity={0.8}
+            >
+              <Ionicons
+                name="home"
+                size={20}
+                color={activeTab === 'home' ? colors.primary : colors.onSurfaceVariant}
+              />
+              <Text style={[styles.navLabel, activeTab === 'home' && styles.navLabelActive]}>Home</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.navItem}
+              onPress={() => handleTabPress('search')}
+              activeOpacity={0.8}
+            >
+              <Ionicons
+                name="search-outline"
+                size={20}
+                color={activeTab === 'search' ? colors.primary : colors.onSurfaceVariant}
+              />
+              <Text style={[styles.navLabel, activeTab === 'search' && styles.navLabelActive]}>Search</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.navItem}
+              onPress={() => handleTabPress('orders')}
+              activeOpacity={0.8}
+            >
+              <Ionicons
+                name="receipt-outline"
+                size={20}
+                color={activeTab === 'orders' ? colors.primary : colors.onSurfaceVariant}
+              />
+              <Text style={[styles.navLabel, activeTab === 'orders' && styles.navLabelActive]}>Orders</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.navItem}
+              onPress={() => handleTabPress('profile')}
+              activeOpacity={0.8}
+            >
+              <Ionicons
+                name="person-outline"
+                size={20}
+                color={activeTab === 'profile' ? colors.primary : colors.onSurfaceVariant}
+              />
+              <Text style={[styles.navLabel, activeTab === 'profile' && styles.navLabelActive]}>Profile</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Profile / Logout Menu Modal */}
+        <Modal
+          visible={isProfileMenuVisible}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={() => setIsProfileMenuVisible(false)}
+        >
+          <TouchableOpacity
+            style={styles.modalOverlay}
+            activeOpacity={1}
+            onPress={() => setIsProfileMenuVisible(false)}
+          >
+            <View style={styles.modalContent}>
+              <View style={styles.modalHeader}>
+                <View style={styles.modalAvatar}>
+                  <Ionicons name="person" size={24} color={colors.primary} />
+                </View>
+                <View style={styles.modalHeaderInfo}>
+                  <Text style={styles.modalUserName}>
+                    {userProfile?.fullName || 'Customer User'}
+                  </Text>
+                  <Text style={styles.modalUserEmail}>
+                    {userProfile?.email || auth.currentUser?.email || ''}
+                  </Text>
+                </View>
+              </View>
+
+              <View style={styles.modalDivider} />
+
+              <TouchableOpacity
+                style={styles.modalLogoutButton}
+                onPress={handleLogout}
+                activeOpacity={0.8}
+              >
+                <Ionicons name="log-out-outline" size={18} color="#DC2626" style={{ marginRight: 8 }} />
+                <Text style={styles.modalLogoutText}>Logout</Text>
+              </TouchableOpacity>
+            </View>
+          </TouchableOpacity>
+        </Modal>
+      </View>
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#F8FAFC',
+  },
+  outerContainer: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 80,
+  },
+  cardContainer: {
+    width: '100%',
+    maxWidth: 390,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  avatarCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(0, 106, 94, 0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  headerTextGroup: {
+    justifyContent: 'center',
+  },
+  greetingText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: colors.onSurface,
+  },
+  locationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    marginTop: 1,
+  },
+  locationText: {
+    fontSize: 11.5,
+    color: colors.primary,
+    fontWeight: '500',
+  },
+  profileMenuButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: colors.surfaceContainerLowest,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  pharmacyBannerCard: {
+    backgroundColor: 'rgba(0, 106, 94, 0.05)',
+    borderWidth: 1,
+    borderColor: colors.primary,
+    borderRadius: 14,
+    padding: 12,
+    marginBottom: 14,
+    gap: 10,
+  },
+  pharmacyBannerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  pharmacyBannerTitle: {
+    fontSize: 14.5,
+    fontWeight: '700',
+    color: colors.primary,
+  },
+  pharmacyBannerSub: {
+    fontSize: 11.5,
+    color: colors.onSurfaceVariant,
+    marginTop: 2,
+  },
+  bannerActionsCol: {
+    flexDirection: 'row',
+    gap: 8,
+    width: '100%',
+  },
+  bannerViewBtn: {
+    flex: 1.2,
+    height: 34,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.primary,
+    borderRadius: 8,
+    gap: 4,
+  },
+  bannerBtnText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  bannerChangeBtn: {
+    flex: 1,
+    height: 34,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: colors.primary,
+    borderRadius: 8,
+    gap: 4,
+  },
+  bannerChangeBtnText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: colors.primary,
+  },
+  infoBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#E0F2FE',
+    borderColor: '#BAE6FD',
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    marginBottom: 14,
+    gap: 8,
+  },
+  infoText: {
+    flex: 1,
+    color: '#0369A1',
+    fontSize: 12.5,
+    fontWeight: '500',
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.surfaceContainerLowest,
+    borderWidth: 1,
+    borderColor: '#CBD5E1',
+    borderRadius: 12,
+    height: 46,
+    paddingHorizontal: 12,
+    marginBottom: 18,
+  },
+  searchIcon: {
+    marginRight: 8,
+  },
+  searchInput: {
+    flex: 1,
+    height: '100%',
+    fontSize: 13.5,
+    color: colors.onSurface,
+    paddingVertical: 0,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: colors.onSurface,
+  },
+  seeAllText: {
+    fontSize: 12.5,
+    fontWeight: '600',
+    color: colors.primary,
+  },
+  quickActionsGrid: {
+    flexDirection: 'row',
+    gap: 10,
+    marginBottom: 10,
+  },
+  actionCardPrimary: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 106, 94, 0.08)',
+    borderRadius: 12,
+    padding: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(0, 106, 94, 0.2)',
+  },
+  actionCardTitlePrimary: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: colors.primary,
+    textAlign: 'center',
+    marginTop: 4,
+  },
+  actionCard: {
+    flex: 1,
+    backgroundColor: colors.surfaceContainerLowest,
+    borderRadius: 12,
+    padding: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  actionCardTitle: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: colors.onSurface,
+    textAlign: 'center',
+    marginTop: 4,
+  },
+  errorBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FEE2E2',
+    borderColor: '#FCA5A5',
+    borderWidth: 1,
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 12,
+    gap: 8,
+  },
+  errorText: {
+    fontSize: 12.5,
+    color: '#991B1B',
+    flex: 1,
+  },
+  loadingBox: {
+    paddingVertical: 32,
+    alignItems: 'center',
+    gap: 8,
+  },
+  loadingText: {
+    fontSize: 13,
+    color: colors.onSurfaceVariant,
+  },
+  emptyBox: {
+    alignItems: 'center',
+    paddingVertical: 36,
+    backgroundColor: colors.surfaceContainerLowest,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    paddingHorizontal: 20,
+    gap: 8,
+  },
+  emptyTitle: {
+    fontSize: 14.5,
+    fontWeight: '700',
+    color: colors.onSurface,
+    textAlign: 'center',
+  },
+  emptySubtext: {
+    fontSize: 12,
+    color: colors.onSurfaceVariant,
+    textAlign: 'center',
+  },
+  pharmaciesList: {
+    gap: 12,
+  },
+  pharmacyCard: {
+    backgroundColor: colors.surfaceContainerLowest,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    padding: 12,
+    gap: 8,
+  },
+  pharmacyCardSelected: {
+    borderColor: colors.primary,
+    backgroundColor: 'rgba(0, 106, 94, 0.03)',
+  },
+  pharmacyHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 10,
+  },
+  pharmacyIconBox: {
+    width: 40,
+    height: 40,
+    borderRadius: 10,
+    backgroundColor: '#F1F5F9',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  pharmacyInfoGroup: {
+    flex: 1,
+  },
+  pharmacyTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  pharmacyName: {
+    fontSize: 14.5,
+    fontWeight: '700',
+    color: colors.onSurface,
+  },
+  addressText: {
+    fontSize: 12,
+    color: colors.onSurfaceVariant,
+    marginTop: 2,
+  },
+  pharmacyMetaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 4,
+  },
+  statusTag: {
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  statusOpen: {
+    backgroundColor: '#D1FAE5',
+  },
+  statusOpenText: {
+    color: '#065F46',
+    fontSize: 10.5,
+    fontWeight: '700',
+  },
+  statusClosed: {
+    backgroundColor: '#FEF2F2',
+  },
+  statusClosedText: {
+    color: '#991B1B',
+    fontSize: 10.5,
+    fontWeight: '700',
+  },
+  dotSeparator: {
+    fontSize: 10,
+    color: colors.onSurfaceVariant,
+  },
+  distanceText: {
+    fontSize: 11.5,
+    color: colors.primary,
+    fontWeight: '600',
+  },
+  pharmacyFooterRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: '#F1F5F9',
+    marginTop: 4,
+  },
+  deliveryBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+    gap: 4,
+  },
+  badge_success: {
+    backgroundColor: '#D1FAE5',
+  },
+  badgeText_success: {
+    fontSize: 11,
+    color: '#065F46',
+    fontWeight: '600',
+  },
+  badge_danger: {
+    backgroundColor: '#FEE2E2',
+  },
+  badgeText_danger: {
+    fontSize: 11,
+    color: '#991B1B',
+    fontWeight: '600',
+  },
+  badge_warning: {
+    backgroundColor: '#FEF3C7',
+  },
+  badgeText_warning: {
+    fontSize: 11,
+    color: '#92400E',
+    fontWeight: '600',
+  },
+  badge_info: {
+    backgroundColor: '#E0F2FE',
+  },
+  badgeText_info: {
+    fontSize: 11,
+    color: '#0369A1',
+    fontWeight: '600',
+  },
+  viewPharmacyButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+  },
+  viewPharmacyText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: colors.primary,
+  },
+  bottomNavContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: colors.surfaceContainerLowest,
+    borderTopWidth: 1,
+    borderTopColor: '#E2E8F0',
+    alignItems: 'center',
+  },
+  bottomNav: {
+    width: '100%',
+    maxWidth: 390,
+    height: 58,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+  },
+  navItem: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 4,
+  },
+  navLabel: {
+    fontSize: 11,
+    color: colors.onSurfaceVariant,
+    marginTop: 2,
+  },
+  navLabelActive: {
+    color: colors.primary,
+    fontWeight: '700',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(15, 23, 42, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+  },
+  modalContent: {
+    width: '100%',
+    maxWidth: 320,
+    backgroundColor: colors.surfaceContainerLowest,
+    borderRadius: 16,
+    padding: 18,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  modalAvatar: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(0, 106, 94, 0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalHeaderInfo: {
+    flex: 1,
+  },
+  modalUserName: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: colors.onSurface,
+  },
+  modalUserEmail: {
+    fontSize: 12,
+    color: colors.onSurfaceVariant,
+    marginTop: 1,
+  },
+  modalDivider: {
+    height: 1,
+    backgroundColor: '#E2E8F0',
+    marginVertical: 14,
+  },
+  modalLogoutButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10,
+    backgroundColor: '#FEF2F2',
+    borderRadius: 10,
+  },
+  modalLogoutText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#DC2626',
+  },
+});
