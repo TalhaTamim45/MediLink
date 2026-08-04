@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MediLink BD | Order Details</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "background": "#f8f9ff",
+                        "tertiary-fixed-dim": "#ffb59e",
+                        "surface-container-low": "#eff4ff",
+                        "inverse-primary": "#5adf82",
+                        "surface-bright": "#f8f9ff",
+                        "on-error-container": "#93000a",
+                        "secondary-fixed": "#e1e0ff",
+                        "on-surface-variant": "#3d4a3e",
+                        "surface-variant": "#d3e4fe",
+                        "surface-dim": "#cbdbf5",
+                        "primary-fixed-dim": "#5adf82",
+                        "on-tertiary-fixed": "#3a0b00",
+                        "on-tertiary": "#ffffff",
+                        "outline": "#6d7b6d",
+                        "primary-container": "#008740",
+                        "on-primary": "#ffffff",
+                        "on-secondary-container": "#292b8d",
+                        "on-error": "#ffffff",
+                        "on-surface": "#0b1c30",
+                        "on-secondary": "#ffffff",
+                        "on-primary-fixed-variant": "#005225",
+                        "error": "#ba1a1a",
+                        "inverse-on-surface": "#eaf1ff",
+                        "on-background": "#0b1c30",
+                        "tertiary": "#a93200",
+                        "surface-container-highest": "#d3e4fe",
+                        "on-primary-container": "#f7fff3",
+                        "primary": "#006b32",
+                        "tertiary-fixed": "#ffdbd0",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed-variant": "#842500",
+                        "surface-container-high": "#dce9ff",
+                        "surface-container": "#e5eeff",
+                        "primary-fixed": "#78fc9c",
+                        "on-primary-fixed": "#00210b",
+                        "secondary-fixed-dim": "#c0c1ff",
+                        "inverse-surface": "#213145",
+                        "secondary": "#4f54b4",
+                        "outline-variant": "#bccabb",
+                        "tertiary-container": "#d1430a",
+                        "on-secondary-fixed": "#04006d",
+                        "on-secondary-fixed-variant": "#373a9b",
+                        "surface": "#f8f9ff",
+                        "error-container": "#ffdad6",
+                        "secondary-container": "#959aff",
+                        "surface-tint": "#006d33",
+                        "on-tertiary-container": "#fffbff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "base": "4px",
+                        "md": "16px",
+                        "container-margin": "24px",
+                        "sm": "8px",
+                        "lg": "24px",
+                        "gutter": "16px",
+                        "xl": "32px"
+                    },
+                    "fontFamily": {
+                        "label-sm": ["Inter"],
+                        "label-md": ["Inter"],
+                        "title-md": ["Inter"],
+                        "display-md": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-sm": ["11px", {"lineHeight": "16px", "fontWeight": "600"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                        "title-md": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                        "display-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "title-lg": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .order-timeline-line {
+            height: 2px;
+            background: theme('colors.outline-variant');
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            z-index: 0;
+        }
+        .order-timeline-progress {
+            height: 2px;
+            background: theme('colors.primary');
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 75%;
+            z-index: 1;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: theme('colors.outline-variant');
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-md overflow-hidden">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-screen w-[280px] bg-surface border-r border-outline-variant flex flex-col py-md z-50">
+<div class="px-lg mb-xl">
+<h1 class="font-title-lg text-title-lg font-bold text-primary">MediLink BD</h1>
+<p class="font-label-md text-label-md text-on-surface-variant">Admin Console</p>
+</div>
+<nav class="flex-1 px-sm overflow-y-auto custom-scrollbar">
+<div class="space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">local_pharmacy</span>
+<span class="font-label-md">Pharmacies</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-md">Customers</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-primary bg-surface-container-high border-r-4 border-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">shopping_cart</span>
+<span class="font-label-md">Orders</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="font-label-md">Prescriptions</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="font-label-md">Deliveries</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-md">Payments</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">gavel</span>
+<span class="font-label-md">Disputes</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">assessment</span>
+<span class="font-label-md">Reports</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">notifications</span>
+<span class="font-label-md">Notifications</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md">Settings</span>
+</a>
+</div>
+</nav>
+</aside>
+<!-- TopNavBar -->
+<header class="fixed top-0 left-[280px] w-[calc(100%-280px)] h-16 bg-surface border-b border-outline-variant flex justify-between items-center px-lg z-40">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container border-none rounded-full pl-10 py-2 text-body-md focus:ring-2 focus:ring-primary" placeholder="Search orders, customers, pills..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-surface-container rounded-full transition-transform scale-95 active:scale-90">
+<span class="material-symbols-outlined text-on-surface-variant">help</span>
+</button>
+<button class="p-2 hover:bg-surface-container rounded-full relative transition-transform scale-95 active:scale-90">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<div class="flex items-center gap-3 ml-2 pl-4 border-l border-outline-variant">
+<div class="text-right">
+<p class="font-label-md text-on-surface leading-none">Admin Profile</p>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-wider">Super Admin</p>
+</div>
+<img class="w-10 h-10 rounded-full border-2 border-primary-container object-cover" data-alt="A professional headshot of a senior hospital administrator in a clean white medical coat, soft studio lighting against a minimal slate blue background, emphasizing a reliable and systematic character." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAtjGnxNdc1iEVLr4J2EU9JmylIXQShMb98ORxu93rJxXlOq0HYGHPpFJ_GGRSguuyERJtfugAW99Ll9xWa05cZQ7rZaie20PAnwDZ_PSu5_wVbtnpgOEexEus0juz1I65LThR3WJZzdGnyfeiF0iumU0u0naCeqPpR0rJOf24qSOKXq_QIx1tzxf9vd-3RHWGwTb-1hmtHu2NKmxqzvBZLK307l5HX727RxLe3uAOpvWPLbDVGhCmY-SFPZyi5G60Iq8Gib2-fdM"/>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-[280px] mt-16 p-lg h-[calc(100vh-64px)] overflow-y-auto custom-scrollbar">
+<!-- Header & Top Actions -->
+<div class="flex justify-between items-end mb-lg">
+<div>
+<nav class="flex gap-2 text-label-md text-on-surface-variant mb-2">
+<span>Orders</span>
+<span>/</span>
+<span class="text-primary font-bold">#ORD-882910</span>
+</nav>
+<div class="flex items-center gap-4">
+<h2 class="font-display-md text-display-md text-on-surface">Order #ORD-882910</h2>
+<span class="px-3 py-1 bg-secondary-container text-on-secondary-container rounded-full text-label-md">In Transit</span>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="px-lg py-2 border border-error text-error hover:bg-error-container/20 rounded-lg transition-colors font-label-md">Cancel Order</button>
+<button class="px-lg py-2 border border-primary text-primary hover:bg-primary/5 rounded-lg transition-colors font-label-md">Refund</button>
+<button class="px-lg py-2 bg-primary text-on-primary hover:shadow-lg transition-all rounded-lg font-label-md flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">print</span>
+                    Print Invoice
+                </button>
+</div>
+</div>
+<!-- Horizontal Timeline -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-lg mb-lg">
+<div class="relative flex justify-between">
+<div class="order-timeline-line"></div>
+<div class="order-timeline-progress"></div>
+<!-- Step 1 -->
+<div class="relative z-10 flex flex-col items-center">
+<div class="w-10 h-10 bg-primary text-on-primary rounded-full flex items-center justify-center mb-2 shadow-sm">
+<span class="material-symbols-outlined">check</span>
+</div>
+<p class="font-label-md text-on-surface">Order Placed</p>
+<p class="text-[10px] text-on-surface-variant">12 Oct, 10:20 AM</p>
+</div>
+<!-- Step 2 -->
+<div class="relative z-10 flex flex-col items-center">
+<div class="w-10 h-10 bg-primary text-on-primary rounded-full flex items-center justify-center mb-2 shadow-sm">
+<span class="material-symbols-outlined">check</span>
+</div>
+<p class="font-label-md text-on-surface">Pharmacy Verified</p>
+<p class="text-[10px] text-on-surface-variant">12 Oct, 11:45 AM</p>
+</div>
+<!-- Step 3 -->
+<div class="relative z-10 flex flex-col items-center">
+<div class="w-10 h-10 bg-primary text-on-primary rounded-full flex items-center justify-center mb-2 shadow-sm">
+<span class="material-symbols-outlined">local_shipping</span>
+</div>
+<p class="font-label-md text-on-surface">In Transit</p>
+<p class="text-[10px] text-on-surface-variant">12 Oct, 02:30 PM</p>
+</div>
+<!-- Step 4 -->
+<div class="relative z-10 flex flex-col items-center">
+<div class="w-10 h-10 bg-surface-container border-2 border-outline-variant text-on-surface-variant rounded-full flex items-center justify-center mb-2">
+<span class="material-symbols-outlined">home</span>
+</div>
+<p class="font-label-md text-on-surface-variant">Out for Delivery</p>
+<p class="text-[10px] text-on-surface-variant">Expected Today</p>
+</div>
+<!-- Step 5 -->
+<div class="relative z-10 flex flex-col items-center">
+<div class="w-10 h-10 bg-surface-container border-2 border-outline-variant text-on-surface-variant rounded-full flex items-center justify-center mb-2">
+<span class="material-symbols-outlined">task_alt</span>
+</div>
+<p class="font-label-md text-on-surface-variant">Delivered</p>
+<p class="text-[10px] text-on-surface-variant">Pending</p>
+</div>
+</div>
+</div>
+<!-- Bento Layout Grid -->
+<div class="grid grid-cols-12 gap-lg">
+<!-- Left Column: Info & Details -->
+<div class="col-span-8 space-y-lg">
+<!-- Info Grid -->
+<div class="grid grid-cols-3 gap-lg">
+<!-- Customer Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-md">
+<div class="flex items-center justify-between mb-3">
+<h3 class="font-title-md text-primary">Customer</h3>
+<button class="text-primary hover:underline text-label-sm">View Profile</button>
+</div>
+<div class="flex items-center gap-3 mb-4">
+<img class="w-12 h-12 rounded-full object-cover" data-alt="A portrait of a Bangladeshi elderly male patient, wearing a traditional lungi and a simple white shirt, looking warm and friendly. The background is a soft, warm cream interior with cinematic lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCStrjWPyXPBDVhAQ_rC2Ic0HquM9K1y9sd-W1_NjgEvTXfLCaD9Rse_oeFxwu97kn80IaoDRrhV4hr521x-BjpnogYmC5zgJTA6OFkxbvcIlipBreglzSjlqFfCCXT4TcS7wJ0Wfyn7r62k8Y3PqxvL6awUhyuzJeAZPkgxBFN1hIoR-P_ARAj4EEm-OdOpHJ3cWrw3d2OcyujQvehvry2un8qm70BNIyF7G2PCsD_3xjIALhnaPNEk2qIAa-hVnCkknBLDsT_b6Q"/>
+<div>
+<p class="font-label-md text-on-surface">Anisur Rahman</p>
+<p class="text-[11px] text-on-surface-variant">+880 1712-445566</p>
+</div>
+</div>
+<button class="w-full py-1.5 bg-surface-container text-primary font-label-md rounded-lg flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[16px]">chat</span> Contact Customer
+                        </button>
+</div>
+<!-- Pharmacy Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-md">
+<div class="flex items-center justify-between mb-3">
+<h3 class="font-title-md text-primary">Pharmacy</h3>
+<button class="text-primary hover:underline text-label-sm">Verified</button>
+</div>
+<div class="flex items-center gap-3 mb-4">
+<div class="w-12 h-12 bg-primary-container/10 rounded-lg flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[32px]">local_pharmacy</span>
+</div>
+<div>
+<p class="font-label-md text-on-surface">Lazz Pharma Ltd.</p>
+<p class="text-[11px] text-on-surface-variant">Gulshan-1 Branch</p>
+</div>
+</div>
+<button class="w-full py-1.5 bg-surface-container text-primary font-label-md rounded-lg flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[16px]">call</span> Contact Pharmacy
+                        </button>
+</div>
+<!-- Delivery Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-md">
+<h3 class="font-title-md text-primary mb-3">Delivery Address</h3>
+<p class="text-label-md text-on-surface leading-relaxed mb-4">
+                            House 42, Road 18, Block G,<br/>
+                            Banani, Dhaka-1213,<br/>
+<span class="text-on-surface-variant italic">(Near Banani Graveyard)</span>
+</p>
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-[18px]">location_on</span>
+<span class="text-label-sm">View on Map</span>
+</div>
+</div>
+</div>
+<!-- Medicine List Table -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden">
+<div class="px-lg py-4 border-b border-outline-variant flex justify-between items-center">
+<h3 class="font-title-md text-on-surface">Medicine List</h3>
+<span class="text-label-md text-on-surface-variant">3 Items Total</span>
+</div>
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant">
+<th class="px-lg py-3 font-label-md">Medicine Name</th>
+<th class="px-lg py-3 font-label-md text-center">Qty</th>
+<th class="px-lg py-3 font-label-md text-right">Unit Price</th>
+<th class="px-lg py-3 font-label-md text-right">Total</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr class="hover:bg-background transition-colors">
+<td class="px-lg py-4">
+<p class="font-label-md text-on-surface">Napa Extend 665mg</p>
+<p class="text-[11px] text-on-surface-variant">Paracetamol | Beximco Pharma</p>
+</td>
+<td class="px-lg py-4 text-center font-label-md">3 Strips</td>
+<td class="px-lg py-4 text-right font-label-md">৳ 120.00</td>
+<td class="px-lg py-4 text-right font-label-md text-primary">৳ 360.00</td>
+</tr>
+<tr class="hover:bg-background transition-colors">
+<td class="px-lg py-4">
+<p class="font-label-md text-on-surface">Sergel 20mg</p>
+<p class="text-[11px] text-on-surface-variant">Esomeprazole | Healthcare Pharma</p>
+</td>
+<td class="px-lg py-4 text-center font-label-md">2 Strips</td>
+<td class="px-lg py-4 text-right font-label-md">৳ 210.00</td>
+<td class="px-lg py-4 text-right font-label-md text-primary">৳ 420.00</td>
+</tr>
+<tr class="hover:bg-background transition-colors">
+<td class="px-lg py-4">
+<p class="font-label-md text-on-surface">Monas 10mg</p>
+<p class="text-[11px] text-on-surface-variant">Montelukast | ACME Laboratories</p>
+</td>
+<td class="px-lg py-4 text-center font-label-md">1 Strip</td>
+<td class="px-lg py-4 text-right font-label-md">৳ 180.00</td>
+<td class="px-lg py-4 text-right font-label-md text-primary">৳ 180.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Prescription & Quotation Section -->
+<div class="grid grid-cols-2 gap-lg">
+<!-- Prescription Lightbox -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-md">
+<h3 class="font-title-md text-on-surface mb-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">medical_information</span>
+                            Prescription
+                        </h3>
+<div class="relative group cursor-pointer overflow-hidden rounded-lg border border-outline-variant">
+<img class="w-full h-48 object-cover transition-transform group-hover:scale-105" data-alt="A scanned professional medical prescription from a Bangladeshi hospital, handwritten in English with a doctor's official seal and stamp at the bottom. The lighting is bright and overhead, giving a clinical and authentic medical documentation feel." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4MTSQT-nCRu0TWckn5Q1moux266Dy2eV-BPArJxt_MWZuC1zR8UqGZG1K4B03GwQg-7dlJLtS89ii07yNksFVfGHDw8a3tFd7L8vzBIowEMt16EuhPtdLDZPPTN0lhLLUrIsXbfFIH0pMRXIsbDW48SVV4km74jSjuH8tFQXnVG842TdRNZ2CZ4ZkU7_JoUX0AzoBGTVjaxDiDaB_N_7Tj37BDxpPw4FUNRHzi0HKqE-MYAm_QrBuAAotEhgtXhY1NtKE0mmaCxI"/>
+<div class="absolute inset-0 bg-on-surface/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="px-4 py-2 bg-white text-on-surface rounded-full text-label-md flex items-center gap-2 shadow-lg">
+<span class="material-symbols-outlined">zoom_in</span> Preview Image
+                                </span>
+</div>
+</div>
+<div class="mt-3 flex justify-between items-center text-[11px] text-on-surface-variant">
+<span>Uploaded: 12 Oct, 10:18 AM</span>
+<span class="text-primary font-bold">Verified by Pharmacist</span>
+</div>
+</div>
+<!-- Quotation Details -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-md">
+<h3 class="font-title-md text-on-surface mb-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">request_quote</span>
+                            Quotation Details
+                        </h3>
+<div class="space-y-2">
+<div class="flex justify-between text-body-md py-1 border-b border-background">
+<span class="text-on-surface-variant">Quoted By:</span>
+<span class="font-bold text-on-surface">Lazz Pharma Admin</span>
+</div>
+<div class="flex justify-between text-body-md py-1 border-b border-background">
+<span class="text-on-surface-variant">Tax / VAT (5%):</span>
+<span class="text-on-surface">৳ 48.00</span>
+</div>
+<div class="flex justify-between text-body-md py-1 border-b border-background">
+<span class="text-on-surface-variant">Service Charge:</span>
+<span class="text-on-surface">৳ 25.00</span>
+</div>
+<div class="flex justify-between text-body-md py-1">
+<span class="text-on-surface-variant">Exp. Date:</span>
+<span class="text-on-surface">15 Oct 2023</span>
+</div>
+<div class="mt-4 p-2 bg-surface-container-low rounded text-label-sm text-on-surface-variant">
+<strong>Note:</strong> Medicines are stored in cold chain as per standard medical guidelines.
+                            </div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Summary & Activity -->
+<div class="col-span-4 space-y-lg">
+<!-- Payment Summary -->
+<div class="bg-surface-container-highest rounded-xl p-lg text-on-surface">
+<h3 class="font-title-lg text-on-surface mb-lg">Payment Summary</h3>
+<div class="space-y-4">
+<div class="flex justify-between text-body-md">
+<span class="text-on-surface-variant">Subtotal (3 items)</span>
+<span>৳ 960.00</span>
+</div>
+<div class="flex justify-between text-body-md">
+<span class="text-on-surface-variant">Delivery Fee</span>
+<span>৳ 60.00</span>
+</div>
+<div class="flex justify-between text-body-md text-primary">
+<span class="font-bold">Discount (MEDILINK20)</span>
+<span class="font-bold">-৳ 120.00</span>
+</div>
+<div class="pt-4 border-t border-outline-variant flex justify-between items-center">
+<span class="font-display-md text-headline-sm">Grand Total</span>
+<span class="font-display-md text-display-md text-primary">৳ 900.00</span>
+</div>
+<div class="mt-4 px-3 py-2 bg-primary/10 rounded-lg flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">payments</span>
+<div>
+<p class="text-label-md font-bold text-primary">Cash On Delivery</p>
+<p class="text-[10px] text-on-surface-variant">Pay after receiving order</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Delivery Info / Rider -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-md">
+<h3 class="font-title-md text-on-surface mb-4">Delivery Partner</h3>
+<div class="flex items-center gap-4 mb-4">
+<img class="w-14 h-14 rounded-full object-cover" data-alt="A portrait of a young Bangladeshi delivery rider in a professional green polo shirt with the MediLink logo. He is wearing a clean motorcycle helmet, smiling confidently against a blurred urban Dhaka street background with sunlight filtering through." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZLh_jo-c0gzqFByUDhDqT4bDAah_V9ctqEqxqR4qsTWgiNRy976iKrt7Y5I2edx5ludpIjiYOxTVAx86jEmPgIs74phtLATl1gSPJLd7Y0X93r3OQvU-Y-BC3jB-djK8rruZuIkOq9K5MVN3sxH7ai3IFES8aeY_kSD3IEkBRVMjEM5N3U1FHiZNsyaAJ6j1UT_VRnu-aKrVtRbsVL6hsM4rUodeOVNtwd9VHWoHms69Q_GFPFyjMoRDqTIjnxZ2kMO3I0Vw_xM0"/>
+<div class="flex-1">
+<p class="font-label-md text-on-surface">Kamrul Islam</p>
+<p class="text-[11px] text-on-surface-variant">ID: ML-RIDER-4029</p>
+<div class="flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-tertiary text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-label-sm">4.8 (120+ deliveries)</span>
+</div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between items-center px-3 py-2 bg-surface rounded-lg">
+<span class="text-label-md text-on-surface-variant">OTP Status</span>
+<span class="text-label-md text-primary font-bold">Sent to Customer</span>
+</div>
+<a class="flex items-center justify-center gap-2 w-full py-2 bg-secondary text-on-secondary rounded-lg font-label-md hover:bg-secondary/90 transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">near_me</span>
+                            Live Tracking Link
+                        </a>
+</div>
+</div>
+<!-- Activity Log -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden">
+<div class="px-lg py-3 border-b border-outline-variant bg-surface-container-low">
+<h3 class="font-title-md text-on-surface">Activity Log</h3>
+</div>
+<div class="p-lg space-y-6 relative">
+<div class="absolute left-[31px] top-6 bottom-6 w-px bg-outline-variant"></div>
+<!-- Log Item 1 -->
+<div class="relative flex gap-4">
+<div class="w-4 h-4 rounded-full bg-primary ring-4 ring-primary/20 z-10"></div>
+<div>
+<p class="text-label-md font-bold text-on-surface">In Transit</p>
+<p class="text-label-sm text-on-surface-variant">Rider Kamrul picked up the order</p>
+<p class="text-[10px] text-outline mt-1">12 Oct 2023, 02:30 PM</p>
+</div>
+</div>
+<!-- Log Item 2 -->
+<div class="relative flex gap-4">
+<div class="w-4 h-4 rounded-full bg-outline-variant z-10"></div>
+<div>
+<p class="text-label-md font-bold text-on-surface">Pharmacy Verified</p>
+<p class="text-label-sm text-on-surface-variant">Lazz Pharma confirmed stock</p>
+<p class="text-[10px] text-outline mt-1">12 Oct 2023, 11:45 AM</p>
+</div>
+</div>
+<!-- Log Item 3 -->
+<div class="relative flex gap-4">
+<div class="w-4 h-4 rounded-full bg-outline-variant z-10"></div>
+<div>
+<p class="text-label-md font-bold text-on-surface">Prescription Checked</p>
+<p class="text-label-sm text-on-surface-variant">Dr. S. Ahmed (Admin) verified</p>
+<p class="text-[10px] text-outline mt-1">12 Oct 2023, 10:45 AM</p>
+</div>
+</div>
+<!-- Log Item 4 -->
+<div class="relative flex gap-4">
+<div class="w-4 h-4 rounded-full bg-outline-variant z-10"></div>
+<div>
+<p class="text-label-md font-bold text-on-surface">Order Placed</p>
+<p class="text-label-sm text-on-surface-variant">Customer initiated request</p>
+<p class="text-[10px] text-outline mt-1">12 Oct 2023, 10:20 AM</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Micro-interaction for hover effects -->
+<script>
+        document.querySelectorAll('button, a').forEach(el => {
+            el.addEventListener('mousedown', () => {
+                el.style.transform = 'scale(0.97)';
+            });
+            el.addEventListener('mouseup', () => {
+                el.style.transform = '';
+            });
+            el.addEventListener('mouseleave', () => {
+                el.style.transform = '';
+            });
+        });
+
+        // Simple mock for "Lightbox" interaction
+        const imgTrigger = document.querySelector('.group.cursor-pointer');
+        imgTrigger.addEventListener('click', () => {
+            alert('Prescription Lightbox View Opened (Mock Interaction)');
+        });
+    </script>
+</body></html>

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Prescription Review | MediLink</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-container": "#3a7b39",
+                    "surface-tint": "#1b6d24",
+                    "on-secondary-container": "#2e7238",
+                    "tertiary": "#1f6223",
+                    "on-error": "#ffffff",
+                    "primary": "#0d631b",
+                    "on-tertiary-container": "#c8ffbf",
+                    "tertiary-fixed": "#acf4a4",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-high": "#e9e8e7",
+                    "on-surface": "#1b1c1c",
+                    "inverse-primary": "#88d982",
+                    "on-secondary-fixed": "#002107",
+                    "secondary": "#286b33",
+                    "primary-fixed-dim": "#88d982",
+                    "error-container": "#ffdad6",
+                    "surface-variant": "#e3e2e2",
+                    "surface-bright": "#fbf9f9",
+                    "surface-dim": "#dbdad9",
+                    "on-primary": "#ffffff",
+                    "surface-container-low": "#f5f3f3",
+                    "secondary-fixed-dim": "#90d792",
+                    "on-primary-fixed-variant": "#005312",
+                    "on-background": "#1b1c1c",
+                    "tertiary-fixed-dim": "#91d78a",
+                    "on-error-container": "#93000a",
+                    "on-tertiary-fixed-variant": "#0c5216",
+                    "primary-fixed": "#a3f69c",
+                    "secondary-container": "#abf4ac",
+                    "inverse-on-surface": "#f2f0f0",
+                    "primary-container": "#2e7d32",
+                    "on-surface-variant": "#40493d",
+                    "surface": "#fbf9f9",
+                    "on-tertiary-fixed": "#002203",
+                    "inverse-surface": "#303031",
+                    "error": "#ba1a1a",
+                    "on-primary-fixed": "#002204",
+                    "surface-container-highest": "#e3e2e2",
+                    "surface-container": "#efeded",
+                    "on-secondary": "#ffffff",
+                    "on-secondary-fixed-variant": "#07521d",
+                    "secondary-fixed": "#abf4ac",
+                    "outline": "#707a6c",
+                    "background": "#fbf9f9",
+                    "on-tertiary": "#ffffff",
+                    "outline-variant": "#bfcaba",
+                    "on-primary-container": "#cbffc2"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xs": "4px",
+                    "xl": "32px",
+                    "margin-mobile": "16px",
+                    "gutter": "24px",
+                    "md": "16px",
+                    "lg": "24px",
+                    "sm": "8px",
+                    "container-max": "1440px",
+                    "base": "8px",
+                    "margin-desktop": "32px"
+            },
+            "fontFamily": {
+                    "headline-lg-mobile": ["Inter"],
+                    "label-lg": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "title-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "letterSpacing": "0px", "fontWeight": "600"}],
+                    "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "500"}],
+                    "label-sm": ["11px", {"lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "letterSpacing": "0.5px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "0px", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.25px", "fontWeight": "400"}],
+                    "display-lg": ["57px", {"lineHeight": "64px", "letterSpacing": "-0.25px", "fontWeight": "400"}],
+                    "title-lg": ["22px", {"lineHeight": "28px", "letterSpacing": "0px", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .glass-effect {
+            backdrop-filter: blur(8px);
+            background: rgba(255, 255, 255, 0.7);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md overflow-x-hidden">
+<!-- TopAppBar -->
+<header class="bg-surface fixed top-0 w-full z-50 flex justify-between items-center h-16 px-margin-mobile md:px-margin-desktop">
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-surface-variant transition-colors duration-200 rounded-full">
+<span class="material-symbols-outlined text-primary">arrow_back</span>
+</button>
+<h1 class="font-title-lg text-title-lg font-bold text-primary">Prescription Review</h1>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional pharmacist in a clean white coat" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhfU2lJ_S5CPyrO1NWVZBcUJ_8s_zCBG5Q2Uqq61Xvk5Wj3JzPsK4As0CJJBgld8QVMeV_QTKJB7RJE4W43ca45C-1GRDLfq9Y8BvnEXU-qAnTMuaMw2PFSFmFFra_3GoPesx5nXdf4OMPHTqui7qM8m3uCRgH6a5AK8yMyltdhiSDSC8zkEvw0gmRCmNoWnHoz5KU3bS9rTlw8YXpJYI8hBMTCjQYItcZwSxYlzU-A1coYiWtfvihieEwmK9VmzUeDz9Ns6CgJRc0"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="pt-20 pb-40 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Prescription Image Panel -->
+<div class="lg:col-span-7 space-y-md">
+<div class="relative bg-surface-container-low rounded-xl overflow-hidden border border-outline-variant aspect-[3/4] md:aspect-auto md:h-[600px] shadow-sm flex flex-col">
+<!-- Image Area -->
+<div class="flex-grow flex items-center justify-center overflow-hidden bg-black/5 relative">
+<img alt="Prescription Document" class="max-w-full max-h-full object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1yUZqVB7_UWdMBAJHnS5iNLu7cD3ap_eZ5qfiwT2QgGzl3r10VQaZVtnTBsbUQumDLGQK64ykJuvorAuyYpxlqQpVYh0uwKkQ36vd6ekhRak_fhMTZG-Y3mNzH7vYEmY1OABBrnEmOD-12PYGQae8pDB5aDuTTKK8BXTLzXIDs80uqesUzS3Sceo-HYWBD6Rs9m8IspoGaA05HloeAmL5mNxK2fQSID84a9KcIZz10FpYxQYPg-ctxsvXl1UnZMZcDw37wVR2SRbc"/>
+</div>
+<!-- Image Controls -->
+<div class="bg-surface-container p-3 flex flex-wrap items-center justify-center gap-4 border-t border-outline-variant">
+<div class="flex items-center bg-surface rounded-lg border border-outline-variant p-1">
+<button class="p-2 hover:bg-surface-variant rounded" title="Zoom Out"><span class="material-symbols-outlined text-on-surface-variant">zoom_out</span></button>
+<span class="px-2 font-label-sm text-on-surface">100%</span>
+<button class="p-2 hover:bg-surface-variant rounded" title="Zoom In"><span class="material-symbols-outlined text-on-surface-variant">zoom_in</span></button>
+</div>
+<div class="flex items-center gap-1">
+<button class="p-2 bg-surface hover:bg-surface-variant border border-outline-variant rounded-lg" title="Rotate Left">
+<span class="material-symbols-outlined text-on-surface-variant">rotate_left</span>
+</button>
+<button class="p-2 bg-surface hover:bg-surface-variant border border-outline-variant rounded-lg" title="Rotate Right">
+<span class="material-symbols-outlined text-on-surface-variant">rotate_right</span>
+</button>
+</div>
+<div class="flex items-center gap-4 px-2 border-l border-outline-variant">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">light_mode</span>
+<input class="w-20 h-1 bg-outline-variant rounded-lg appearance-none cursor-pointer accent-primary" type="range"/>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">contrast</span>
+<input class="w-20 h-1 bg-outline-variant rounded-lg appearance-none cursor-pointer accent-primary" type="range"/>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Review Details Panel -->
+<div class="lg:col-span-5 space-y-lg">
+<!-- Customer Info Card -->
+<section class="bg-surface rounded-xl p-lg border border-outline-variant shadow-sm">
+<div class="flex items-center gap-sm mb-md">
+<span class="material-symbols-outlined text-secondary">person</span>
+<h2 class="font-title-lg text-title-lg text-on-surface">Customer Info</h2>
+</div>
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 bg-secondary-container rounded-full flex items-center justify-center text-on-secondary-container font-bold text-title-lg">
+                            SJ
+                        </div>
+<div>
+<p class="font-bold text-body-lg text-on-surface">Sarah Jenkins</p>
+<p class="text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">call</span>
+                                +1 (555) 012-3456
+                            </p>
+</div>
+</div>
+</section>
+<!-- Detected Medicines List -->
+<section class="bg-surface rounded-xl p-lg border border-outline-variant shadow-sm">
+<div class="flex justify-between items-center mb-md">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-secondary">medication</span>
+<h2 class="font-title-lg text-title-lg text-on-surface">Detected Medicines</h2>
+</div>
+<span class="bg-tertiary-container text-on-tertiary-container px-3 py-1 rounded-full text-label-sm font-label-sm">3 Items Found</span>
+</div>
+<div class="space-y-sm">
+<!-- Medicine Item -->
+<div class="flex items-center justify-between p-md bg-surface-container-low rounded-lg border border-outline-variant hover:border-primary transition-all group">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-bold text-on-surface">Amoxicillin 500mg</span>
+<span class="text-[11px] font-bold px-1.5 py-0.5 bg-secondary/10 text-secondary rounded flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[10px] fill-1">verified</span> 98% match
+                                </span>
+</div>
+<span class="text-on-surface-variant text-label-sm">Quantity: 30 Capsules</span>
+</div>
+<button class="p-2.5 bg-surface-container-high rounded-lg text-primary shadow-sm hover:bg-primary hover:text-on-primary transition-all transform active:scale-95">
+<span class="material-symbols-outlined">edit</span>
+</button>
+</div>
+<!-- Medicine Item -->
+<div class="flex items-center justify-between p-md bg-surface-container-low rounded-lg border border-outline-variant hover:border-primary transition-all group">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-bold text-on-surface">Lisinopril 10mg</span>
+<span class="text-[11px] font-bold px-1.5 py-0.5 bg-secondary/10 text-secondary rounded flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[10px] fill-1">verified</span> 94% match
+                                </span>
+</div>
+<span class="text-on-surface-variant text-label-sm">Quantity: 15 Tablets</span>
+</div>
+<button class="p-2.5 bg-surface-container-high rounded-lg text-primary shadow-sm hover:bg-primary hover:text-on-primary transition-all transform active:scale-95">
+<span class="material-symbols-outlined">edit</span>
+</button>
+</div>
+<!-- Medicine Item -->
+<div class="flex items-center justify-between p-md bg-surface-container-low rounded-lg border border-outline-variant hover:border-primary transition-all group">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-bold text-on-surface">Metformin 850mg</span>
+<span class="text-[11px] font-bold px-1.5 py-0.5 bg-secondary/10 text-secondary rounded flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[10px] fill-1">verified</span> 99% match
+                                </span>
+</div>
+<span class="text-on-surface-variant text-label-sm">Quantity: 60 Tablets</span>
+</div>
+<button class="p-2.5 bg-surface-container-high rounded-lg text-primary shadow-sm hover:bg-primary hover:text-on-primary transition-all transform active:scale-95">
+<span class="material-symbols-outlined">edit</span>
+</button>
+</div>
+</div>
+<!-- Add Medicine Button -->
+<button class="mt-md w-full flex items-center justify-center gap-2 py-4 border-2 border-dashed border-primary/40 bg-primary/5 rounded-xl text-primary font-bold hover:bg-primary/10 hover:border-primary transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined font-bold">add_circle</span>
+<span>Add Medicine</span>
+</button>
+</section>
+<!-- Internal Notes -->
+<section class="bg-surface rounded-xl p-lg border border-outline-variant shadow-sm">
+<div class="flex items-center gap-sm mb-md">
+<span class="material-symbols-outlined text-secondary">notes</span>
+<h2 class="font-title-lg text-title-lg text-on-surface">Pharmacist Notes</h2>
+</div>
+<textarea class="w-full h-32 bg-surface-container-low border border-outline-variant rounded-xl p-md focus:ring-2 focus:ring-primary focus:border-primary transition-all outline-none resize-none text-body-md" placeholder="Add internal remarks about this prescription..."></textarea>
+</section>
+</div>
+</div>
+</main>
+<!-- Fixed Action Bar -->
+<div class="fixed bottom-20 left-0 w-full px-margin-mobile md:px-margin-desktop py-4 glass-effect z-40 border-t border-outline-variant">
+<div class="max-w-container-max mx-auto flex justify-end">
+<button class="w-full md:w-80 bg-primary text-on-primary py-4 px-lg rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg hover:shadow-primary/25 hover:bg-primary/90 transition-all active:scale-95">
+<span class="font-title-lg">Next: Create Quotation</span>
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center h-20 pb-safe px-2 bg-surface-container rounded-t-xl z-50 shadow-md">
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-1 hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-sm text-label-sm">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-5 py-1 scale-95 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">prescriptions</span>
+<span class="font-label-sm text-label-sm">Orders</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-1 hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-sm text-label-sm">Inventory</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-1 hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-sm text-label-sm">Earnings</span>
+</a>
+</nav>
+</body></html>

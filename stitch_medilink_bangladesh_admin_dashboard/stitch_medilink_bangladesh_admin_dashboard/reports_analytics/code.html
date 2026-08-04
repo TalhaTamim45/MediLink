@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Reports & Analytics | MediLink BD</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed": "#04006d",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-container": "#292b8d",
+                        "primary": "#006b32",
+                        "secondary-fixed": "#e1e0ff",
+                        "surface-container": "#e5eeff",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed": "#3a0b00",
+                        "on-surface": "#0b1c30",
+                        "surface": "#f8f9ff",
+                        "surface-container-high": "#dce9ff",
+                        "inverse-surface": "#213145",
+                        "outline-variant": "#bccabb",
+                        "tertiary-fixed-dim": "#ffb59e",
+                        "primary-fixed-dim": "#5adf82",
+                        "primary-fixed": "#78fc9c",
+                        "surface-container-low": "#eff4ff",
+                        "error": "#ba1a1a",
+                        "surface-bright": "#f8f9ff",
+                        "secondary-fixed-dim": "#c0c1ff",
+                        "on-background": "#0b1c30",
+                        "inverse-on-surface": "#eaf1ff",
+                        "secondary-container": "#959aff",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#cbdbf5",
+                        "on-primary-fixed": "#00210b",
+                        "tertiary-container": "#d1430a",
+                        "tertiary": "#a93200",
+                        "surface-tint": "#006d33",
+                        "on-primary-container": "#f7fff3",
+                        "background": "#f8f9ff",
+                        "secondary": "#4f54b4",
+                        "on-tertiary-fixed-variant": "#842500",
+                        "on-secondary-fixed-variant": "#373a9b",
+                        "outline": "#6d7b6d",
+                        "on-primary-fixed-variant": "#005225",
+                        "surface-variant": "#d3e4fe",
+                        "on-surface-variant": "#3d4a3e",
+                        "error-container": "#ffdad6",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed": "#ffdbd0",
+                        "inverse-primary": "#5adf82",
+                        "on-tertiary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "surface-container-highest": "#d3e4fe",
+                        "primary-container": "#008740",
+                        "on-tertiary-container": "#fffbff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-margin": "24px",
+                        "base": "4px",
+                        "md": "16px",
+                        "lg": "24px",
+                        "gutter": "16px",
+                        "xs": "4px",
+                        "sm": "8px",
+                        "xl": "32px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "title-md": ["Inter"],
+                        "display-md": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-sm": ["11px", {"lineHeight": "16px", "fontWeight": "600"}],
+                        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "title-lg": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "title-md": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                        "display-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #bccabb;
+            border-radius: 10px;
+        }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 16px;
+        }
+    </style>
+</head>
+<body class="bg-surface font-body-md text-on-surface custom-scrollbar overflow-x-hidden">
+<!-- Sidebar Navigation -->
+<aside class="fixed left-0 top-0 h-screen w-[280px] bg-surface border-r border-outline-variant flex flex-col py-md z-50">
+<div class="px-lg mb-xl">
+<h1 class="font-title-lg text-title-lg font-bold text-primary">MediLink BD</h1>
+<p class="font-label-md text-label-md text-on-surface-variant">Admin Console</p>
+</div>
+<nav class="flex-1 space-y-1 px-sm overflow-y-auto custom-scrollbar">
+<!-- Navigation Items Mapping from JSON -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors group" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined">local_pharmacy</span>
+<span class="font-label-md text-label-md">Pharmacies</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-md text-label-md">Customers</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="font-label-md text-label-md">Orders</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="font-label-md text-label-md">Prescriptions</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="font-label-md text-label-md">Deliveries</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-md text-label-md">Payments</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined">gavel</span>
+<span class="font-label-md text-label-md">Disputes</span>
+</a>
+<!-- ACTIVE TAB: Reports -->
+<a class="flex items-center gap-3 px-4 py-3 text-primary border-r-4 border-primary bg-surface-container-high font-bold" href="#">
+<span class="material-symbols-outlined">assessment</span>
+<span class="font-label-md text-label-md">Reports</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined">notifications</span>
+<span class="font-label-md text-label-md">Notifications</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</nav>
+<div class="px-lg mt-auto pt-md border-t border-outline-variant">
+<div class="flex items-center gap-3">
+<img class="w-10 h-10 rounded-full bg-surface-container-highest object-cover" data-alt="Professional headshot of a senior medical administrator with glasses, set against a blurred clinical laboratory background with soft healthcare green lighting. The style is clean, modern, and clinical with high-key lighting that emphasizes authority and systematic reliability." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAzLiGTKuhiuUs5QyUFP1ztLolozBWf01fbBgEpiUQ_MLNVkNXqFqlTW9Hu3N0kMrxtMVHnhvcNGJkdPxtnyoF9WGUPEyKCYKhqkYPav2IxnWNZmBEzHGYRF4Jo-fypcwjzmsZ1BF-Tq4m9_K7NlMsY7paDmIju26CwyB-YjWJ9ZUfmeBU202dblYMHztwrwpos0BxA6cV1tqAWCAdIzk8YCJ5VPHBqCbf4MaEcy1hoxwxfjWJu-I89dFjqeyRn50fvb1Th1IZa6vg"/>
+<div class="overflow-hidden">
+<p class="font-title-md text-title-md text-on-surface truncate">Admin User</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Global Admin</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 right-0 left-0 ml-[280px] h-16 bg-surface border-b border-outline-variant flex justify-between items-center px-lg z-40">
+<div class="flex items-center gap-4 flex-1 max-w-xl">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-body-md" placeholder="Search reports, data points, or pharmacies..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-sm">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-full transition-transform active:scale-90">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-full transition-transform active:scale-90">
+<span class="material-symbols-outlined">help</span>
+</button>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="ml-[280px] pt-16 min-h-screen">
+<div class="p-lg space-y-lg">
+<!-- Header Section with Exports -->
+<section class="flex flex-col md:flex-row md:items-center justify-between gap-md mb-lg">
+<div>
+<h2 class="font-display-md text-display-md text-on-surface">Reports & Analytics</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Overview of MediLink BD operational performance and growth metrics.</p>
+</div>
+<div class="flex items-center gap-sm">
+<button class="flex items-center gap-2 px-md py-2 border border-primary text-primary hover:bg-primary/5 rounded-lg font-title-md transition-all">
+<span class="material-symbols-outlined">picture_as_pdf</span>
+                        Export PDF
+                    </button>
+<button class="flex items-center gap-2 px-md py-2 bg-primary text-on-primary hover:bg-primary-container rounded-lg font-title-md shadow-sm transition-all">
+<span class="material-symbols-outlined">table_chart</span>
+                        Export Excel
+                    </button>
+</div>
+</section>
+<!-- High-Level Metric Cards (Bento Style) -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
+<!-- Revenue Metric -->
+<div class="bg-surface-container-lowest p-lg rounded-xl border border-outline-variant hover:border-primary transition-colors">
+<div class="flex justify-between items-start mb-sm">
+<span class="p-2 bg-primary/10 text-primary rounded-lg">
+<span class="material-symbols-outlined">payments</span>
+</span>
+<span class="flex items-center gap-1 text-primary font-label-md">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+                            +12.5%
+                        </span>
+</div>
+<p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Total Revenue</p>
+<h3 class="font-display-md text-display-md mt-xs">৳ 1,284,500</h3>
+<p class="font-label-sm text-label-sm text-outline mt-xs">Compared to last month</p>
+</div>
+<!-- Orders Metric -->
+<div class="bg-surface-container-lowest p-lg rounded-xl border border-outline-variant hover:border-primary transition-colors">
+<div class="flex justify-between items-start mb-sm">
+<span class="p-2 bg-secondary/10 text-secondary rounded-lg">
+<span class="material-symbols-outlined">shopping_bag</span>
+</span>
+<span class="flex items-center gap-1 text-primary font-label-md">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+                            +8.2%
+                        </span>
+</div>
+<p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Total Orders</p>
+<h3 class="font-display-md text-display-md mt-xs">4,129</h3>
+<p class="font-label-sm text-label-sm text-outline mt-xs">Avg. 137 orders/day</p>
+</div>
+<!-- Pharmacy Growth Metric -->
+<div class="bg-surface-container-lowest p-lg rounded-xl border border-outline-variant hover:border-primary transition-colors">
+<div class="flex justify-between items-start mb-sm">
+<span class="p-2 bg-tertiary-container/10 text-tertiary rounded-lg">
+<span class="material-symbols-outlined">local_pharmacy</span>
+</span>
+<span class="flex items-center gap-1 text-error font-label-md">
+<span class="material-symbols-outlined text-[16px]">trending_down</span>
+                            -2.1%
+                        </span>
+</div>
+<p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">New Pharmacies</p>
+<h3 class="font-display-md text-display-md mt-xs">48</h3>
+<p class="font-label-sm text-label-sm text-outline mt-xs">Active onboardings</p>
+</div>
+<!-- Medicine Statistics Metric -->
+<div class="bg-surface-container-lowest p-lg rounded-xl border border-outline-variant hover:border-primary transition-colors">
+<div class="flex justify-between items-start mb-sm">
+<span class="p-2 bg-primary/10 text-primary rounded-lg">
+<span class="material-symbols-outlined">medication</span>
+</span>
+<span class="flex items-center gap-1 text-primary font-label-md">
+<span class="material-symbols-outlined text-[16px]">verified</span>
+                            98.5%
+                        </span>
+</div>
+<p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Stock Availability</p>
+<h3 class="font-display-md text-display-md mt-xs">12,400</h3>
+<p class="font-label-sm text-label-sm text-outline mt-xs">Unique SKU count</p>
+</div>
+</div>
+<!-- Detailed Charts & Bento Grid Section -->
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Revenue Trend Chart -->
+<div class="col-span-12 lg:col-span-8 bg-surface-container-lowest rounded-xl border border-outline-variant p-lg">
+<div class="flex justify-between items-center mb-lg">
+<div>
+<h4 class="font-title-lg text-title-lg text-on-surface">Revenue Growth</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Monthly revenue tracking for FY 2023-24</p>
+</div>
+<select class="bg-surface border border-outline-variant rounded-lg px-sm py-1 font-label-md">
+<option>Last 6 Months</option>
+<option>Year to Date</option>
+</select>
+</div>
+<div class="h-64 flex items-end justify-between gap-base px-sm">
+<!-- Simulated Chart Bars -->
+<div class="flex-1 bg-surface-container rounded-t-lg relative group h-1/2">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">৳120k</div>
+<div class="absolute bottom-[-24px] left-1/2 -translate-x-1/2 font-label-sm text-outline">Jul</div>
+</div>
+<div class="flex-1 bg-surface-container rounded-t-lg relative group h-2/3">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">৳165k</div>
+<div class="absolute bottom-[-24px] left-1/2 -translate-x-1/2 font-label-sm text-outline">Aug</div>
+</div>
+<div class="flex-1 bg-surface-container rounded-t-lg relative group h-3/4">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">৳190k</div>
+<div class="absolute bottom-[-24px] left-1/2 -translate-x-1/2 font-label-sm text-outline">Sep</div>
+</div>
+<div class="flex-1 bg-primary rounded-t-lg relative group h-5/6">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">৳220k</div>
+<div class="absolute bottom-[-24px] left-1/2 -translate-x-1/2 font-label-sm text-primary font-bold">Oct</div>
+</div>
+<div class="flex-1 bg-surface-container rounded-t-lg relative group h-2/3">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">৳170k</div>
+<div class="absolute bottom-[-24px] left-1/2 -translate-x-1/2 font-label-sm text-outline">Nov</div>
+</div>
+<div class="flex-1 bg-surface-container rounded-t-lg relative group h-[90%]">
+<div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">৳245k</div>
+<div class="absolute bottom-[-24px] left-1/2 -translate-x-1/2 font-label-sm text-outline">Dec</div>
+</div>
+</div>
+</div>
+<!-- Order Status Breakdown -->
+<div class="col-span-12 lg:col-span-4 bg-surface-container-lowest rounded-xl border border-outline-variant p-lg">
+<h4 class="font-title-lg text-title-lg text-on-surface mb-lg">Order Status Distribution</h4>
+<div class="space-y-md">
+<div>
+<div class="flex justify-between font-label-md mb-1">
+<span>Delivered</span>
+<span class="font-bold">78%</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-2">
+<div class="bg-primary h-full rounded-full w-[78%]"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between font-label-md mb-1">
+<span>In Transit</span>
+<span class="font-bold">12%</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-2">
+<div class="bg-secondary h-full rounded-full w-[12%]"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between font-label-md mb-1">
+<span>Processing</span>
+<span class="font-bold">7%</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-2">
+<div class="bg-tertiary-container h-full rounded-full w-[7%]"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between font-label-md mb-1">
+<span>Cancelled</span>
+<span class="font-bold">3%</span>
+</div>
+<div class="w-full bg-surface-container rounded-full h-2">
+<div class="bg-error h-full rounded-full w-[3%]"></div>
+</div>
+</div>
+</div>
+<div class="mt-lg pt-lg border-t border-outline-variant text-center">
+<p class="font-label-sm text-label-sm text-on-surface-variant">Last updated: 5 minutes ago</p>
+</div>
+</div>
+<!-- Pharmacy Performance Table -->
+<div class="col-span-12 bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden">
+<div class="p-lg border-b border-outline-variant flex justify-between items-center">
+<h4 class="font-title-lg text-title-lg text-on-surface">Top Performing Pharmacies</h4>
+<button class="text-primary font-label-md hover:underline">View All Pharmacies</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="bg-surface-container-low font-label-md text-on-surface-variant">
+<th class="px-lg py-md">Pharmacy Name</th>
+<th class="px-lg py-md">Location</th>
+<th class="px-lg py-md">Monthly Orders</th>
+<th class="px-lg py-md">Rating</th>
+<th class="px-lg py-md text-right">Revenue (BDT)</th>
+<th class="px-lg py-md">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-lg py-md font-title-md">Lazz Pharma Ltd.</td>
+<td class="px-lg py-md text-on-surface-variant">Dhanmondi, Dhaka</td>
+<td class="px-lg py-md font-body-md">842</td>
+<td class="px-lg py-md">
+<div class="flex items-center text-primary">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="ml-1 font-label-md">4.9</span>
+</div>
+</td>
+<td class="px-lg py-md font-title-md text-right tabular-nums">৳ 452,100</td>
+<td class="px-lg py-md">
+<span class="px-2 py-1 bg-primary/10 text-primary rounded-full text-[10px] font-bold uppercase tracking-tight">Active</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-lg py-md font-title-md">Tamanna Pharmacy</td>
+<td class="px-lg py-md text-on-surface-variant">Uttara, Dhaka</td>
+<td class="px-lg py-md font-body-md">568</td>
+<td class="px-lg py-md">
+<div class="flex items-center text-primary">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="ml-1 font-label-md">4.7</span>
+</div>
+</td>
+<td class="px-lg py-md font-title-md text-right tabular-nums">৳ 310,200</td>
+<td class="px-lg py-md">
+<span class="px-2 py-1 bg-primary/10 text-primary rounded-full text-[10px] font-bold uppercase tracking-tight">Active</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-lg py-md font-title-md">Model Pharmacy</td>
+<td class="px-lg py-md text-on-surface-variant">Banani, Dhaka</td>
+<td class="px-lg py-md font-body-md">412</td>
+<td class="px-lg py-md">
+<div class="flex items-center text-primary">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="ml-1 font-label-md">4.5</span>
+</div>
+</td>
+<td class="px-lg py-md font-title-md text-right tabular-nums">৳ 248,500</td>
+<td class="px-lg py-md">
+<span class="px-2 py-1 bg-primary/10 text-primary rounded-full text-[10px] font-bold uppercase tracking-tight">Active</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Medicine Statistics / Popular SKU -->
+<div class="col-span-12 lg:col-span-6 bg-surface-container-lowest rounded-xl border border-outline-variant p-lg">
+<h4 class="font-title-lg text-title-lg text-on-surface mb-lg">Top Selling Medications</h4>
+<div class="space-y-md">
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">pill</span>
+</div>
+<div class="flex-1">
+<p class="font-title-md text-title-md">Napa Extra 500mg</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Paracetamol + Caffeine</p>
+</div>
+<div class="text-right">
+<p class="font-title-md text-title-md">14,203 units</p>
+<p class="font-label-sm text-label-sm text-primary">+12% vs last month</p>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">pill</span>
+</div>
+<div class="flex-1">
+<p class="font-title-md text-title-md">Sergel 20mg</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Esomeprazole</p>
+</div>
+<div class="text-right">
+<p class="font-title-md text-title-md">9,140 units</p>
+<p class="font-label-sm text-label-sm text-primary">+5% vs last month</p>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">pill</span>
+</div>
+<div class="flex-1">
+<p class="font-title-md text-title-md">Fexo 120mg</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Fexofenadine Hydrochloride</p>
+</div>
+<div class="text-right">
+<p class="font-title-md text-title-md">7,820 units</p>
+<p class="font-label-sm text-label-sm text-error">-2% vs last month</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Regional Demand Map Placeholder -->
+<div class="col-span-12 lg:col-span-6 bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden flex flex-col">
+<div class="p-lg border-b border-outline-variant">
+<h4 class="font-title-lg text-title-lg text-on-surface">Regional Order Density</h4>
+</div>
+<div class="flex-1 relative min-h-[240px]">
+<img class="absolute inset-0 w-full h-full object-cover" data-location="Dhaka, Bangladesh" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZp7sS1mJna6oY4FQAyeT5aunIL3Yi5rd0kJa0XNBLdHacto5l_VycIjSJl5l0knCGfOHmOSPNrYb3sBW6npato9OMt-wsZ82IwsXA9ZhhN-XwXfJA-cKiI8f-cXff5RhywqpHtachgCzlpWBTct66HPxwW78EldC3DhsSXQ3DwifpAPqjnns3wSImBzsD4Q7MImitGWDLClJ2WjOxpYNKyTocZQ7yLC5YPMJDViyIL-1hAm7jPGZZKVa4bNVwvwjb7UPcf36MZMY"/>
+<div class="absolute inset-0 bg-primary/10 pointer-events-none"></div>
+<div class="absolute top-4 right-4 bg-white/90 backdrop-blur-md p-sm rounded-lg shadow-sm border border-outline-variant space-y-xs">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<span class="font-label-sm text-label-sm">High Density (Dhaka South)</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-secondary"></div>
+<span class="font-label-sm text-label-sm">Medium Density (Uttara)</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer / Credits -->
+<footer class="p-lg mt-xl text-center border-t border-outline-variant">
+<p class="font-label-md text-label-md text-on-surface-variant">© 2024 MediLink BD - Integrated Pharmaceutical Logistics Admin Console</p>
+</footer>
+</main>
+<!-- Floating Quick Action (FAB) - For Reports usually used for Custom Filter or Help -->
+<button class="fixed bottom-lg right-lg w-14 h-14 bg-primary text-on-primary rounded-full shadow-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-transform z-50">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+<script>
+        // Micro-interactions for hover effects and dynamic styling
+        document.querySelectorAll('.group').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                el.classList.add('translate-x-1');
+            });
+            el.addEventListener('mouseleave', () => {
+                el.classList.remove('translate-x-1');
+            });
+        });
+
+        // Simulating some animation on page load for metrics
+        window.addEventListener('load', () => {
+            const bars = document.querySelectorAll('.h-64 .flex-1');
+            bars.forEach((bar, index) => {
+                const targetHeight = bar.style.height || getComputedStyle(bar).height;
+                bar.style.height = '0';
+                setTimeout(() => {
+                    bar.style.transition = 'height 1s cubic-bezier(0.16, 1, 0.3, 1)';
+                    bar.style.height = targetHeight;
+                }, 100 * index);
+            });
+        });
+    </script>
+</body></html>

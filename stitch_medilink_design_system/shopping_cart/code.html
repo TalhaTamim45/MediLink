@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Shopping Cart - MediLink Bangladesh</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-high": "#e8e8e8",
+                        "primary-container": "#008577",
+                        "on-surface-variant": "#3e4946",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-container": "#ffffff",
+                        "surface": "#f9f9f9",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-highest": "#e2e2e2",
+                        "outline": "#6d7a76",
+                        "on-primary": "#ffffff",
+                        "inverse-surface": "#2f3131",
+                        "secondary": "#40627b",
+                        "on-error-container": "#93000a",
+                        "error": "#ba1a1a",
+                        "on-error": "#ffffff",
+                        "surface-tint": "#006b5f",
+                        "surface-dim": "#dadada",
+                        "surface-bright": "#f9f9f9",
+                        "primary-fixed": "#90f4e3",
+                        "on-primary-fixed-variant": "#005047",
+                        "on-secondary-container": "#43647d",
+                        "on-surface": "#1a1c1c",
+                        "on-secondary-fixed-variant": "#274a62",
+                        "tertiary-container": "#656ec9",
+                        "secondary-fixed-dim": "#a8cbe7",
+                        "on-tertiary-fixed": "#000767",
+                        "on-tertiary-fixed-variant": "#343d96",
+                        "on-secondary-fixed": "#001e2f",
+                        "secondary-fixed": "#c9e6ff",
+                        "primary": "#006a5e",
+                        "on-primary-container": "#ffffff",
+                        "surface-container": "#eeeeee",
+                        "on-background": "#1a1c1c",
+                        "secondary-container": "#bee1fe",
+                        "tertiary-fixed": "#e0e0ff",
+                        "primary-fixed-dim": "#73d8c7",
+                        "background": "#f9f9f9",
+                        "tertiary-fixed-dim": "#bdc2ff",
+                        "surface-variant": "#e2e2e2",
+                        "surface-container-low": "#f3f3f3",
+                        "error-container": "#ffdad6",
+                        "tertiary": "#4c55ae",
+                        "on-primary-fixed": "#00201c",
+                        "on-tertiary": "#ffffff",
+                        "inverse-on-surface": "#f1f1f1",
+                        "outline-variant": "#bdc9c5",
+                        "inverse-primary": "#73d8c7"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xxl": "48px",
+                        "md": "16px",
+                        "xl": "32px",
+                        "lg": "24px",
+                        "margin-tablet": "32px",
+                        "xs": "4px",
+                        "gutter": "16px",
+                        "touch-target": "48px",
+                        "sm": "8px",
+                        "margin-mobile": "16px",
+                        "base": "8px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "label-lg": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "title-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", { "lineHeight": "28px", "letterSpacing": "0.5px", "fontWeight": "400" }],
+                        "title-lg": ["22px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
+                        "title-md": ["16px", { "lineHeight": "24px", "letterSpacing": "0.15px", "fontWeight": "600" }],
+                        "display-lg": ["57px", { "lineHeight": "64px", "letterSpacing": "-0.25px", "fontWeight": "700" }],
+                        "headline-md": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "letterSpacing": "0.25px", "fontWeight": "400" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background antialiased min-h-screen flex flex-col pt-16 pb-24 md:pb-0">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky bg-surface dark:bg-on-background flex justify-between items-center px-margin-mobile h-touch-target z-50">
+<button aria-label="Go back" class="w-touch-target h-touch-target flex items-center justify-start text-on-surface hover:bg-surface-container-low dark:hover:bg-surface-variant active:scale-95 transition-transform duration-150 rounded-full">
+<span class="material-symbols-outlined text-2xl">arrow_back</span>
+</button>
+<h1 class="font-title-lg text-title-lg text-on-surface">Cart</h1>
+<div class="w-touch-target h-touch-target"></div>
+</header>
+<main class="flex-grow flex flex-col md:grid md:grid-cols-8 md:gap-gutter px-margin-mobile md:px-margin-tablet py-lg md:py-xl max-w-7xl mx-auto w-full">
+<div class="md:col-span-5 flex flex-col gap-lg">
+<!-- Pharmacy Notice -->
+<div class="bg-primary-container text-on-primary-container rounded-lg p-md flex items-start gap-sm shadow-sm">
+<span class="material-symbols-outlined mt-0.5" style="font-variation-settings: 'FILL' 1;">store</span>
+<div>
+<h2 class="font-title-md text-title-md">Lazz Pharma - Dhanmondi</h2>
+<p class="font-body-md text-body-md opacity-90 mt-1">Items from a single pharmacy are grouped together for faster delivery.</p>
+</div>
+</div>
+<!-- Cart Items List -->
+<div class="flex flex-col gap-md">
+<!-- Item 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-md shadow-sm border border-outline-variant/50 flex gap-md items-center relative">
+<div class="w-[80px] h-[80px] rounded-lg overflow-hidden flex-shrink-0 bg-surface-container-high">
+<img alt="Medicine Image" class="w-full h-full object-cover" data-alt="A clean, professional studio shot of a blister pack of Paracetamol 500mg tablets resting on a pristine white medical background. Soft, even lighting highlights the foil texture. The overall aesthetic is clinical, trustworthy, and minimal, using a medical color palette." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBp88WMOteVbcDvmxs3sA61J-wTr-1CeHyFmamcJdcpJ66EHrLy7LSNW6cMzUnLPWbBMH6PYS3fZhC47B7RXZg-5cb6t3hK1Vb6cxzS_AvdrsJuhlfVDa_C-D7cIUyA8f2jXQ1PwYpemOr6LC33TpGz_RpPpJkphV7P62lJ6UklIss_ND-UcpmBh_IBAEdchF6gbCixjM9YwbPUi3q9zcagi7A7CiRkdAUcNqZfiNKj6QbG6FllIPlADaSfIjO1txSL6vg_4nBwdGeQ"/>
+</div>
+<div class="flex-grow flex flex-col">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-title-md text-title-md text-on-surface line-clamp-1">Napa Extra 500mg</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Paracetamol + Caffeine</p>
+</div>
+<button aria-label="Remove item" class="p-2 -mt-2 -mr-2 text-on-surface-variant hover:text-error active:scale-90 transition-transform">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+<div class="flex justify-between items-end mt-2">
+<span class="font-title-lg text-title-lg text-primary">৳ 25.00</span>
+<!-- Stepper -->
+<div class="flex items-center gap-2 bg-surface-container-low rounded-full px-2 py-1 border border-outline-variant/30">
+<button aria-label="Decrease quantity" class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface hover:bg-surface-variant active:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">remove</span>
+</button>
+<span class="font-title-md text-title-md w-6 text-center">2</span>
+<button aria-label="Increase quantity" class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface hover:bg-surface-variant active:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Item 2 (Prescription Required) -->
+<div class="bg-surface-container-lowest rounded-xl p-md shadow-sm border border-outline-variant/50 flex gap-md items-center relative">
+<div class="w-[80px] h-[80px] rounded-lg overflow-hidden flex-shrink-0 bg-surface-container-high relative">
+<img alt="Medicine Image" class="w-full h-full object-cover" data-alt="A high-quality image of a box of Amoxicillin 500mg capsules. The box is white with subtle blue and green medical branding. The lighting is bright and soft, creating a clean, professional medical aesthetic suitable for an app." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSFXHdAdYMvBLoq5SrO0LfwCh-CImHbFA6eMHebW1NUaNsoGFthrxSfNwPs4S3jc_jUppR9eJBezWbZTbwrwy2xoZpm4S8Tmb56WZ9_i0WmDONeTXCz7OxHew0gOHeoMedO9Z2FY2cr69dIxqCl6opKesdqXrA8AFeA3zotbgEToZXkxJP9pzAm2ytf721mJbw6qKdPv6kAg7feF4zsamWr3AKdBfi2BdIjphZMvoH-SLNPN5iOfKzys4crGaAd7abuWFqpqqKdrHc"/>
+</div>
+<div class="flex-grow flex flex-col">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-title-md text-title-md text-on-surface line-clamp-1">Moxacil 500mg</h3>
+<div class="flex items-center gap-1 mt-1 text-tertiary">
+<span class="material-symbols-outlined text-[14px]">prescriptions</span>
+<span class="font-label-md text-label-md">Prescription Required</span>
+</div>
+</div>
+<button aria-label="Remove item" class="p-2 -mt-2 -mr-2 text-on-surface-variant hover:text-error active:scale-90 transition-transform">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+<div class="flex justify-between items-end mt-2">
+<span class="font-title-lg text-title-lg text-primary">৳ 120.00</span>
+<!-- Stepper -->
+<div class="flex items-center gap-2 bg-surface-container-low rounded-full px-2 py-1 border border-outline-variant/30">
+<button aria-label="Decrease quantity" class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface hover:bg-surface-variant active:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">remove</span>
+</button>
+<span class="font-title-md text-title-md w-6 text-center">1</span>
+<button aria-label="Increase quantity" class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface hover:bg-surface-variant active:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<button class="text-primary font-label-lg text-label-lg flex items-center justify-center gap-2 py-3 border border-outline-variant rounded-lg hover:bg-surface-container-low transition-colors self-start px-md mt-sm">
+<span class="material-symbols-outlined">add</span>
+                Add more items from this pharmacy
+            </button>
+</div>
+<div class="md:col-span-3 flex flex-col gap-lg mt-xl md:mt-0">
+<!-- Order Summary -->
+<div class="bg-surface-container-lowest rounded-xl p-lg shadow-sm border border-outline-variant/50 sticky top-[80px]">
+<h3 class="font-title-lg text-title-lg text-on-surface mb-lg">Order Summary</h3>
+<div class="flex flex-col gap-sm border-b border-outline-variant/30 pb-md mb-md">
+<div class="flex justify-between">
+<span class="font-body-md text-body-md text-on-surface-variant">Subtotal (3 items)</span>
+<span class="font-body-md text-body-md text-on-surface">৳ 170.00</span>
+</div>
+<div class="flex justify-between">
+<span class="font-body-md text-body-md text-on-surface-variant">Delivery Fee</span>
+<span class="font-body-md text-body-md text-on-surface">৳ 40.00</span>
+</div>
+<div class="flex justify-between text-secondary">
+<span class="font-body-md text-body-md">Discount</span>
+<span class="font-body-md text-body-md">- ৳ 0.00</span>
+</div>
+</div>
+<div class="flex justify-between items-center mb-xl">
+<span class="font-title-lg text-title-lg text-on-surface">Total</span>
+<span class="font-headline-md text-headline-md text-primary">৳ 210.00</span>
+</div>
+<button class="w-full bg-primary text-on-primary font-label-lg text-label-lg h-[56px] rounded-[16px] flex items-center justify-center gap-2 hover:bg-primary/90 active:scale-[0.98] transition-all">
+                    Continue Checkout
+                    <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+</main>
+</body></html>

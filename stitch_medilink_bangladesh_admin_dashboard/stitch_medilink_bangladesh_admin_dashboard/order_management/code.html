@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Order Management | MediLink BD</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "background": "#f8f9ff",
+                      "tertiary-fixed-dim": "#ffb59e",
+                      "surface-container-low": "#eff4ff",
+                      "inverse-primary": "#5adf82",
+                      "surface-bright": "#f8f9ff",
+                      "on-error-container": "#93000a",
+                      "secondary-fixed": "#e1e0ff",
+                      "on-surface-variant": "#3d4a3e",
+                      "surface-variant": "#d3e4fe",
+                      "surface-dim": "#cbdbf5",
+                      "primary-fixed-dim": "#5adf82",
+                      "on-tertiary-fixed": "#3a0b00",
+                      "on-tertiary": "#ffffff",
+                      "outline": "#6d7b6d",
+                      "primary-container": "#008740",
+                      "on-primary": "#ffffff",
+                      "on-secondary-container": "#292b8d",
+                      "on-error": "#ffffff",
+                      "on-surface": "#0b1c30",
+                      "on-secondary": "#ffffff",
+                      "on-primary-fixed-variant": "#005225",
+                      "error": "#ba1a1a",
+                      "inverse-on-surface": "#eaf1ff",
+                      "on-background": "#0b1c30",
+                      "tertiary": "#a93200",
+                      "surface-container-highest": "#d3e4fe",
+                      "on-primary-container": "#f7fff3",
+                      "primary": "#006b32",
+                      "tertiary-fixed": "#ffdbd0",
+                      "surface-container-lowest": "#ffffff",
+                      "on-tertiary-fixed-variant": "#842500",
+                      "surface-container-high": "#dce9ff",
+                      "surface-container": "#e5eeff",
+                      "primary-fixed": "#78fc9c",
+                      "on-primary-fixed": "#00210b",
+                      "secondary-fixed-dim": "#c0c1ff",
+                      "inverse-surface": "#213145",
+                      "secondary": "#4f54b4",
+                      "outline-variant": "#bccabb",
+                      "tertiary-container": "#d1430a",
+                      "on-secondary-fixed": "#04006d",
+                      "on-secondary-fixed-variant": "#373a9b",
+                      "surface": "#f8f9ff",
+                      "error-container": "#ffdad6",
+                      "secondary-container": "#959aff",
+                      "surface-tint": "#006d33",
+                      "on-tertiary-container": "#fffbff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "xs": "4px",
+                      "base": "4px",
+                      "md": "16px",
+                      "container-margin": "24px",
+                      "sm": "8px",
+                      "lg": "24px",
+                      "gutter": "16px",
+                      "xl": "32px"
+              },
+              "fontFamily": {
+                      "label-sm": ["Inter"],
+                      "label-md": ["Inter"],
+                      "title-md": ["Inter"],
+                      "display-md": ["Inter"],
+                      "title-lg": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "display-lg": ["Inter"],
+                      "body-md": ["Inter"],
+                      "headline-sm": ["Inter"]
+              },
+              "fontSize": {
+                      "label-sm": ["11px", {"lineHeight": "16px", "fontWeight": "600"}],
+                      "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                      "title-md": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                      "display-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "title-lg": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                      "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #bccabb; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-background text-on-surface">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-screen w-[280px] bg-surface border-r border-outline-variant flex flex-col py-md z-50">
+<div class="px-lg mb-xl">
+<h1 class="font-title-lg text-title-lg font-bold text-primary">MediLink BD</h1>
+<p class="text-label-md font-label-md text-on-surface-variant opacity-70">Admin Console</p>
+</div>
+<nav class="flex-1 px-sm overflow-y-auto custom-scrollbar">
+<div class="space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">local_pharmacy</span>
+<span class="font-label-md text-label-md">Pharmacies</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-md text-label-md">Customers</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-primary border-r-4 border-primary bg-surface-container-high transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">shopping_cart</span>
+<span class="font-label-md text-label-md">Orders</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="font-label-md text-label-md">Prescriptions</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="font-label-md text-label-md">Deliveries</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-md text-label-md">Payments</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">gavel</span>
+<span class="font-label-md text-label-md">Disputes</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">assessment</span>
+<span class="font-label-md text-label-md">Reports</span>
+</a>
+</div>
+</nav>
+<div class="mt-auto px-sm border-t border-outline-variant pt-md">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">notifications</span>
+<span class="font-label-md text-label-md">Notifications</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-[280px] min-h-screen">
+<!-- TopNavBar -->
+<header class="h-16 px-lg bg-surface border-b border-outline-variant flex justify-between items-center sticky top-0 z-40">
+<div class="flex items-center flex-1">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-full pl-10 pr-4 py-2 font-body-md text-body-md focus:ring-2 focus:ring-primary outline-none" placeholder="Search orders, customers, or IDs..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-surface-container transition-transform scale-95 active:scale-90">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+</button>
+<button class="p-2 rounded-full hover:bg-surface-container transition-transform scale-95 active:scale-90">
+<span class="material-symbols-outlined text-on-surface-variant">help</span>
+</button>
+<div class="h-8 w-px bg-outline-variant mx-2"></div>
+<div class="flex items-center gap-3">
+<div class="text-right hidden sm:block">
+<p class="font-label-md text-label-md text-on-surface">Dr. Rahman</p>
+<p class="text-[10px] text-on-surface-variant font-bold uppercase tracking-wider">Super Admin</p>
+</div>
+<img class="h-10 w-10 rounded-full border-2 border-primary-fixed object-cover" data-alt="Professional studio portrait of a confident middle-aged Bangladeshi doctor wearing a clean white medical coat and a subtle stethoscope, set against a soft-focus medical office background with clinical green and blue tones. The lighting is bright and warm, reflecting a professional and trust-inspiring atmosphere suitable for a high-end healthcare administrative console." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAcjsWnMeq_bUFOOBUQuOF4JoK3xzu98EVqnU6Nm8RBqRgvFf5z6Q7xxXeeHZt7TjRSqCuYEiPHUmVroew6iD1_7elD_Vw7HEcZAlf-eMj9G2GifLV53ikbGRe3OERuq5ACxU7iAD2esagxrCw9vYUm3yY9uiI_3h-Q3dWmnNLqmXs__Hj6k1TiToJSDhdQcI4_SE9TQfEhxkqfWRcjJp0fZauOx3QcetTiwdSxEvJnTxeDrkM8g-MPL4d07f6d_8GbPchMu11-89Q"/>
+</div>
+</div>
+</header>
+<!-- Page Content -->
+<div class="p-lg">
+<!-- Page Header Actions -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-lg">
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Order Management</h2>
+<p class="text-body-md font-body-md text-on-surface-variant">Monitor and manage pharmaceutical logistics and sales.</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="flex items-center gap-2 px-4 py-2 border border-primary text-primary font-label-md text-label-md rounded-lg hover:bg-primary-fixed-dim transition-colors">
+<span class="material-symbols-outlined text-[18px]">upload</span>
+                        Export Orders
+                    </button>
+<button class="flex items-center gap-2 px-4 py-2 bg-primary text-on-primary font-label-md text-label-md rounded-lg shadow-sm hover:brightness-110 transition-all">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                        Manual Order
+                    </button>
+</div>
+</div>
+<!-- Advanced Filters Bento Grid Style -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md mb-lg">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+<div class="flex flex-col gap-1.5">
+<label class="text-label-sm font-label-sm text-on-surface-variant ml-1">Date Range</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">calendar_today</span>
+<select class="w-full bg-surface border border-outline-variant rounded-lg pl-10 pr-4 py-2 font-body-md text-body-md focus:ring-1 focus:ring-primary outline-none appearance-none">
+<option>Last 30 Days</option>
+<option>Today</option>
+<option>This Week</option>
+<option>Custom Range</option>
+</select>
+</div>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-label-sm font-label-sm text-on-surface-variant ml-1">Status</label>
+<select class="w-full bg-surface border border-outline-variant rounded-lg px-4 py-2 font-body-md text-body-md focus:ring-1 focus:ring-primary outline-none">
+<option>All Statuses</option>
+<option>Pending</option>
+<option>Confirmed</option>
+<option>Shipped</option>
+<option>Delivered</option>
+<option>Cancelled</option>
+</select>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-label-sm font-label-sm text-on-surface-variant ml-1">Pharmacy</label>
+<select class="w-full bg-surface border border-outline-variant rounded-lg px-4 py-2 font-body-md text-body-md focus:ring-1 focus:ring-primary outline-none">
+<option>All Pharmacies</option>
+<option>Lazz Pharma</option>
+<option>Arogga</option>
+<option>Tamanna Pharmacy</option>
+</select>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-label-sm font-label-sm text-on-surface-variant ml-1">Order Type</label>
+<select class="w-full bg-surface border border-outline-variant rounded-lg px-4 py-2 font-body-md text-body-md focus:ring-1 focus:ring-primary outline-none">
+<option>All Types</option>
+<option>Prescription</option>
+<option>OTC</option>
+</select>
+</div>
+<div class="flex items-end">
+<button class="w-full h-[38px] flex items-center justify-center gap-2 bg-secondary-container text-on-secondary-container font-label-md text-label-md rounded-lg hover:brightness-95 transition-all">
+<span class="material-symbols-outlined text-[18px]">filter_list</span>
+                            Apply Filters
+                        </button>
+</div>
+</div>
+</div>
+<!-- Data Table Container -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-high border-b border-outline-variant">
+<th class="px-md py-3 font-label-md text-label-md text-on-surface-variant">Order ID</th>
+<th class="px-md py-3 font-label-md text-label-md text-on-surface-variant">Customer</th>
+<th class="px-md py-3 font-label-md text-label-md text-on-surface-variant">Pharmacy</th>
+<th class="px-md py-3 font-label-md text-label-md text-on-surface-variant">Type</th>
+<th class="px-md py-3 font-label-md text-label-md text-on-surface-variant">Payment</th>
+<th class="px-md py-3 font-label-md text-label-md text-on-surface-variant text-right">Total</th>
+<th class="px-md py-3 font-label-md text-label-md text-on-surface-variant">Status</th>
+<th class="px-md py-3 font-label-md text-label-md text-on-surface-variant text-center">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/30">
+<!-- Row 1 -->
+<tr class="hover:bg-background transition-colors">
+<td class="px-md py-4 font-body-md text-body-md font-bold text-primary">#ML-8823</td>
+<td class="px-md py-4">
+<div class="flex flex-col">
+<span class="font-body-md text-body-md font-medium">Asif Mahmud</span>
+<span class="text-[11px] text-on-surface-variant">+880 1711-XXXXXX</span>
+</div>
+</td>
+<td class="px-md py-4 font-body-md text-body-md">Lazz Pharma (Dhanmondi)</td>
+<td class="px-md py-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-tighter bg-surface-container text-primary border border-primary/20">Prescription</span>
+</td>
+<td class="px-md py-4">
+<div class="flex items-center gap-1.5 font-body-md text-body-md">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+                                        bKash
+                                    </div>
+</td>
+<td class="px-md py-4 font-body-md text-body-md text-right tabular-nums">৳ 1,450.00</td>
+<td class="px-md py-4">
+<div class="flex flex-col gap-1">
+<span class="inline-flex items-center justify-center w-fit px-2 py-0.5 rounded-full text-[10px] font-bold bg-green-100 text-green-800 border border-green-200">Delivered</span>
+<span class="text-[9px] font-bold text-on-surface-variant/60 uppercase">Logistics: Completed</span>
+</div>
+</td>
+<td class="px-md py-4 text-center">
+<button class="p-1.5 rounded-lg hover:bg-surface-container-high text-primary transition-all">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-background transition-colors">
+<td class="px-md py-4 font-body-md text-body-md font-bold text-primary">#ML-8824</td>
+<td class="px-md py-4">
+<div class="flex flex-col">
+<span class="font-body-md text-body-md font-medium">Nusrat Jahan</span>
+<span class="text-[11px] text-on-surface-variant">+880 1912-XXXXXX</span>
+</div>
+</td>
+<td class="px-md py-4 font-body-md text-body-md">Arogga</td>
+<td class="px-md py-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-tighter bg-surface-container-highest text-secondary border border-secondary/20">OTC</span>
+</td>
+<td class="px-md py-4">
+<div class="flex items-center gap-1.5 font-body-md text-body-md">
+<span class="w-2 h-2 rounded-full bg-outline"></span>
+                                        Cash
+                                    </div>
+</td>
+<td class="px-md py-4 font-body-md text-body-md text-right tabular-nums">৳ 820.00</td>
+<td class="px-md py-4">
+<div class="flex flex-col gap-1">
+<span class="inline-flex items-center justify-center w-fit px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-blue-800 border border-blue-200">Shipped</span>
+<span class="text-[9px] font-bold text-on-surface-variant/60 uppercase">Logistics: In-Transit</span>
+</div>
+</td>
+<td class="px-md py-4 text-center">
+<button class="p-1.5 rounded-lg hover:bg-surface-container-high text-primary transition-all">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-background transition-colors">
+<td class="px-md py-4 font-body-md text-body-md font-bold text-primary">#ML-8825</td>
+<td class="px-md py-4">
+<div class="flex flex-col">
+<span class="font-body-md text-body-md font-medium">Kamal Uddin</span>
+<span class="text-[11px] text-on-surface-variant">+880 1610-XXXXXX</span>
+</div>
+</td>
+<td class="px-md py-4 font-body-md text-body-md">Tamanna Pharmacy</td>
+<td class="px-md py-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-tighter bg-surface-container text-primary border border-primary/20">Prescription</span>
+</td>
+<td class="px-md py-4">
+<div class="flex items-center gap-1.5 font-body-md text-body-md">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+                                        bKash
+                                    </div>
+</td>
+<td class="px-md py-4 font-body-md text-body-md text-right tabular-nums">৳ 2,100.50</td>
+<td class="px-md py-4">
+<div class="flex flex-col gap-1">
+<span class="inline-flex items-center justify-center w-fit px-2 py-0.5 rounded-full text-[10px] font-bold bg-yellow-100 text-yellow-800 border border-yellow-200">Pending</span>
+<span class="text-[9px] font-bold text-on-surface-variant/60 uppercase">Logistics: Awaiting Pick</span>
+</div>
+</td>
+<td class="px-md py-4 text-center">
+<button class="p-1.5 rounded-lg hover:bg-surface-container-high text-primary transition-all">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-background transition-colors">
+<td class="px-md py-4 font-body-md text-body-md font-bold text-primary">#ML-8826</td>
+<td class="px-md py-4">
+<div class="flex flex-col">
+<span class="font-body-md text-body-md font-medium">Saima Akhter</span>
+<span class="text-[11px] text-on-surface-variant">+880 1888-XXXXXX</span>
+</div>
+</td>
+<td class="px-md py-4 font-body-md text-body-md">Lazz Pharma (Uttara)</td>
+<td class="px-md py-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-tighter bg-surface-container-highest text-secondary border border-secondary/20">OTC</span>
+</td>
+<td class="px-md py-4">
+<div class="flex items-center gap-1.5 font-body-md text-body-md">
+<span class="w-2 h-2 rounded-full bg-outline"></span>
+                                        Cash
+                                    </div>
+</td>
+<td class="px-md py-4 font-body-md text-body-md text-right tabular-nums">৳ 450.00</td>
+<td class="px-md py-4">
+<div class="flex flex-col gap-1">
+<span class="inline-flex items-center justify-center w-fit px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-100 text-red-800 border border-red-200">Cancelled</span>
+<span class="text-[9px] font-bold text-on-surface-variant/60 uppercase">Logistics: Aborted</span>
+</div>
+</td>
+<td class="px-md py-4 text-center">
+<button class="p-1.5 rounded-lg hover:bg-surface-container-high text-primary transition-all">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination Footer -->
+<div class="px-md py-4 bg-surface-container border-t border-outline-variant flex flex-col sm:flex-row justify-between items-center gap-4">
+<p class="text-label-md font-label-md text-on-surface-variant">Showing 1 to 10 of 582 orders</p>
+<div class="flex items-center gap-1">
+<button class="p-1 rounded hover:bg-surface-container-high text-on-surface-variant disabled:opacity-30" disabled="">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="px-3 py-1 rounded bg-primary text-on-primary font-label-md text-label-md">1</button>
+<button class="px-3 py-1 rounded hover:bg-surface-container-high text-on-surface-variant font-label-md text-label-md">2</button>
+<button class="px-3 py-1 rounded hover:bg-surface-container-high text-on-surface-variant font-label-md text-label-md">3</button>
+<span class="px-2 text-on-surface-variant">...</span>
+<button class="px-3 py-1 rounded hover:bg-surface-container-high text-on-surface-variant font-label-md text-label-md">59</button>
+<button class="p-1 rounded hover:bg-surface-container-high text-on-surface-variant">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Dashboard Stats Summary (Small Bento Section) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-lg mt-lg">
+<div class="bg-surface-container-low border border-outline-variant rounded-xl p-md flex items-center gap-4">
+<div class="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">pending_actions</span>
+</div>
+<div>
+<p class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wide">Pending Confirmation</p>
+<p class="font-display-md text-display-md text-on-surface">24</p>
+</div>
+</div>
+<div class="bg-surface-container-low border border-outline-variant rounded-xl p-md flex items-center gap-4">
+<div class="h-12 w-12 rounded-full bg-secondary/10 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined">local_shipping</span>
+</div>
+<div>
+<p class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wide">In Transit</p>
+<p class="font-display-md text-display-md text-on-surface">156</p>
+</div>
+</div>
+<div class="bg-surface-container-low border border-outline-variant rounded-xl p-md flex items-center gap-4">
+<div class="h-12 w-12 rounded-full bg-green-500/10 flex items-center justify-center text-green-700">
+<span class="material-symbols-outlined">check_circle</span>
+</div>
+<div>
+<p class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wide">Daily Completed</p>
+<p class="font-display-md text-display-md text-on-surface">42</p>
+</div>
+</div>
+<div class="bg-surface-container-low border border-outline-variant rounded-xl p-md flex items-center gap-4">
+<div class="h-12 w-12 rounded-full bg-error/10 flex items-center justify-center text-error">
+<span class="material-symbols-outlined">report</span>
+</div>
+<div>
+<p class="text-label-sm font-label-sm text-on-surface-variant uppercase tracking-wide">Flagged Orders</p>
+<p class="font-display-md text-display-md text-on-surface">03</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Simple FAB for Mobile or Quick Actions -->
+<button class="fixed bottom-6 right-6 h-14 w-14 rounded-full bg-primary text-on-primary shadow-xl flex items-center justify-center hover:scale-105 active:scale-95 transition-transform z-50 md:hidden">
+<span class="material-symbols-outlined text-[28px]">add</span>
+</button>
+<script>
+        // Micro-interaction for table rows
+        document.querySelectorAll('tbody tr').forEach(row => {
+            row.addEventListener('click', () => {
+                // Placeholder for navigation or modal opening logic
+                console.log('Opening order details...');
+            });
+            row.style.cursor = 'pointer';
+        });
+
+        // Search bar animation on focus
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('ring-2', 'ring-primary');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('ring-2', 'ring-primary');
+        });
+    </script>
+</body></html>

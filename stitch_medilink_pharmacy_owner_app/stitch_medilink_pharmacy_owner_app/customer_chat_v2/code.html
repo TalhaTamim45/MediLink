@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MediLink - Customer Chat</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-container": "#3a7b39",
+                    "surface-tint": "#1b6d24",
+                    "on-secondary-container": "#2e7238",
+                    "tertiary": "#1f6223",
+                    "on-error": "#ffffff",
+                    "primary": "#0d631b",
+                    "on-tertiary-container": "#c8ffbf",
+                    "tertiary-fixed": "#acf4a4",
+                    "surface-container-lowest": "#ffffff",
+                    "surface-container-high": "#e9e8e7",
+                    "on-surface": "#1b1c1c",
+                    "inverse-primary": "#88d982",
+                    "on-secondary-fixed": "#002107",
+                    "secondary": "#286b33",
+                    "primary-fixed-dim": "#88d982",
+                    "error-container": "#ffdad6",
+                    "surface-variant": "#e3e2e2",
+                    "surface-bright": "#fbf9f9",
+                    "surface-dim": "#dbdad9",
+                    "on-primary": "#ffffff",
+                    "surface-container-low": "#f5f3f3",
+                    "secondary-fixed-dim": "#90d792",
+                    "on-primary-fixed-variant": "#005312",
+                    "on-background": "#1b1c1c",
+                    "tertiary-fixed-dim": "#91d78a",
+                    "on-error-container": "#93000a",
+                    "on-tertiary-fixed-variant": "#0c5216",
+                    "primary-fixed": "#a3f69c",
+                    "secondary-container": "#abf4ac",
+                    "inverse-on-surface": "#f2f0f0",
+                    "primary-container": "#2e7d32",
+                    "on-surface-variant": "#40493d",
+                    "surface": "#fbf9f9",
+                    "on-tertiary-fixed": "#002203",
+                    "inverse-surface": "#303031",
+                    "error": "#ba1a1a",
+                    "on-primary-fixed": "#002204",
+                    "surface-container-highest": "#e3e2e2",
+                    "surface-container": "#efeded",
+                    "on-secondary": "#ffffff",
+                    "on-secondary-fixed-variant": "#07521d",
+                    "secondary-fixed": "#abf4ac",
+                    "outline": "#707a6c",
+                    "background": "#fbf9f9",
+                    "on-tertiary": "#ffffff",
+                    "outline-variant": "#bfcaba",
+                    "on-primary-container": "#cbffc2"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xs": "4px",
+                    "xl": "32px",
+                    "margin-mobile": "16px",
+                    "gutter": "24px",
+                    "md": "16px",
+                    "lg": "24px",
+                    "sm": "8px",
+                    "container-max": "1440px",
+                    "base": "8px",
+                    "margin-desktop": "32px"
+            },
+            "fontFamily": {
+                    "headline-lg-mobile": ["Inter"],
+                    "label-lg": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "title-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "letterSpacing": "0px", "fontWeight": "600"}],
+                    "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "500"}],
+                    "label-sm": ["11px", {"lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "letterSpacing": "0.5px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "0px", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.25px", "fontWeight": "400"}],
+                    "display-lg": ["57px", {"lineHeight": "64px", "letterSpacing": "-0.25px", "fontWeight": "400"}],
+                    "title-lg": ["22px", {"lineHeight": "28px", "letterSpacing": "0px", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .chat-container::-webkit-scrollbar { width: 4px; }
+        .chat-container::-webkit-scrollbar-thumb { background: #e3e2e2; border-radius: 10px; }
+        .mes-bubble { position: relative; }
+        .mes-bubble-customer::before {
+            content: ''; position: absolute; left: -8px; top: 12px; width: 0; height: 0;
+            border-top: 8px solid transparent; border-bottom: 8px solid transparent;
+            border-right: 8px solid #efeded;
+        }
+        .mes-bubble-pharmacist::after {
+            content: ''; position: absolute; right: -8px; top: 12px; width: 0; height: 0;
+            border-top: 8px solid transparent; border-bottom: 8px solid transparent;
+            border-left: 8px solid #2e7d32;
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-surface flex justify-between items-center h-16 px-margin-mobile md:px-margin-desktop shadow-sm">
+<div class="flex items-center gap-3">
+<button class="p-2 hover:bg-surface-variant rounded-full transition-colors">
+<span class="material-symbols-outlined text-primary">arrow_back</span>
+</button>
+<div class="relative">
+<img alt="Robert Chen" class="w-10 h-10 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCyVFG_UIYQW070zCYT5HsfSRs2WjtemstMNoPHmFNFWc0JZgJ_lYiQ5UxLjbwYvYTVaSMEptjyX36-wwjdpEHoPpyXEM0gvUscf3SQABR464QLtIxpA2l6f2lzb86ExfQGnZ3U04hLL6TvJf9BhMI3ucMXWHSrzuUkTD8U-MHXENebE3X3JtxQafJSbjwrO8mqwriMXEN55G_ACWW92uczTVzUZ3rCJ9Diq009EFeogBxk56IqLc3hgjC-jXYi5WFq4Q41rokTvJki"/>
+<div class="absolute bottom-0 right-0 w-3 h-3 bg-primary border-2 border-surface rounded-full"></div>
+</div>
+<div class="flex flex-col">
+<h1 class="font-title-lg text-title-lg font-bold text-on-surface leading-tight">Robert Chen</h1>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Active now</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 text-primary hover:bg-surface-variant rounded-full transition-colors">
+<span class="material-symbols-outlined">call</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-variant rounded-full transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</header>
+<!-- Main Content / Chat Area -->
+<main class="flex-grow pt-20 pb-56 md:pb-48 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto w-full">
+<div class="chat-container flex flex-col gap-6 overflow-y-auto">
+<!-- Date Separator -->
+<div class="flex justify-center">
+<span class="px-3 py-1 bg-surface-container text-on-surface-variant font-label-sm text-label-sm rounded-full">Today</span>
+</div>
+<!-- Customer Message -->
+<div class="flex items-end gap-2 max-w-[85%] md:max-w-[70%]">
+<div class="flex-shrink-0 mb-1">
+<img alt="Patient" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5W6K3y4xE_sGwNJ-ZP5_74lZNY5h_vbkD6EyTpgp_g6xVV21kkKIVavXUQRm6rj7LMgfaVXNOuVh6LcCGmAAfRb7QqKixLjrEFc2v5vx6BOR7DZRrYexgCPb2FX_vXyw8nQT4rU5Uf2wahTOfj0HScIIBravNVJy8JE6ldwif5JRQroNVNOoFnIC-v9_o4-EBMWkR682J8SwZsiSM5iFC31-yyP_awAo5zqlKyc2oN9XJCRb1XbeuMQJbFNr9lVLxnipt77wBJjqN"/>
+</div>
+<div class="flex flex-col gap-1">
+<div class="mes-bubble mes-bubble-customer bg-surface-container text-on-surface p-4 rounded-xl rounded-bl-none shadow-sm">
+<p class="font-body-md text-body-md">Hello! I need to refill my prescription for Atorvastatin. Can you check if it's available?</p>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant ml-1">09:15 AM</span>
+</div>
+</div>
+<!-- Customer Message with Image and Preview -->
+<div class="flex items-end gap-2 max-w-[85%] md:max-w-[70%]">
+<div class="flex-shrink-0 mb-1">
+<img alt="Patient" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDIGFDEBL5WouRsDj64aBosxbQhQvTjlltVf-SFad9Py8lqUkY3jN8mp9uSDRagYXhqJNlzKmY9ToTcZc4vm6wFoEpYoPZoqPp8-7fpOsebBePlYsYn1dA3zi-OEHZeDZ6_Z7t7iCIfanmJpOgyWCkKdPx4LHJeJ8Enr1PduY3niPJsiIt6ObHyXWmVYN6Lk8Uq_EW86s672EIlx_lGvDV6ji3Uggm24x70SPSSrUOJlrXgSkV-fPpA7Wz_kKA64W56NG_1dypJci0a"/>
+</div>
+<div class="flex flex-col gap-1">
+<div class="mes-bubble mes-bubble-customer bg-surface-container p-2 rounded-xl rounded-bl-none shadow-sm">
+<div class="rounded-lg overflow-hidden border border-outline-variant relative group">
+<img alt="Prescription" class="w-full max-w-[240px] h-auto object-contain cursor-zoom-in" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7LzYpMe-J6AKJUacTzWWA6fSboWrz_velKSp1h1lqzxw6MlMLV5wxRx2Unz5_BH6azEdyit1q2Kh9ouUKmm3k0SA78ZIp26xslYzw6hS0wasL2JUljX0P95PuWpi_U_-cvjZgDiqd7POIL67e-nypD8tAS8BJPQJh1b9fOXSu2tqizkp1TKXYatAd4bMnnlmNWnczNYZ0gHzGurXSJnfC6tmTqxnrVFOQB5mnsHEaqY3enkKyVsH7uYEkoElQVkJHDMeOHrCW115X"/>
+<!-- Prescription Preview Thumbnail Overlay -->
+<div class="absolute bottom-2 left-2 flex items-center gap-2 bg-surface/90 backdrop-blur px-2 py-1 rounded-lg border border-outline-variant shadow-sm pointer-events-none">
+<span class="material-symbols-outlined text-primary text-[18px]">task</span>
+<span class="font-label-sm text-label-sm font-semibold">Prescription Preview</span>
+</div>
+</div>
+<p class="font-body-md text-body-md mt-2 px-2 pb-2 text-on-surface">Here is the prescription image for reference.</p>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant ml-1">09:16 AM</span>
+</div>
+</div>
+<!-- Pharmacist Message -->
+<div class="flex flex-col items-end gap-1 self-end max-w-[85%] md:max-w-[70%]">
+<div class="mes-bubble mes-bubble-pharmacist bg-primary-container text-on-primary-container p-4 rounded-xl rounded-br-none shadow-sm">
+<p class="font-body-md text-body-md">Good morning Mr. Chen. Let me check our inventory for you right away. One moment please.</p>
+</div>
+<div class="flex items-center gap-1 mr-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant">09:18 AM</span>
+<span class="material-symbols-outlined text-[16px] text-primary" style="font-variation-settings: 'FILL' 1;">done_all</span>
+</div>
+</div>
+<!-- Status Indicator -->
+<div class="flex justify-center my-2">
+<div class="flex items-center gap-2 px-4 py-2 bg-secondary-container/30 border border-secondary-container text-on-secondary-container rounded-full">
+<span class="material-symbols-outlined text-[18px] animate-pulse">inventory_2</span>
+<span class="font-label-sm text-label-sm">System checking stock...</span>
+</div>
+</div>
+<!-- Pharmacist Reply -->
+<div class="flex flex-col items-end gap-1 self-end max-w-[85%] md:max-w-[70%]">
+<div class="mes-bubble mes-bubble-pharmacist bg-primary-container text-on-primary-container p-4 rounded-xl rounded-br-none shadow-sm">
+<p class="font-body-md text-body-md">We have the Atorvastatin 20mg in stock. Would you like me to prepare it for pickup or local delivery?</p>
+</div>
+<div class="flex items-center gap-1 mr-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant">09:20 AM</span>
+<span class="material-symbols-outlined text-[16px] text-primary" style="font-variation-settings: 'FILL' 1;">done_all</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Controls (Floating above BottomNavBar) -->
+<section class="fixed bottom-20 md:bottom-0 w-full bg-surface-bright/95 backdrop-blur-md pb-safe">
+<!-- Quick Replies -->
+<div class="px-margin-mobile py-3 flex gap-2 overflow-x-auto no-scrollbar border-t border-outline-variant/30">
+<button class="flex-shrink-0 px-4 py-2 bg-surface-container-high hover:bg-primary-container hover:text-on-primary-container text-on-surface-variant font-label-lg text-label-lg rounded-full transition-all border border-outline-variant">
+            Medicine available
+        </button>
+<button class="flex-shrink-0 px-4 py-2 bg-surface-container-high hover:bg-primary-container hover:text-on-primary-container text-on-surface-variant font-label-lg text-label-lg rounded-full transition-all border border-outline-variant">
+            Out of stock
+        </button>
+<button class="flex-shrink-0 px-4 py-2 bg-surface-container-high hover:bg-primary-container hover:text-on-primary-container text-on-surface-variant font-label-lg text-label-lg rounded-full transition-all border border-outline-variant">
+            Checking stock
+        </button>
+</div>
+<!-- Chat Input Field -->
+<div class="px-margin-mobile pb-4 pt-2 md:pb-8 max-w-container-max mx-auto">
+<div class="flex items-center gap-2 bg-surface-container-lowest border border-outline-variant p-1.5 rounded-2xl shadow-md">
+<div class="flex items-center gap-0.5">
+<button class="p-2 text-primary hover:bg-primary-container/10 rounded-full transition-colors" title="Attachment">
+<span class="material-symbols-outlined">attachment</span>
+</button>
+<button class="p-2 text-primary hover:bg-primary-container/10 rounded-full transition-colors" title="Camera">
+<span class="material-symbols-outlined">photo_camera</span>
+</button>
+</div>
+<div class="flex-grow">
+<input class="w-full bg-transparent border-none focus:ring-0 font-body-md text-body-md py-2 px-1" placeholder="Type a message..." type="text"/>
+</div>
+<div class="flex items-center gap-1 pr-1">
+<button class="p-2 text-tertiary hover:bg-tertiary-container/10 rounded-full transition-colors" title="Voice Message">
+<span class="material-symbols-outlined">mic</span>
+</button>
+<button class="p-2 text-tertiary hover:bg-tertiary-container/10 rounded-full transition-colors flex items-center gap-1" title="Send Quotation">
+<span class="material-symbols-outlined">description</span>
+<span class="hidden md:inline font-label-lg text-label-lg">Quote</span>
+</button>
+<button class="p-2 bg-primary text-on-primary rounded-xl hover:shadow-lg active:scale-95 transition-all flex items-center justify-center ml-1">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">send</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center h-20 pb-safe px-2 bg-surface-container shadow-lg z-50 rounded-t-xl md:hidden">
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-1 hover:bg-surface-variant transition-colors duration-150">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-sm text-label-sm">Dashboard</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-5 py-1 scale-95 active:scale-90 transition-transform duration-150">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">prescriptions</span>
+<span class="font-label-sm text-label-sm">Orders</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-1 hover:bg-surface-variant transition-colors duration-150">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-sm text-label-sm">Inventory</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-1 hover:bg-surface-variant transition-colors duration-150">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-sm text-label-sm">Earnings</span>
+</button>
+</nav>
+<!-- Desktop Navigation (Side Bar) -->
+<div class="hidden md:flex fixed left-0 top-16 bottom-0 w-64 bg-surface-container-low border-r border-outline-variant flex-col p-4 z-40">
+<div class="flex flex-col gap-2">
+<button class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-variant rounded-xl transition-all">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-lg text-label-lg">Dashboard</span>
+</button>
+<button class="flex items-center gap-3 px-4 py-3 bg-secondary-container text-on-secondary-container rounded-xl transition-all">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">prescriptions</span>
+<span class="font-label-lg text-label-lg">Orders</span>
+</button>
+<button class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-variant rounded-xl transition-all">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-lg text-label-lg">Inventory</span>
+</button>
+<button class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-variant rounded-xl transition-all">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-lg text-label-lg">Earnings</span>
+</button>
+</div>
+<div class="mt-auto pt-4 border-t border-outline-variant">
+<div class="flex items-center gap-3 px-4 py-2">
+<img alt="MediLink Admin" class="w-10 h-10 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvbVAUGTF5IKSyurjD4FVLXC6KMzPScfwGPGEtaggVRm-3jtSp8zUCIdnJGtcgrjXocF4Ee2cFbd8sWIXzTkioqSqHt6OFOBoosVBDBCWG8Vt2VXKgUncIQTfqK7Xqx_3IN4bRZtmhzrwjEqb8m2fXm91tF3IVt7m1qVpJ6l2xBa00WWLltuIFz-GPj0iTE3I2VeOM8_aAvCS9v5NbCGSYGewI1RzNmbolWqwE5VkEwt8fDmKXxPpcDFQyJTSwUxTCUNIDRPMid6fp"/>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-on-surface font-bold">MediLink Admin</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Store Owner</span>
+</div>
+</div>
+</div>
+</div>
+<script>
+    // Simple micro-interaction for quick reply chips
+    document.querySelectorAll('button.flex-shrink-0').forEach(button => {
+        button.addEventListener('click', () => {
+            const text = button.innerText.trim();
+            const input = document.querySelector('input[type="text"]');
+            input.value = text;
+            input.focus();
+        });
+    });
+
+    // Chat scroll to bottom on load
+    window.onload = () => {
+        const chatBox = document.querySelector('.chat-container');
+        chatBox.scrollTop = chatBox.scrollHeight;
+    };
+</script>
+</body></html>

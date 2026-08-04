@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Support &amp; Disputes | MediLink BD Admin</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed": "#04006d",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary-container": "#292b8d",
+                    "primary": "#006b32",
+                    "secondary-fixed": "#e1e0ff",
+                    "surface-container": "#e5eeff",
+                    "on-primary": "#ffffff",
+                    "on-tertiary-fixed": "#3a0b00",
+                    "on-surface": "#0b1c30",
+                    "surface": "#f8f9ff",
+                    "surface-container-high": "#dce9ff",
+                    "inverse-surface": "#213145",
+                    "outline-variant": "#bccabb",
+                    "tertiary-fixed-dim": "#ffb59e",
+                    "primary-fixed-dim": "#5adf82",
+                    "primary-fixed": "#78fc9c",
+                    "surface-container-low": "#eff4ff",
+                    "error": "#ba1a1a",
+                    "surface-bright": "#f8f9ff",
+                    "secondary-fixed-dim": "#c0c1ff",
+                    "on-background": "#0b1c30",
+                    "inverse-on-surface": "#eaf1ff",
+                    "secondary-container": "#959aff",
+                    "on-secondary": "#ffffff",
+                    "surface-dim": "#cbdbf5",
+                    "on-primary-fixed": "#00210b",
+                    "tertiary-container": "#d1430a",
+                    "tertiary": "#a93200",
+                    "surface-tint": "#006d33",
+                    "on-primary-container": "#f7fff3",
+                    "background": "#f8f9ff",
+                    "secondary": "#4f54b4",
+                    "on-tertiary-fixed-variant": "#842500",
+                    "on-secondary-fixed-variant": "#373a9b",
+                    "outline": "#6d7b6d",
+                    "on-primary-fixed-variant": "#005225",
+                    "surface-variant": "#d3e4fe",
+                    "on-surface-variant": "#3d4a3e",
+                    "error-container": "#ffdad6",
+                    "on-error-container": "#93000a",
+                    "tertiary-fixed": "#ffdbd0",
+                    "inverse-primary": "#5adf82",
+                    "on-tertiary": "#ffffff",
+                    "on-error": "#ffffff",
+                    "surface-container-highest": "#d3e4fe",
+                    "primary-container": "#008740",
+                    "on-tertiary-container": "#fffbff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "container-margin": "24px",
+                    "base": "4px",
+                    "md": "16px",
+                    "lg": "24px",
+                    "gutter": "16px",
+                    "xs": "4px",
+                    "sm": "8px",
+                    "xl": "32px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-sm": ["Inter"],
+                    "title-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "title-md": ["Inter"],
+                    "display-md": ["Inter"],
+                    "label-md": ["Inter"]
+            },
+            "fontSize": {
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-sm": ["11px", {"lineHeight": "16px", "fontWeight": "600"}],
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "title-lg": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "title-md": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                    "display-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #bccabb; border-radius: 10px; }
+        .transition-all { transition: all 0.2s ease-in-out; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased">
+<!-- Side Navigation Bar -->
+<aside class="fixed left-0 top-0 h-screen w-[280px] bg-surface dark:bg-inverse-surface border-r border-outline-variant dark:border-outline flex flex-col py-md z-50">
+<div class="px-lg mb-xl">
+<h1 class="font-title-lg text-title-lg font-bold text-primary dark:text-primary-fixed">MediLink BD</h1>
+<p class="font-label-md text-label-md text-on-surface-variant opacity-70">Admin Console</p>
+</div>
+<nav class="flex-1 overflow-y-auto px-sm space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-surface-container dark:hover:bg-surface-variant hover:text-primary dark:hover:text-primary-fixed rounded-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-surface-container dark:hover:bg-surface-variant hover:text-primary dark:hover:text-primary-fixed rounded-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="local_pharmacy">local_pharmacy</span>
+<span class="font-label-md text-label-md">Pharmacies</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-surface-container dark:hover:bg-surface-variant hover:text-primary dark:hover:text-primary-fixed rounded-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-label-md text-label-md">Customers</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-surface-container dark:hover:bg-surface-variant hover:text-primary dark:hover:text-primary-fixed rounded-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+<span class="font-label-md text-label-md">Orders</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-surface-container dark:hover:bg-surface-variant hover:text-primary dark:hover:text-primary-fixed rounded-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span class="font-label-md text-label-md">Prescriptions</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-surface-container dark:hover:bg-surface-variant hover:text-primary dark:hover:text-primary-fixed rounded-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="local_shipping">local_shipping</span>
+<span class="font-label-md text-label-md">Deliveries</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-surface-container dark:hover:bg-surface-variant hover:text-primary dark:hover:text-primary-fixed rounded-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="font-label-md text-label-md">Payments</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-primary dark:text-primary-fixed border-r-4 border-primary dark:border-primary-fixed bg-surface-container-high dark:bg-surface-variant transition-colors duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="gavel">gavel</span>
+<span class="font-label-md text-label-md">Disputes</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-surface-container dark:hover:bg-surface-variant hover:text-primary dark:hover:text-primary-fixed rounded-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="assessment">assessment</span>
+<span class="font-label-md text-label-md">Reports</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-surface-container dark:hover:bg-surface-variant hover:text-primary dark:hover:text-primary-fixed rounded-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="font-label-md text-label-md">Notifications</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant dark:text-surface-variant hover:bg-surface-container dark:hover:bg-surface-variant hover:text-primary dark:hover:text-primary-fixed rounded-lg transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</nav>
+<div class="px-md mt-auto pt-md border-t border-outline-variant">
+<div class="flex items-center gap-3 p-2 bg-surface-container-low rounded-xl">
+<img class="w-10 h-10 rounded-full border border-outline-variant object-cover" data-alt="A clean, professional headshot of a healthcare administrator in a brightly lit modern office setting. The lighting is soft and natural, emphasizing a high-trust, corporate medical environment. The person is wearing a professional blazer, and the background shows a blurred medical technology workspace with Healthcare Green accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmYgL3CM0sQLQJUll8_xHUBgZyB5908zma2YgavnHFvGph4IZV-JpH4yf40nATXEJWUzzBl4COGyXxdOMABK27IWKCt6dEtpJf7A5AWJyizQ_TrVbIBLJDZ6IVgJAPE7tlBc7M-SDYURQrZG3x0Id5GKBXIzXmfa9DeT3CimOQ6Y0mIsaATpdEKy6bXDHChYCULF6TCZucwtoaUA5jhKiStULyv-WKo4IhnRfJfH3KPZKkPLbwAFMCejzJCGZmEnb-59LZniUfZrY"/>
+<div class="overflow-hidden">
+<p class="font-label-md text-label-md font-bold truncate">Ariful Islam</p>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-wider">Super Admin</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 right-0 left-[280px] h-16 bg-surface dark:bg-inverse-surface border-b border-outline-variant flex items-center justify-between px-lg z-40">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" data-icon="search">search</span>
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-full py-2 pl-10 pr-4 text-body-md focus:outline-none focus:border-primary transition-all" placeholder="Search disputes or refund requests..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 hover:bg-surface-container rounded-full text-on-surface-variant transition-transform active:scale-90">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+<button class="p-2 hover:bg-surface-container rounded-full text-on-surface-variant relative transition-transform active:scale-90">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-error rounded-full"></span>
+</button>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-[280px] mt-16 p-lg bg-background min-h-[calc(100vh-64px)]">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-lg gap-4">
+<div>
+<h2 class="font-display-md text-display-md text-on-surface">Support &amp; Disputes</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Resolution center for customer complaints and pharmacy coordination.</p>
+</div>
+<div class="flex gap-3">
+<div class="flex items-center bg-surface-container rounded-lg p-1 border border-outline-variant">
+<button class="px-4 py-1.5 rounded-md bg-white shadow-sm font-label-md text-label-md text-primary">All Activity</button>
+<button class="px-4 py-1.5 rounded-md font-label-md text-label-md text-on-surface-variant hover:bg-surface-container-high transition-colors">My Queue</button>
+</div>
+<button class="flex items-center gap-2 bg-primary text-on-primary px-6 py-2 rounded-lg font-title-md text-title-md hover:brightness-110 transition-all shadow-sm">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+                    New Ticket
+                </button>
+</div>
+</div>
+<!-- Filters Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-lg">
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant flex items-center gap-4">
+<div class="w-12 h-12 bg-primary-container/20 rounded-full flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="pending_actions">pending_actions</span>
+</div>
+<div>
+<p class="text-on-surface-variant font-label-md text-label-md">Pending Resolution</p>
+<p class="text-2xl font-bold">24</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant flex items-center gap-4">
+<div class="w-12 h-12 bg-secondary-container/20 rounded-full flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+</div>
+<div>
+<p class="text-on-surface-variant font-label-md text-label-md">Refund Requests</p>
+<p class="text-2xl font-bold">12</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant flex items-center gap-4">
+<div class="w-12 h-12 bg-error-container/20 rounded-full flex items-center justify-center text-error">
+<span class="material-symbols-outlined" data-icon="priority_high">priority_high</span>
+</div>
+<div>
+<p class="text-on-surface-variant font-label-md text-label-md">High Priority</p>
+<p class="text-2xl font-bold">05</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant flex items-center gap-4">
+<div class="w-12 h-12 bg-surface-container-highest rounded-full flex items-center justify-center text-on-surface">
+<span class="material-symbols-outlined" data-icon="check_circle">check_circle</span>
+</div>
+<div>
+<p class="text-on-surface-variant font-label-md text-label-md">Resolved Today</p>
+<p class="text-2xl font-bold">18</p>
+</div>
+</div>
+</div>
+<!-- Management Table & Dispute Detail -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-lg">
+<!-- Management Table Column -->
+<div class="lg:col-span-2 flex flex-col gap-4">
+<div class="bg-white rounded-xl border border-outline-variant overflow-hidden shadow-sm">
+<!-- Table Toolbar -->
+<div class="px-md py-3 bg-surface-container-low border-b border-outline-variant flex flex-wrap items-center justify-between gap-4">
+<div class="flex gap-2">
+<select class="bg-white border border-outline-variant rounded-lg px-3 py-1.5 text-body-md focus:ring-1 focus:ring-primary outline-none">
+<option>All Disputes</option>
+<option>Customer Disputes</option>
+<option>Pharmacy Disputes</option>
+</select>
+<select class="bg-white border border-outline-variant rounded-lg px-3 py-1.5 text-body-md focus:ring-1 focus:ring-primary outline-none">
+<option>Priority: All</option>
+<option>High</option>
+<option>Medium</option>
+<option>Low</option>
+</select>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-label-md text-on-surface-variant">Status:</span>
+<div class="flex border border-outline-variant rounded-lg overflow-hidden">
+<button class="px-3 py-1.5 bg-primary text-white text-label-md">Open</button>
+<button class="px-3 py-1.5 bg-white text-on-surface-variant text-label-md hover:bg-surface-container transition-colors border-l border-outline-variant">Resolved</button>
+</div>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-surface-container-lowest text-on-surface-variant font-label-md text-label-md uppercase tracking-wider">
+<tr>
+<th class="px-md py-4 font-semibold">ID &amp; Type</th>
+<th class="px-md py-4 font-semibold">Subject / Party</th>
+<th class="px-md py-4 font-semibold">Priority</th>
+<th class="px-md py-4 font-semibold">Status</th>
+<th class="px-md py-4 font-semibold text-right">Requested</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container transition-colors cursor-pointer group bg-surface-container-low">
+<td class="px-md py-4">
+<div class="flex items-center gap-2">
+<span class="text-label-sm font-bold text-primary">#DS-1082</span>
+<span class="bg-primary/10 text-primary px-2 py-0.5 rounded text-[10px] font-bold">CUSTOMER</span>
+</div>
+</td>
+<td class="px-md py-4">
+<div>
+<p class="font-title-md text-title-md text-on-surface">Incorrect dosage in order</p>
+<p class="text-body-md text-on-surface-variant">Tamim Iqbal (User ID: 2209)</p>
+</div>
+</td>
+<td class="px-md py-4">
+<span class="inline-flex items-center gap-1 bg-error-container/20 text-error px-3 py-1 rounded-full text-label-md font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span> High
+                                        </span>
+</td>
+<td class="px-md py-4">
+<span class="text-label-md font-medium px-2 py-1 bg-surface-variant text-on-surface-variant rounded">Under Review</span>
+</td>
+<td class="px-md py-4 text-right">
+<p class="text-body-md text-on-surface-variant">2 hours ago</p>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container transition-colors cursor-pointer group">
+<td class="px-md py-4">
+<div class="flex items-center gap-2">
+<span class="text-label-sm font-bold text-secondary">#DS-1081</span>
+<span class="bg-secondary/10 text-secondary px-2 py-0.5 rounded text-[10px] font-bold">PHARMACY</span>
+</div>
+</td>
+<td class="px-md py-4">
+<div>
+<p class="font-title-md text-title-md text-on-surface">Payment settlement delay</p>
+<p class="text-body-md text-on-surface-variant">Lazz Pharma Ltd.</p>
+</div>
+</td>
+<td class="px-md py-4">
+<span class="inline-flex items-center gap-1 bg-tertiary-fixed text-on-tertiary-fixed-variant px-3 py-1 rounded-full text-label-md font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> Medium
+                                        </span>
+</td>
+<td class="px-md py-4">
+<span class="text-label-md font-medium px-2 py-1 bg-surface-variant text-on-surface-variant rounded">Pending</span>
+</td>
+<td class="px-md py-4 text-right">
+<p class="text-body-md text-on-surface-variant">5 hours ago</p>
+</td>
+</tr>
+<!-- Row 3 (Refund) -->
+<tr class="hover:bg-surface-container transition-colors cursor-pointer group">
+<td class="px-md py-4">
+<div class="flex items-center gap-2">
+<span class="text-label-sm font-bold text-primary">#REF-402</span>
+<span class="bg-secondary/20 text-secondary px-2 py-0.5 rounded text-[10px] font-bold">REFUND</span>
+</div>
+</td>
+<td class="px-md py-4">
+<div>
+<p class="font-title-md text-title-md text-on-surface font-bold">Refund: Damaged product</p>
+<p class="text-body-md text-on-surface-variant">Sumiya Akter (Order #9921)</p>
+</div>
+</td>
+<td class="px-md py-4">
+<span class="inline-flex items-center gap-1 bg-surface-container-high text-on-surface-variant px-3 py-1 rounded-full text-label-md font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span> Low
+                                        </span>
+</td>
+<td class="px-md py-4">
+<span class="text-label-md font-medium px-2 py-1 bg-surface-variant text-on-surface-variant rounded">Escalated</span>
+</td>
+<td class="px-md py-4 text-right">
+<p class="text-body-md text-on-surface-variant">Yesterday</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="px-md py-4 bg-surface-container-lowest border-t border-outline-variant flex items-center justify-between">
+<span class="text-label-md text-on-surface-variant">Showing 1 to 3 of 42 disputes</span>
+<div class="flex gap-1">
+<button class="p-1 border border-outline-variant rounded hover:bg-surface-container transition-colors"><span class="material-symbols-outlined text-[20px]" data-icon="chevron_left">chevron_left</span></button>
+<button class="px-3 py-1 border border-primary bg-primary text-white rounded text-label-md">1</button>
+<button class="px-3 py-1 border border-outline-variant hover:bg-surface-container rounded text-label-md">2</button>
+<button class="px-3 py-1 border border-outline-variant hover:bg-surface-container rounded text-label-md">3</button>
+<button class="p-1 border border-outline-variant rounded hover:bg-surface-container transition-colors"><span class="material-symbols-outlined text-[20px]" data-icon="chevron_right">chevron_right</span></button>
+</div>
+</div>
+</div>
+</div>
+<!-- Resolution & Detail Panel -->
+<div class="lg:col-span-1 space-y-lg">
+<!-- Resolution Box -->
+<div class="bg-white rounded-xl border border-outline-variant p-lg shadow-sm flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<h3 class="font-title-lg text-title-lg text-on-surface">Ticket Resolution</h3>
+<span class="bg-error-container/20 text-error px-2 py-1 rounded text-label-sm font-bold">URGENT</span>
+</div>
+<div class="bg-surface-container-low p-4 rounded-lg space-y-2">
+<div class="flex items-center justify-between">
+<span class="text-label-sm text-on-surface-variant uppercase tracking-tighter">Current Ticket</span>
+<span class="text-label-sm font-bold text-primary">#DS-1082</span>
+</div>
+<p class="text-body-md font-bold text-on-surface">Tamim Iqbal: Incorrect dosage in order</p>
+<div class="text-body-md text-on-surface-variant space-y-1">
+<div class="flex justify-between"><span>Pharmacy:</span> <span class="font-medium text-on-surface">City Health Plus</span></div>
+<div class="flex justify-between"><span>Order Total:</span> <span class="font-medium text-on-surface">BDT 2,450.00</span></div>
+</div>
+</div>
+<div class="space-y-4">
+<div>
+<label class="block text-label-md font-bold text-on-surface mb-1">Resolution Status</label>
+<select class="w-full border border-outline-variant rounded-lg px-3 py-2 text-body-md focus:border-primary outline-none transition-all">
+<option>In Progress</option>
+<option>Escalated to Compliance</option>
+<option>Awaiting Pharmacy Input</option>
+<option>Resolved - Refund Issued</option>
+<option>Resolved - Closed</option>
+</select>
+</div>
+<div>
+<label class="block text-label-md font-bold text-on-surface mb-1">Resolution Notes</label>
+<textarea class="w-full border border-outline-variant rounded-lg px-3 py-2 text-body-md focus:border-primary outline-none transition-all resize-none" placeholder="Enter internal details about the resolution steps taken..." rows="4"></textarea>
+</div>
+<div class="flex gap-2">
+<button class="flex-1 bg-surface-container-high text-on-surface font-title-md py-2.5 rounded-lg border border-outline-variant hover:bg-surface-container-highest transition-all">
+                                Internal Tag
+                            </button>
+<button class="flex-[2] bg-primary text-on-primary font-title-md py-2.5 rounded-lg hover:brightness-110 transition-all shadow-sm">
+                                Submit Resolution
+                            </button>
+</div>
+</div>
+</div>
+<!-- Related Actions Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant p-md">
+<h4 class="text-label-md font-bold text-on-surface-variant uppercase mb-4 px-1">Quick Actions</h4>
+<div class="grid grid-cols-2 gap-2">
+<button class="flex flex-col items-center justify-center p-3 border border-outline-variant rounded-lg hover:bg-white hover:shadow-sm transition-all group">
+<span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform mb-2" data-icon="mail">mail</span>
+<span class="text-label-md font-medium">Email User</span>
+</button>
+<button class="flex flex-col items-center justify-center p-3 border border-outline-variant rounded-lg hover:bg-white hover:shadow-sm transition-all group">
+<span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform mb-2" data-icon="phone_in_talk">phone_in_talk</span>
+<span class="text-label-md font-medium">Call Pharmacy</span>
+</button>
+<button class="flex flex-col items-center justify-center p-3 border border-outline-variant rounded-lg hover:bg-white hover:shadow-sm transition-all group">
+<span class="material-symbols-outlined text-secondary group-hover:scale-110 transition-transform mb-2" data-icon="receipt_long">receipt_long</span>
+<span class="text-label-md font-medium">View Order</span>
+</button>
+<button class="flex flex-col items-center justify-center p-3 border border-outline-variant rounded-lg hover:bg-white hover:shadow-sm transition-all group">
+<span class="material-symbols-outlined text-error group-hover:scale-110 transition-transform mb-2" data-icon="block">block</span>
+<span class="text-label-md font-medium">Flag Entry</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- History/Activity Timeline Overlay Concept -->
+<div class="mt-lg">
+<h3 class="font-title-lg text-title-lg text-on-surface mb-md">Recent Dispute Activity</h3>
+<div class="bg-white rounded-xl border border-outline-variant p-lg shadow-sm">
+<div class="relative pl-8 space-y-8 before:content-[''] before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-[2px] before:bg-outline-variant">
+<div class="relative">
+<span class="absolute -left-10 top-1 w-6 h-6 bg-primary rounded-full border-4 border-white flex items-center justify-center">
+<span class="material-symbols-outlined text-[12px] text-white" data-icon="done" data-weight="fill" style="font-variation-settings: 'FILL' 1;">done</span>
+</span>
+<div class="flex items-center gap-2 mb-1">
+<span class="font-label-md font-bold">Admin Ariful Islam</span>
+<span class="text-label-sm text-on-surface-variant">resolved dispute #DS-1075</span>
+<span class="text-label-sm text-on-surface-variant ml-auto">15m ago</span>
+</div>
+<p class="text-body-md text-on-surface-variant">"Pharmacy acknowledged inventory error. Full refund processed to user wallet."</p>
+</div>
+<div class="relative">
+<span class="absolute -left-10 top-1 w-6 h-6 bg-surface-variant rounded-full border-4 border-white flex items-center justify-center">
+<span class="material-symbols-outlined text-[12px] text-on-surface" data-icon="add" style="font-variation-settings: 'FILL' 0;">add</span>
+</span>
+<div class="flex items-center gap-2 mb-1">
+<span class="font-label-md font-bold text-on-surface">Tamim Iqbal</span>
+<span class="text-label-sm text-on-surface-variant">opened a new dispute #DS-1082</span>
+<span class="text-label-sm text-on-surface-variant ml-auto">2h ago</span>
+</div>
+<p class="text-body-md text-on-surface-variant italic">"Received 500mg tablets instead of the prescribed 250mg. This is dangerous."</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Action Button for Emergency Context -->
+<button class="fixed bottom-lg right-lg w-14 h-14 bg-error text-on-error rounded-full shadow-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-all z-50 group">
+<span class="material-symbols-outlined" data-icon="support_agent">support_agent</span>
+<span class="absolute right-full mr-4 bg-inverse-surface text-inverse-on-surface px-3 py-1 rounded text-label-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Immediate Support</span>
+</button>
+<script>
+        // Simple Interaction logic
+        document.querySelectorAll('tr').forEach(row => {
+            row.addEventListener('click', () => {
+                // Mock selection behavior
+                document.querySelectorAll('tr').forEach(r => r.classList.remove('bg-surface-container-low'));
+                row.classList.add('bg-surface-container-low');
+            });
+        });
+    </script>
+</body></html>

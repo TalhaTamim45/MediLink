@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MediLink - Help Center</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "secondary-container": "#bee1fe",
+                        "on-primary-container": "#ffffff",
+                        "surface-variant": "#e2e2e2",
+                        "surface-container-low": "#f3f3f3",
+                        "primary-fixed": "#90f4e3",
+                        "on-surface": "#1a1c1c",
+                        "surface-container": "#eeeeee",
+                        "error": "#ba1a1a",
+                        "primary-container": "#008577",
+                        "on-tertiary-fixed": "#000767",
+                        "outline-variant": "#bdc9c5",
+                        "secondary-fixed-dim": "#a8cbe7",
+                        "secondary": "#40627b",
+                        "on-secondary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "surface": "#f9f9f9",
+                        "outline": "#6d7a76",
+                        "tertiary-fixed-dim": "#bdc2ff",
+                        "on-error": "#ffffff",
+                        "surface-container-high": "#e8e8e8",
+                        "tertiary-fixed": "#e0e0ff",
+                        "on-secondary-container": "#43647d",
+                        "secondary-fixed": "#c9e6ff",
+                        "on-secondary-fixed": "#001e2f",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-tint": "#006b5f",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-container": "#656ec9",
+                        "surface-container-highest": "#e2e2e2",
+                        "surface-bright": "#f9f9f9",
+                        "on-tertiary-container": "#ffffff",
+                        "on-surface-variant": "#3e4946",
+                        "background": "#f9f9f9",
+                        "on-background": "#1a1c1c",
+                        "primary": "#006a5e",
+                        "on-tertiary-fixed-variant": "#343d96",
+                        "on-primary": "#ffffff",
+                        "inverse-surface": "#2f3131",
+                        "on-primary-fixed": "#00201c",
+                        "on-secondary-fixed-variant": "#274a62",
+                        "primary-fixed-dim": "#73d8c7",
+                        "on-primary-fixed-variant": "#005047",
+                        "inverse-primary": "#73d8c7",
+                        "inverse-on-surface": "#f1f1f1",
+                        "tertiary": "#4c55ae",
+                        "surface-dim": "#dadada",
+                        "on-error-container": "#93000a"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "margin-mobile": "16px",
+                        "xs": "4px",
+                        "md": "16px",
+                        "base": "8px",
+                        "xl": "32px",
+                        "gutter": "16px",
+                        "xxl": "48px",
+                        "lg": "24px",
+                        "touch-target": "48px",
+                        "sm": "8px",
+                        "margin-tablet": "32px"
+                    },
+                    fontFamily: {
+                        "body-lg": ["Inter"],
+                        "title-md": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "label-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    fontSize: {
+                        "body-lg": ["18px", { lineHeight: "28px", letterSpacing: "0.5px", fontWeight: "400" }],
+                        "title-md": ["16px", { lineHeight: "24px", letterSpacing: "0.15px", fontWeight: "600" }],
+                        "title-lg": ["22px", { lineHeight: "28px", fontWeight: "600" }],
+                        "label-md": ["12px", { lineHeight: "16px", letterSpacing: "0.5px", fontWeight: "500" }],
+                        "label-lg": ["14px", { lineHeight: "20px", letterSpacing: "0.1px", fontWeight: "500" }],
+                        "headline-md": ["28px", { lineHeight: "36px", fontWeight: "600" }],
+                        "headline-lg-mobile": ["28px", { lineHeight: "36px", fontWeight: "700" }],
+                        "display-lg": ["57px", { lineHeight: "64px", letterSpacing: "-0.25px", fontWeight: "700" }],
+                        "headline-lg": ["32px", { lineHeight: "40px", fontWeight: "700" }],
+                        "body-md": ["16px", { lineHeight: "24px", letterSpacing: "0.25px", fontWeight: "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .accordion-content.expanded {
+            max-height: 500px;
+            transition: max-height 0.5s ease-in;
+        }
+        .chevron {
+            transition: transform 0.3s ease;
+        }
+        .expanded .chevron {
+            transform: rotate(180deg);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen flex flex-col font-body-lg">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky z-40 bg-surface shadow-sm">
+<div class="flex items-center justify-between px-margin-mobile h-touch-target w-full border-b border-outline-variant/30 hidden md:flex">
+<div class="flex items-center gap-md">
+<button class="w-touch-target h-touch-target flex items-center justify-center text-primary active:scale-95 transition-transform duration-100 rounded-full hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">health_and_safety</span>
+</button>
+<h1 class="text-title-lg font-title-lg font-bold text-primary">MediLink</h1>
+</div>
+<!-- Web Nav -->
+<nav class="flex gap-lg">
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-variant transition-colors rounded-full font-label-md text-label-md" href="#">Home</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-variant transition-colors rounded-full font-label-md text-label-md" href="#">Map</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-variant transition-colors rounded-full font-label-md text-label-md" href="#">Orders</a>
+<a class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-4 py-1 font-label-md text-label-md font-bold" href="#">Profile</a>
+</nav>
+<button class="w-touch-target h-touch-target flex items-center justify-center text-primary active:scale-95 transition-transform duration-100 rounded-full hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</div>
+<!-- Mobile TopAppBar -->
+<div class="flex items-center justify-between px-margin-mobile h-touch-target w-full bg-surface shadow-sm md:hidden">
+<button class="w-touch-target h-touch-target flex items-center justify-center text-primary active:scale-95 transition-transform duration-100 rounded-full hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined cursor-pointer" onclick="window.history.back()">arrow_back</span>
+</button>
+<h1 class="text-title-lg font-title-lg font-bold text-primary">Help Center</h1>
+<div class="w-touch-target"></div>
+</div>
+</header>
+<main class="flex-1 pb-24 md:pb-12 max-w-3xl w-full mx-auto p-margin-mobile">
+<!-- Hero Search -->
+<div class="text-center mt-xl mb-xxl">
+<h2 class="text-headline-lg-mobile md:text-headline-lg font-headline-lg-mobile md:font-headline-lg mb-base text-primary">How can we help?</h2>
+<p class="text-body-md font-body-md text-on-surface-variant mb-lg">Search our knowledge base or contact support.</p>
+<div class="relative max-w-xl mx-auto">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full h-14 pl-12 pr-4 rounded-full border border-outline-variant bg-surface focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all font-body-md text-body-md shadow-sm outline-none" placeholder="Search Help..." type="text"/>
+</div>
+</div>
+<!-- Contact Options Grid (Bento style) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-md mb-xxl">
+<!-- Live Chat -->
+<button class="group bg-surface-container-low rounded-2xl p-lg flex flex-col items-center justify-center text-center shadow-sm hover:shadow-md transition-all border border-transparent hover:border-primary-container/30 active:scale-[0.98]">
+<div class="w-16 h-16 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center mb-base group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[32px]" style="font-variation-settings: 'FILL' 1;">forum</span>
+</div>
+<h3 class="text-title-md font-title-md text-on-surface mb-xs">Live Chat</h3>
+<p class="text-label-md font-label-md text-on-surface-variant">Available 24/7</p>
+</button>
+<!-- Call Support -->
+<button class="group bg-surface-container-low rounded-2xl p-lg flex flex-col items-center justify-center text-center shadow-sm hover:shadow-md transition-all border border-transparent hover:border-primary-container/30 active:scale-[0.98]">
+<div class="w-16 h-16 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center mb-base group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[32px]" style="font-variation-settings: 'FILL' 1;">call</span>
+</div>
+<h3 class="text-title-md font-title-md text-on-surface mb-xs">Call Support</h3>
+<p class="text-label-md font-label-md text-on-surface-variant">16216 (Toll Free)</p>
+</button>
+<!-- Email Support -->
+<button class="group bg-surface-container-low rounded-2xl p-lg flex flex-col items-center justify-center text-center shadow-sm hover:shadow-md transition-all border border-transparent hover:border-primary-container/30 active:scale-[0.98]">
+<div class="w-16 h-16 rounded-full bg-surface-variant text-on-surface-variant flex items-center justify-center mb-base group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-[32px]" style="font-variation-settings: 'FILL' 1;">mail</span>
+</div>
+<h3 class="text-title-md font-title-md text-on-surface mb-xs">Email Support</h3>
+<p class="text-label-md font-label-md text-on-surface-variant">support@medilink.com.bd</p>
+</button>
+</div>
+<!-- FAQ Section -->
+<div class="mb-xxl">
+<h2 class="text-title-lg font-title-lg text-on-surface mb-md px-2">Frequently Asked Questions</h2>
+<div class="space-y-sm">
+<!-- FAQ Item 1 -->
+<div class="bg-surface rounded-xl shadow-sm border border-outline-variant/30 overflow-hidden accordion-item">
+<button class="w-full flex items-center justify-between p-md text-left focus:outline-none hover:bg-surface-container-low transition-colors" onclick="toggleAccordion(this)">
+<span class="text-title-md font-title-md text-on-surface">How do I track my medicine order?</span>
+<span class="material-symbols-outlined text-on-surface-variant chevron">expand_more</span>
+</button>
+<div class="accordion-content bg-surface-container-lowest px-md">
+<p class="text-body-md font-body-md text-on-surface-variant py-md border-t border-outline-variant/20">
+                            You can track your order by navigating to the "Orders" tab in the bottom menu. Select your active order to see real-time updates on its status, from processing to delivery.
+                        </p>
+</div>
+</div>
+<!-- FAQ Item 2 -->
+<div class="bg-surface rounded-xl shadow-sm border border-outline-variant/30 overflow-hidden accordion-item">
+<button class="w-full flex items-center justify-between p-md text-left focus:outline-none hover:bg-surface-container-low transition-colors" onclick="toggleAccordion(this)">
+<span class="text-title-md font-title-md text-on-surface">How do I upload a prescription?</span>
+<span class="material-symbols-outlined text-on-surface-variant chevron">expand_more</span>
+</button>
+<div class="accordion-content bg-surface-container-lowest px-md">
+<p class="text-body-md font-body-md text-on-surface-variant py-md border-t border-outline-variant/20">
+                            To upload a prescription, go to the Home screen and tap on "Upload Prescription". You can take a new photo using your camera or select an existing image/PDF from your gallery. Our pharmacists will review it within 30 minutes.
+                        </p>
+</div>
+</div>
+<!-- FAQ Item 3 -->
+<div class="bg-surface rounded-xl shadow-sm border border-outline-variant/30 overflow-hidden accordion-item">
+<button class="w-full flex items-center justify-between p-md text-left focus:outline-none hover:bg-surface-container-low transition-colors" onclick="toggleAccordion(this)">
+<span class="text-title-md font-title-md text-on-surface">What payment methods are accepted?</span>
+<span class="material-symbols-outlined text-on-surface-variant chevron">expand_more</span>
+</button>
+<div class="accordion-content bg-surface-container-lowest px-md">
+<p class="text-body-md font-body-md text-on-surface-variant py-md border-t border-outline-variant/20">
+                            We accept Cash on Delivery (COD), bKash, Nagad, and major credit/debit cards (Visa, Mastercard, Amex).
+                        </p>
+</div>
+</div>
+<!-- FAQ Item 4 -->
+<div class="bg-surface rounded-xl shadow-sm border border-outline-variant/30 overflow-hidden accordion-item">
+<button class="w-full flex items-center justify-between p-md text-left focus:outline-none hover:bg-surface-container-low transition-colors" onclick="toggleAccordion(this)">
+<span class="text-title-md font-title-md text-on-surface">What is the return policy for medicines?</span>
+<span class="material-symbols-outlined text-on-surface-variant chevron">expand_more</span>
+</button>
+<div class="accordion-content bg-surface-container-lowest px-md">
+<p class="text-body-md font-body-md text-on-surface-variant py-md border-t border-outline-variant/20">
+                            Medicines can only be returned if they are damaged upon delivery or if the wrong item was sent. Please contact our support team within 24 hours of delivery with photographic evidence.
+                        </p>
+</div>
+</div>
+</div>
+</div>
+<!-- Legal Links -->
+<div class="flex flex-col gap-sm">
+<a class="flex items-center justify-between p-md bg-surface-container-low rounded-xl hover:bg-surface-container transition-colors active:scale-[0.99]" href="#">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-on-surface-variant">description</span>
+<span class="text-body-md font-body-md text-on-surface">Terms &amp; Conditions</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-sm">chevron_right</span>
+</a>
+<a class="flex items-center justify-between p-md bg-surface-container-low rounded-xl hover:bg-surface-container transition-colors active:scale-[0.99]" href="#">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-on-surface-variant">policy</span>
+<span class="text-body-md font-body-md text-on-surface">Privacy Policy</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-sm">chevron_right</span>
+</a>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-2 bg-surface dark:bg-surface border-t border-outline-variant/30 z-50 md:hidden shadow-[0_-1px_3px_0_rgba(0,0,0,0.1)]">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-4 py-1 hover:bg-surface-variant dark:hover:bg-surface-variant transition-colors active:scale-90 transition-transform duration-150 rounded-xl" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-md text-label-md mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-4 py-1 hover:bg-surface-variant dark:hover:bg-surface-variant transition-colors active:scale-90 transition-transform duration-150 rounded-xl" href="#">
+<span class="material-symbols-outlined">map</span>
+<span class="font-label-md text-label-md mt-1">Map</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-4 py-1 hover:bg-surface-variant dark:hover:bg-surface-variant transition-colors active:scale-90 transition-transform duration-150 rounded-xl" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="font-label-md text-label-md mt-1">Orders</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-secondary-container dark:bg-secondary-container text-on-secondary-container dark:text-on-secondary-container rounded-xl px-4 py-1 hover:bg-surface-variant dark:hover:bg-surface-variant transition-colors active:scale-90 transition-transform duration-150" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="font-label-md text-label-md mt-1 font-bold">Profile</span>
+</a>
+</nav>
+<script>
+        function toggleAccordion(btn) {
+            const content = btn.nextElementSibling;
+            const isExpanded = content.classList.contains('expanded');
+            
+            // Close all other accordions
+            document.querySelectorAll('.accordion-content').forEach(el => {
+                el.classList.remove('expanded');
+            });
+            document.querySelectorAll('.accordion-item').forEach(el => {
+                el.classList.remove('expanded');
+            });
+
+            // Toggle current
+            if (!isExpanded) {
+                content.classList.add('expanded');
+                btn.closest('.accordion-item').classList.add('expanded');
+            }
+        }
+    </script>
+</body></html>

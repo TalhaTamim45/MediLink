@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MediLink | Order Fulfillment</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-dim": "#dbdad9",
+                    "on-surface-variant": "#40493d",
+                    "surface-variant": "#e3e2e2",
+                    "secondary-fixed": "#abf4ac",
+                    "on-tertiary-fixed": "#002203",
+                    "primary-fixed-dim": "#88d982",
+                    "inverse-primary": "#88d982",
+                    "surface-container-low": "#f5f3f3",
+                    "tertiary-fixed-dim": "#91d78a",
+                    "background": "#fbf9f9",
+                    "on-error-container": "#93000a",
+                    "surface-bright": "#fbf9f9",
+                    "on-surface": "#1b1c1c",
+                    "on-error": "#ffffff",
+                    "on-primary-fixed-variant": "#005312",
+                    "on-secondary": "#ffffff",
+                    "primary-container": "#2e7d32",
+                    "on-tertiary": "#ffffff",
+                    "outline": "#707a6c",
+                    "on-secondary-container": "#2e7238",
+                    "on-primary": "#ffffff",
+                    "on-tertiary-fixed-variant": "#0c5216",
+                    "surface-container-lowest": "#ffffff",
+                    "tertiary-fixed": "#acf4a4",
+                    "on-primary-container": "#cbffc2",
+                    "primary": "#0d631b",
+                    "surface-container-high": "#e9e8e7",
+                    "on-background": "#1b1c1c",
+                    "inverse-on-surface": "#f2f0f0",
+                    "error": "#ba1a1a",
+                    "surface-container-highest": "#e3e2e2",
+                    "tertiary": "#1f6223",
+                    "surface": "#fbf9f9",
+                    "error-container": "#ffdad6",
+                    "on-secondary-fixed": "#002107",
+                    "on-secondary-fixed-variant": "#07521d",
+                    "on-tertiary-container": "#c8ffbf",
+                    "secondary-container": "#abf4ac",
+                    "surface-tint": "#1b6d24",
+                    "secondary-fixed-dim": "#90d792",
+                    "surface-container": "#efeded",
+                    "primary-fixed": "#a3f69c",
+                    "on-primary-fixed": "#002204",
+                    "tertiary-container": "#3a7b39",
+                    "outline-variant": "#bfcaba",
+                    "secondary": "#286b33",
+                    "inverse-surface": "#303031"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-mobile": "16px",
+                    "container-max": "1440px",
+                    "gutter": "24px",
+                    "base": "8px",
+                    "xs": "4px",
+                    "xl": "32px",
+                    "sm": "8px",
+                    "lg": "24px",
+                    "md": "16px",
+                    "margin-desktop": "32px"
+            },
+            "fontFamily": {
+                    "title-lg": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "label-lg": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "body-md": ["Inter"]
+            },
+            "fontSize": {
+                    "title-lg": ["22px", {"lineHeight": "28px", "letterSpacing": "0px", "fontWeight": "500"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "letterSpacing": "0.5px", "fontWeight": "400"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "0px", "fontWeight": "600"}],
+                    "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "500"}],
+                    "display-lg": ["57px", {"lineHeight": "64px", "letterSpacing": "-0.25px", "fontWeight": "400"}],
+                    "label-sm": ["11px", {"lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "letterSpacing": "0px", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.25px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface min-h-screen pb-24 md:pb-0 md:pt-16">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-surface dark:bg-surface flex justify-between items-center h-16 px-margin-mobile md:px-margin-desktop w-full transition-colors duration-200">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary" data-icon="local_pharmacy">local_pharmacy</span>
+<h1 class="font-title-lg text-title-lg font-bold text-primary dark:text-primary-fixed-dim">MediLink</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined p-2 rounded-full hover:bg-surface-variant transition-colors" data-icon="search">search</button>
+<button class="material-symbols-outlined p-2 rounded-full hover:bg-surface-variant transition-colors" data-icon="notifications">notifications</button>
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center overflow-hidden border-2 border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional pharmacist owner headshot, clean medical scrubs, high-end corporate portrait with soft studio lighting and a sterile clinical background in the MediLink color palette." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDzNAXhxRPr1BMfQ7uHymP1D7F7jeRSl19w0zqccXBo-nVuzhZ8Yce2b_kh2acKlstQTQKnYz6BJq1MfCAqV0IT1fAlBHjKsA85ePlUQpbuQ_WNSJ_C3P6_I3Zaax-f7FJATQ_x_C9hSm4oJhWJ_kQlEuqzxtVX_wmPSMWS9xnHOIMaXwUnd4NmX6DrWaWp3zcVJd8e4dxKnmHf2bs4Qu7aefPORyz4s6ZXKcvvBd09c7dr_nngbXftxpPbvEZRI5yVWS3gkqtewVp"/>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-lg mt-16">
+<!-- Welcome & Stats Section (Bento Inspired) -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-md mb-lg">
+<div class="md:col-span-8 bg-surface-container-low p-lg rounded-xl border border-outline-variant/30 flex flex-col justify-center">
+<h2 class="font-headline-lg text-headline-lg md:text-headline-lg-mobile mb-2">Order Fulfillment</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Manage active prescriptions and coordinate patient deliveries.</p>
+</div>
+<div class="md:col-span-4 grid grid-cols-2 gap-md">
+<div class="bg-secondary-container p-md rounded-xl flex flex-col items-center justify-center text-center">
+<span class="font-display-lg text-primary text-3xl font-bold">24</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-secondary-container">Pending</span>
+</div>
+<div class="bg-tertiary-container p-md rounded-xl flex flex-col items-center justify-center text-center">
+<span class="font-display-lg text-on-tertiary-container text-3xl font-bold">12</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-tertiary-container">Ready</span>
+</div>
+</div>
+</div>
+<!-- Filter Chips -->
+<div class="flex gap-2 mb-md overflow-x-auto pb-2 scrollbar-hide">
+<button class="bg-primary text-on-primary px-lg py-2 rounded-full font-label-lg flex items-center gap-2">
+                All Orders
+            </button>
+<button class="bg-surface-container text-on-surface-variant px-lg py-2 rounded-full font-label-lg hover:bg-surface-variant transition-colors">
+                Preparing
+            </button>
+<button class="bg-surface-container text-on-surface-variant px-lg py-2 rounded-full font-label-lg hover:bg-surface-variant transition-colors">
+                Ready for Pickup
+            </button>
+<button class="bg-surface-container text-on-surface-variant px-lg py-2 rounded-full font-label-lg hover:bg-surface-variant transition-colors">
+                Out for Delivery
+            </button>
+</div>
+<!-- Orders Grid (The Main View) -->
+<div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-lg mb-24">
+<!-- Order Card 1: Preparing -->
+<div class="bg-surface-container-lowest border border-outline-variant/50 rounded-xl p-lg shadow-sm hover:shadow-md transition-shadow flex flex-col gap-md">
+<div class="flex justify-between items-start">
+<div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Order #ML-9021</span>
+<h3 class="font-title-lg text-title-lg text-on-surface font-semibold">Sarah Jenkins</h3>
+</div>
+<span class="bg-error-container text-on-error-container px-3 py-1 rounded-full font-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="pending_actions">pending_actions</span>
+                        Preparing
+                    </span>
+</div>
+<div class="space-y-2">
+<div class="flex items-center gap-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-md" data-icon="medication">medication</span>
+<span class="font-body-md text-body-md">Amoxicillin 500mg, Ibuprofen 400mg</span>
+</div>
+<div class="flex items-center gap-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-md" data-icon="schedule">schedule</span>
+<span class="font-body-md text-body-md">Submitted 15m ago</span>
+</div>
+</div>
+<div class="flex gap-2 mt-auto">
+<button class="flex-1 border border-primary text-primary font-label-lg py-3 rounded-lg hover:bg-primary/5 transition-colors">Verify Documents</button>
+<button class="flex-1 bg-primary text-on-primary font-label-lg py-3 rounded-lg hover:shadow-lg transition-all active:scale-95">Mark as Ready</button>
+</div>
+</div>
+<!-- Order Card 2: Ready for Pickup -->
+<div class="bg-surface-container-lowest border border-outline-variant/50 rounded-xl p-lg shadow-sm hover:shadow-md transition-shadow flex flex-col gap-md">
+<div class="flex justify-between items-start">
+<div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Order #ML-8944</span>
+<h3 class="font-title-lg text-title-lg text-on-surface font-semibold">Robert Chen</h3>
+</div>
+<span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full font-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="check_circle">check_circle</span>
+                        Ready for Pickup
+                    </span>
+</div>
+<div class="space-y-2">
+<div class="flex items-center gap-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-md" data-icon="medication">medication</span>
+<span class="font-body-md text-body-md">Lisinopril 10mg (30-day supply)</span>
+</div>
+<div class="flex items-center gap-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-md" data-icon="inventory_2">inventory_2</span>
+<span class="font-body-md text-body-md">Bin: A-12</span>
+</div>
+</div>
+<div class="flex gap-2 mt-auto">
+<button class="flex-1 border border-outline text-on-surface font-label-lg py-3 rounded-lg hover:bg-surface-variant transition-colors">Details</button>
+<button class="flex-1 bg-secondary text-on-secondary font-label-lg py-3 rounded-lg hover:shadow-lg transition-all active:scale-95">Confirm Pickup</button>
+</div>
+</div>
+<!-- Order Card 3: Out for Delivery -->
+<div class="bg-surface-container-lowest border border-outline-variant/50 rounded-xl p-lg shadow-sm hover:shadow-md transition-shadow flex flex-col gap-md">
+<div class="flex justify-between items-start">
+<div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Order #ML-8812</span>
+<h3 class="font-title-lg text-title-lg text-on-surface font-semibold">Emily Rodriguez</h3>
+</div>
+<span class="bg-tertiary-fixed text-on-tertiary-fixed px-3 py-1 rounded-full font-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="local_shipping">local_shipping</span>
+                        Out for Delivery
+                    </span>
+</div>
+<div class="space-y-2">
+<div class="flex items-center gap-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-md" data-icon="location_on">location_on</span>
+<span class="font-body-md text-body-md">422 Oak Lane, North District</span>
+</div>
+<div class="flex items-center gap-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-md" data-icon="person_pin">person_pin</span>
+<span class="font-body-md text-body-md">Driver: James K.</span>
+</div>
+</div>
+<div class="flex gap-2 mt-auto">
+<button class="flex-1 border border-outline text-on-surface font-label-lg py-3 rounded-lg hover:bg-surface-variant transition-colors">Track Map</button>
+<button class="flex-1 bg-tertiary text-on-tertiary font-label-lg py-3 rounded-lg hover:shadow-lg transition-all active:scale-95">Complete</button>
+</div>
+</div>
+<!-- Order Card 4: Preparing (Documentation Missing) -->
+<div class="bg-surface-container-lowest border border-outline-variant/50 rounded-xl p-lg shadow-sm hover:shadow-md transition-shadow flex flex-col gap-md">
+<div class="flex justify-between items-start">
+<div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Order #ML-9035</span>
+<h3 class="font-title-lg text-title-lg text-on-surface font-semibold">David Wilson</h3>
+</div>
+<span class="bg-error-container text-on-error-container px-3 py-1 rounded-full font-label-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="priority_high">priority_high</span>
+                        Preparing
+                    </span>
+</div>
+<div class="space-y-2">
+<div class="flex items-center gap-3 text-on-surface-variant">
+<span class="material-symbols-outlined text-md" data-icon="medication">medication</span>
+<span class="font-body-md text-body-md">Metformin 500mg, Atorvastatin</span>
+</div>
+<div class="flex items-center gap-3 text-error font-medium">
+<span class="material-symbols-outlined text-md" data-icon="warning">warning</span>
+<span class="font-body-md text-body-md">Insurance mismatch found</span>
+</div>
+</div>
+<div class="flex gap-2 mt-auto">
+<button class="w-full bg-error text-on-error font-label-lg py-3 rounded-lg hover:shadow-lg transition-all active:scale-95 flex justify-center items-center gap-2">
+<span class="material-symbols-outlined" data-icon="assignment_ind">assignment_ind</span>
+                        Verify Documents
+                    </button>
+</div>
+</div>
+<!-- Map/Delivery Preview Card (Visual Interest) -->
+<div class="lg:col-span-2 xl:col-span-2 bg-surface-container border border-outline-variant/30 rounded-xl overflow-hidden relative min-h-[300px]">
+<div class="absolute inset-0 z-0">
+<div class="w-full h-full bg-cover bg-center opacity-80 grayscale-[0.5] hover:grayscale-0 transition-all duration-700" data-alt="A stylized, clean UI map showing the urban landscape of a city with several delivery routes highlighted in MediLink green. Minimalist aesthetic with medical icons for pharmacies and home icons for delivery points." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB2zY6OD49TOVbs2YKclHwQlWBF9bmzYJcGWZxXDT4sPmg3pWvfDZ2U6dVhW8pv4ddDqbUyYPEdesRAI0PLVCe5duRTjpUgqH87qWszsDOti4kTLTAck7psSlYY3B9QxWi2gHgV0Ec6VbXXCYIk83G7QKqfuonjqtgJwDAsLDGT0_I1zo2IhL3jLi4dSlbJTmf6t2RVgv4ueLj7KxXFmaA9ykcX6VHlyfsjfpLYXVUa_EppC_1kFoDxPdJk8iOBSzinZu9P0P3FM3qK')"></div>
+</div>
+<div class="relative z-10 p-lg h-full flex flex-col justify-between pointer-events-none">
+<div class="bg-surface/90 backdrop-blur-md p-md rounded-lg self-start border border-outline-variant shadow-lg pointer-events-auto">
+<h4 class="font-label-lg text-label-lg font-bold text-primary mb-1">Live Delivery Map</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant">3 active deliveries in progress</p>
+</div>
+<div class="pointer-events-auto flex justify-end">
+<button class="bg-primary text-on-primary px-lg py-3 rounded-full font-label-lg shadow-lg flex items-center gap-2 hover:scale-105 transition-transform">
+<span class="material-symbols-outlined" data-icon="fullscreen">fullscreen</span>
+                            View Fullscreen Tracking
+                        </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center h-20 pb-safe px-2 bg-surface-container dark:bg-surface-container rounded-t-xl shadow-lg z-50">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-5 py-1 transition-transform duration-150 active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-sm text-label-sm">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-secondary-container dark:bg-secondary-container text-on-secondary-container dark:text-on-secondary-container rounded-full px-5 py-1 transition-transform duration-150 active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="prescriptions" style="font-variation-settings: 'FILL' 1;">prescriptions</span>
+<span class="font-label-sm text-label-sm">Orders</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-5 py-1 transition-transform duration-150 active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="font-label-sm text-label-sm">Inventory</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-5 py-1 transition-transform duration-150 active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="font-label-sm text-label-sm">Earnings</span>
+</a>
+</nav>
+<!-- Floating Action Button -->
+<button class="fixed bottom-24 right-6 md:bottom-10 md:right-10 bg-primary text-on-primary w-16 h-16 rounded-2xl shadow-xl flex items-center justify-center hover:bg-primary-container hover:text-on-primary-container transition-all hover:rotate-90 z-40">
+<span class="material-symbols-outlined text-3xl" data-icon="add">add</span>
+</button>
+<script>
+        // Simple Interaction Logic
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const ripple = document.createElement('div');
+                ripple.className = 'absolute inset-0 bg-white/20 rounded-lg pointer-events-none animate-ping';
+                this.style.position = 'relative';
+                this.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 500);
+            });
+        });
+    </script>
+</body></html>

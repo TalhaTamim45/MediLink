@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>Live Order Tracking - MediLink</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-container": "#bee1fe",
+                        "on-primary-container": "#ffffff",
+                        "surface-variant": "#e2e2e2",
+                        "surface-container-low": "#f3f3f3",
+                        "primary-fixed": "#90f4e3",
+                        "on-surface": "#1a1c1c",
+                        "surface-container": "#eeeeee",
+                        "error": "#ba1a1a",
+                        "primary-container": "#008577",
+                        "on-tertiary-fixed": "#000767",
+                        "outline-variant": "#bdc9c5",
+                        "secondary-fixed-dim": "#a8cbe7",
+                        "secondary": "#40627b",
+                        "on-secondary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "surface": "#f9f9f9",
+                        "outline": "#6d7a76",
+                        "tertiary-fixed-dim": "#bdc2ff",
+                        "on-error": "#ffffff",
+                        "surface-container-high": "#e8e8e8",
+                        "tertiary-fixed": "#e0e0ff",
+                        "on-secondary-container": "#43647d",
+                        "secondary-fixed": "#c9e6ff",
+                        "on-secondary-fixed": "#001e2f",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-tint": "#006b5f",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-container": "#656ec9",
+                        "surface-container-highest": "#e2e2e2",
+                        "surface-bright": "#f9f9f9",
+                        "on-tertiary-container": "#ffffff",
+                        "on-surface-variant": "#3e4946",
+                        "background": "#f9f9f9",
+                        "on-background": "#1a1c1c",
+                        "primary": "#006a5e",
+                        "on-tertiary-fixed-variant": "#343d96",
+                        "on-primary": "#ffffff",
+                        "inverse-surface": "#2f3131",
+                        "on-primary-fixed": "#00201c",
+                        "on-secondary-fixed-variant": "#274a62",
+                        "primary-fixed-dim": "#73d8c7",
+                        "on-primary-fixed-variant": "#005047",
+                        "inverse-primary": "#73d8c7",
+                        "inverse-on-surface": "#f1f1f1",
+                        "tertiary": "#4c55ae",
+                        "surface-dim": "#dadada",
+                        "on-error-container": "#93000a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "xs": "4px",
+                        "md": "16px",
+                        "base": "8px",
+                        "xl": "32px",
+                        "gutter": "16px",
+                        "xxl": "48px",
+                        "lg": "24px",
+                        "touch-target": "48px",
+                        "sm": "8px",
+                        "margin-tablet": "32px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "title-md": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "label-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "28px", "letterSpacing": "0.5px", "fontWeight": "400"}],
+                        "title-md": ["16px", {"lineHeight": "24px", "letterSpacing": "0.15px", "fontWeight": "600"}],
+                        "title-lg": ["22px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500"}],
+                        "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "500"}],
+                        "headline-md": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "700"}],
+                        "display-lg": ["57px", {"lineHeight": "64px", "letterSpacing": "-0.25px", "fontWeight": "700"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "letterSpacing": "0.25px", "fontWeight": "400"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .map-overlay-gradient {
+            background: linear-gradient(to bottom, rgba(249, 249, 249, 0.9) 0%, rgba(249, 249, 249, 0) 30%, rgba(249, 249, 249, 0) 70%, rgba(249, 249, 249, 0.95) 100%);
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: .7;
+                transform: scale(1.1);
+            }
+        }
+        
+        /* Map pin drop animation */
+        .pin-drop {
+            animation: dropIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+        }
+        
+        @keyframes dropIn {
+            0% {
+                transform: translateY(-50px) scale(0);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+        
+        /* Bottom sheet slide up */
+        .slide-up {
+            animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+        
+        @keyframes slideUp {
+            0% {
+                transform: translateY(100%);
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md antialiased overflow-hidden h-screen w-full flex flex-col relative">
+<!-- Top App Bar -->
+<header class="w-full top-0 sticky bg-surface z-50 shadow-sm flex items-center justify-between px-margin-mobile h-touch-target absolute top-0 left-0">
+<button aria-label="Go back" class="w-touch-target h-touch-target flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-full active:scale-95 transition-transform duration-100">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_back</span>
+</button>
+<h1 class="font-title-lg text-title-lg font-bold text-primary">Live Tracking</h1>
+<div class="w-touch-target h-touch-target flex items-center justify-center text-on-surface-variant">
+<!-- Empty placeholder for balance -->
+</div>
+</header>
+<!-- Map Container -->
+<main class="flex-grow relative w-full h-full bg-surface-container-low overflow-hidden">
+<!-- Base Map Image -->
+<div class="absolute inset-0 w-full h-full">
+<img alt="" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLtEMF9fR18WjFSpzIwXNRxmQLQaCLSTOv4tRO3tCQS-TbyPbUwmaG85hjQMBtHC03UWTaDDyp-bt61oiWbBG8Zbqbe9cX1PGWNYJMwm7KGAPiD2ZMcfJ0RWCGVx2dGMDQ9r1SRW4cpVDJEY74KZMJxdwVD2xPgtmvcXYlkloLV5RmWELlGKHXDHxuroNydHDWg8bccVjKAIdsKzu68QTSI8qLwfzh_y-GFrjbA5RtzUClNC0-4fNI3-hxwp" style="object-position: center 30%;"/>
+</div>
+<!-- Gradient Overlay for readability -->
+<div class="absolute inset-0 map-overlay-gradient pointer-events-none"></div>
+<!-- Route Line (Simulated via SVG) -->
+<svg class="absolute inset-0 w-full h-full pointer-events-none z-10" preserveaspectratio="none" viewbox="0 0 100 100">
+<path class="opacity-70" d="M 30,70 C 40,60 50,55 50,40 C 50,25 60,30 70,20" fill="none" stroke="#006a5e" stroke-dasharray="2,2" stroke-width="0.8"></path>
+<!-- Animated dash -->
+<path d="M 30,70 C 40,60 50,55 50,40 C 50,25 60,30 70,20" fill="none" stroke="#006a5e" stroke-width="1.2">
+<animate attributename="stroke-dasharray" dur="2s" repeatcount="indefinite" values="0,100; 100,0"></animate>
+</path>
+</svg>
+<!-- Pharmacy Marker (Origin) -->
+<div class="absolute top-[20%] left-[70%] transform -translate-x-1/2 -translate-y-1/2 z-20 flex flex-col items-center pin-drop" style="animation-delay: 0.1s;">
+<div class="bg-surface px-3 py-1 rounded-full shadow-sm border border-outline-variant mb-1 font-label-md text-label-md text-on-surface flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-primary" style="font-variation-settings: 'FILL' 1;">local_pharmacy</span>
+<span>Lazz Pharma</span>
+</div>
+<div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center shadow-sm border-2 border-surface relative">
+<span class="material-symbols-outlined text-on-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">storefront</span>
+<div class="absolute -bottom-1 left-1/2 w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[6px] border-t-primary transform -translate-x-1/2"></div>
+</div>
+</div>
+<!-- Rider Marker (Current) -->
+<div class="absolute top-[40%] left-[50%] transform -translate-x-1/2 -translate-y-1/2 z-30 flex flex-col items-center pulse-animation pin-drop" style="animation-delay: 0.3s;">
+<div class="bg-primary text-on-primary px-3 py-1 rounded-full shadow-sm mb-1 font-label-md text-label-md flex items-center gap-1">
+<span>15 mins</span>
+</div>
+<div class="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-md border-2 border-primary relative">
+<img alt="Rider Avatar" class="w-full h-full rounded-full object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLtaMmeVZNEVl2mSM4AYA5cHR6gVkwEkMC7WUoZ0j-xNYx8Y0Qt8ejos_iVGZn7SdMDtQ4AqG5C3adtqpRmnM5eHkT-UQG78FXoGau6YoUuThJ70_x3bNjzCBlZgLV5_jDqKh7cGFlZLH23PeBiyjB2WCcOatcHZnN--JkWrHbyr6-bhXxH2eZj41UZj2k0Ig26zIrE-ODAcY0jHolqhLDVz-ZdSPdDrHhSS8QJvZ1tfNdOc14ucID3-CWwQ"/>
+<div class="absolute -bottom-1.5 left-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[8px] border-t-white transform -translate-x-1/2"></div>
+<div class="absolute -bottom-2 left-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[8px] border-t-primary transform -translate-x-1/2 -z-10"></div>
+</div>
+</div>
+<!-- Customer Marker (Destination) -->
+<div class="absolute top-[70%] left-[30%] transform -translate-x-1/2 -translate-y-1/2 z-20 flex flex-col items-center pin-drop" style="animation-delay: 0.5s;">
+<div class="bg-surface px-3 py-1 rounded-full shadow-sm border border-outline-variant mb-1 font-label-md text-label-md text-on-surface">
+                Home
+            </div>
+<div class="w-8 h-8 bg-tertiary rounded-full flex items-center justify-center shadow-sm border-2 border-surface relative">
+<span class="material-symbols-outlined text-on-tertiary text-[18px]" style="font-variation-settings: 'FILL' 1;">home</span>
+<div class="absolute -bottom-1 left-1/2 w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[6px] border-t-tertiary transform -translate-x-1/2"></div>
+</div>
+</div>
+<!-- Floating Current Location Button -->
+<button class="absolute bottom-[300px] right-margin-mobile w-12 h-12 bg-surface rounded-full shadow-[0_4px_8px_rgba(0,0,0,0.15)] flex items-center justify-center text-primary z-40 hover:bg-surface-container-high transition-colors active:scale-95">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">my_location</span>
+</button>
+</main>
+<!-- Bottom Sheet (Delivery Details) -->
+<div class="absolute bottom-0 w-full bg-surface rounded-t-[24px] shadow-[0_-4px_16px_rgba(0,0,0,0.1)] z-50 slide-up flex flex-col pb-6">
+<!-- Drag Handle -->
+<div class="w-full flex justify-center pt-3 pb-2">
+<div class="w-12 h-1.5 bg-outline-variant rounded-full opacity-50"></div>
+</div>
+<div class="px-margin-mobile">
+<!-- Header: Status & ETA -->
+<div class="flex justify-between items-start mb-6">
+<div>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Out for Delivery</h2>
+<p class="font-body-md text-body-md text-on-surface-variant flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-[18px] text-primary" style="font-variation-settings: 'FILL' 1;">two_wheeler</span>
+                        Arriving in ~15 mins
+                    </p>
+</div>
+<div class="bg-primary-container text-on-primary-container font-title-md text-title-md px-4 py-2 rounded-xl flex flex-col items-center justify-center">
+<span class="text-2xl font-bold">15</span>
+<span class="font-label-md text-label-md">min</span>
+</div>
+</div>
+<!-- Timeline Tracker -->
+<div class="flex items-center w-full mb-6 px-2">
+<!-- Step 1: Preparing (Done) -->
+<div class="flex flex-col items-center flex-1 relative">
+<div class="w-6 h-6 rounded-full bg-primary flex items-center justify-center z-10">
+<span class="material-symbols-outlined text-[14px] text-on-primary font-bold">check</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface-variant mt-2 text-center">Preparing</span>
+</div>
+<!-- Line 1 -->
+<div class="h-[2px] flex-1 bg-primary -mx-4 z-0 self-start mt-3"></div>
+<!-- Step 2: Picked Up (Done) -->
+<div class="flex flex-col items-center flex-1 relative">
+<div class="w-6 h-6 rounded-full bg-primary flex items-center justify-center z-10">
+<span class="material-symbols-outlined text-[14px] text-on-primary font-bold">check</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface-variant mt-2 text-center">Picked Up</span>
+</div>
+<!-- Line 2 -->
+<div class="h-[2px] flex-1 bg-primary -mx-4 z-0 self-start mt-3"></div>
+<!-- Step 3: Out for Delivery (Active) -->
+<div class="flex flex-col items-center flex-1 relative">
+<div class="w-6 h-6 rounded-full bg-primary border-4 border-primary-container flex items-center justify-center z-10 pulse-animation"></div>
+<span class="font-label-md text-label-md text-primary font-semibold mt-2 text-center">On Way</span>
+</div>
+</div>
+<!-- Rider Info Card -->
+<div class="bg-surface-container-low rounded-xl p-4 flex items-center gap-4 mb-6 border border-outline-variant/30">
+<img alt="Tanvir Ahmed Profile" class="w-[56px] h-[56px] rounded-full object-cover border-2 border-surface shadow-sm" src="https://lh3.googleusercontent.com/aida/AP1WRLtaMmeVZNEVl2mSM4AYA5cHR6gVkwEkMC7WUoZ0j-xNYx8Y0Qt8ejos_iVGZn7SdMDtQ4AqG5C3adtqpRmnM5eHkT-UQG78FXoGau6YoUuThJ70_x3bNjzCBlZgLV5_jDqKh7cGFlZLH23PeBiyjB2WCcOatcHZnN--JkWrHbyr6-bhXxH2eZj41UZj2k0Ig26zIrE-ODAcY0jHolqhLDVz-ZdSPdDrHhSS8QJvZ1tfNdOc14ucID3-CWwQ"/>
+<div class="flex-grow">
+<h3 class="font-title-md text-title-md text-on-surface">Tanvir Ahmed</h3>
+<div class="flex items-center gap-1 font-label-md text-label-md text-on-surface-variant mt-1">
+<span class="material-symbols-outlined text-[16px] text-primary" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-semibold text-on-surface">4.8</span>
+<span class="mx-1">•</span>
+<span>Yamaha FZ</span>
+</div>
+</div>
+<button aria-label="Call Rider" class="w-[48px] h-[48px] rounded-full bg-primary-container text-on-primary-container flex items-center justify-center hover:bg-primary transition-colors active:scale-95 shrink-0">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">call</span>
+</button>
+</div>
+<!-- Action Buttons -->
+<div class="flex gap-3">
+<button aria-label="Contact Support" class="flex-1 h-[56px] bg-surface rounded-xl border-2 border-primary text-primary font-title-md text-title-md flex items-center justify-center gap-2 hover:bg-surface-container-low transition-colors active:scale-95">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 0;">support_agent</span>
+                    Support
+                </button>
+<button aria-label="Call Pharmacy" class="flex-1 h-[56px] bg-surface rounded-xl border-2 border-primary text-primary font-title-md text-title-md flex items-center justify-center gap-2 hover:bg-surface-container-low transition-colors active:scale-95">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 0;">local_pharmacy</span>
+                    Pharmacy
+                </button>
+</div>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Medicine Details</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-dim": "#dadada",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed-variant": "#005047",
+                        "on-primary-fixed": "#00201c",
+                        "on-secondary-fixed-variant": "#274a62",
+                        "on-error-container": "#93000a",
+                        "tertiary": "#4c55ae",
+                        "on-tertiary-fixed": "#000767",
+                        "primary-fixed-dim": "#73d8c7",
+                        "on-surface-variant": "#3e4946",
+                        "on-primary": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "inverse-surface": "#2f3131",
+                        "on-secondary-fixed": "#001e2f",
+                        "tertiary-fixed-dim": "#bdc2ff",
+                        "outline-variant": "#bdc9c5",
+                        "background": "#f9f9f9",
+                        "tertiary-fixed": "#e0e0ff",
+                        "secondary": "#40627b",
+                        "surface-variant": "#e2e2e2",
+                        "secondary-container": "#bee1fe",
+                        "on-surface": "#1a1c1c",
+                        "inverse-primary": "#73d8c7",
+                        "surface-container-high": "#e8e8e8",
+                        "outline": "#6d7a76",
+                        "on-background": "#1a1c1c",
+                        "on-tertiary-container": "#ffffff",
+                        "surface": "#f9f9f9",
+                        "tertiary-container": "#656ec9",
+                        "on-secondary-container": "#43647d",
+                        "primary-fixed": "#90f4e3",
+                        "surface-container": "#eeeeee",
+                        "surface-container-highest": "#e2e2e2",
+                        "surface-tint": "#006b5f",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed": "#c9e6ff",
+                        "error": "#ba1a1a",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#343d96",
+                        "surface-bright": "#f9f9f9",
+                        "on-primary-container": "#ffffff",
+                        "secondary-fixed-dim": "#a8cbe7",
+                        "inverse-on-surface": "#f1f1f1",
+                        "primary": "#006a5e",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#f3f3f3",
+                        "primary-container": "#008577"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "xl": "32px",
+                        "gutter": "16px",
+                        "sm": "8px",
+                        "margin-mobile": "16px",
+                        "xxl": "48px",
+                        "md": "16px",
+                        "lg": "24px",
+                        "xs": "4px",
+                        "margin-tablet": "32px",
+                        "touch-target": "48px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "label-lg": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "title-md": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500" }],
+                        "headline-md": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
+                        "display-lg": ["57px", { "lineHeight": "64px", "letterSpacing": "-0.25px", "fontWeight": "700" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "letterSpacing": "0.5px", "fontWeight": "400" }],
+                        "title-md": ["16px", { "lineHeight": "24px", "letterSpacing": "0.15px", "fontWeight": "600" }],
+                        "title-lg": ["22px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "letterSpacing": "0.25px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .m3-elevation-1 { box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.30), 0px 1px 3px 1px rgba(0, 0, 0, 0.15); }
+        .m3-elevation-2 { box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.30), 0px 2px 6px 2px rgba(0, 0, 0, 0.15); }
+        
+        /* Expansion Panel Transition */
+        .expansion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .expansion-content.open {
+            max-height: 500px; /* Arbitrary large number for max-height transition */
+            transition: max-height 0.5s ease-in;
+        }
+        .expansion-icon {
+            transition: transform 0.3s ease;
+        }
+        .expansion-icon.open {
+            transform: rotate(180deg);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background min-h-screen pb-[120px] md:pb-0">
+<!-- Top Navigation (Mobile/Desktop Hybrid) -->
+<header class="sticky top-0 z-50 bg-surface shadow-sm h-[64px] px-margin-mobile flex items-center justify-between">
+<div class="flex items-center gap-md">
+<button aria-label="Back" class="h-touch-target w-touch-target flex items-center justify-center hover:bg-surface-container-high rounded-full transition-colors md:hidden">
+<span class="material-symbols-outlined text-on-surface-variant">arrow_back</span>
+</button>
+<!-- Desktop Top Navigation Shell Items (Hidden on Mobile) -->
+<div class="hidden md:flex gap-lg ml-xl">
+<button class="h-touch-target flex items-center px-4 hover:bg-surface-container-high rounded-lg text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined mr-sm">home</span>
+<span class="font-label-lg text-label-lg">Home</span>
+</button>
+<button class="h-touch-target flex items-center px-4 hover:bg-surface-container-high rounded-lg text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined mr-sm">receipt_long</span>
+<span class="font-label-lg text-label-lg">Orders</span>
+</button>
+</div>
+</div>
+<div class="flex items-center gap-sm">
+<button aria-label="Search" class="h-touch-target w-touch-target flex items-center justify-center hover:bg-surface-container-high rounded-full transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">search</span>
+</button>
+<button aria-label="Cart" class="h-touch-target w-touch-target flex items-center justify-center hover:bg-surface-container-high rounded-full transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">shopping_cart</span>
+</button>
+</div>
+</header>
+<main class="max-w-4xl mx-auto md:px-margin-tablet pt-lg md:pt-xl md:grid md:grid-cols-12 md:gap-lg md:items-start">
+<!-- Left Column: Image & Badges -->
+<div class="md:col-span-5 md:sticky md:top-[88px]">
+<div class="px-margin-mobile md:px-0">
+<!-- Main Product Image -->
+<div class="w-full aspect-square bg-surface-container rounded-2xl flex items-center justify-center m3-elevation-1 mb-md relative overflow-hidden">
+<img alt="Product Image" class="object-cover w-full h-full mix-blend-multiply p-lg" data-alt="A clean, high-resolution studio shot of a pharmaceutical blister pack containing small, round, white tablets next to its branded cardboard box. The background is a bright, clinical white, illuminated with soft, even lighting to eliminate harsh shadows. The aesthetic is highly professional, sterile, and trustworthy, suitable for a modern healthcare application." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCy_4DhudbGG9GlSguRr8Gh-QzDNGGU268vwAqtOg6boLhj3NC2DiUhKLWJ3jlpZ2eZI3IWh8Ual_cNgj2eQYGp4n2AGAOgQLY92_2T6iczqJZk1LQAZSMML7PqazPhAQTvafvVXKwY2Fs4fElkaZln08l5lkY7BehtXYyxf-o9Lh-H97WLyIvVeIAKRRqlzm5xateSYAPpyHGj75EOChm0ynd8AAD0LHvbDDr23jswHVMI-ezi5bKY_CCUmgrRR73gGK-vslemFAIz"/>
+</div>
+</div>
+</div>
+<!-- Right Column: Details & Actions -->
+<div class="md:col-span-7">
+<div class="px-margin-mobile md:px-0">
+<!-- Title & Tags -->
+<div class="mb-lg mb-xl">
+<div class="flex flex-wrap gap-sm mb-sm">
+<span class="bg-primary-container text-on-primary-container px-sm py-xs rounded-md font-label-md text-label-md flex items-center gap-xs">
+<span class="material-symbols-outlined" style="font-size: 14px;">check_circle</span>
+                            Available
+                        </span>
+<span class="border border-error text-error px-sm py-xs rounded-md font-label-md text-label-md flex items-center gap-xs">
+<span class="material-symbols-outlined" style="font-size: 14px;">description</span>
+                            Prescription Required
+                        </span>
+</div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-on-surface mb-xs">
+                        Napa Extra 500mg/65mg
+                    </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-md">
+                        Paracetamol + Caffeine
+                    </p>
+<div class="flex items-end justify-between border-b border-outline-variant pb-md">
+<div>
+<p class="font-label-md text-label-md text-outline mb-xs">Unit Price</p>
+<p class="font-headline-md text-headline-md text-primary font-bold">
+                                ৳ 2.50
+                            </p>
+</div>
+<div class="text-right">
+<p class="font-label-md text-label-md text-outline">Tablet</p>
+</div>
+</div>
+</div>
+<!-- Mandatory Warning -->
+<div class="bg-error-container rounded-xl p-md mb-lg flex items-start gap-md mb-xl">
+<span class="material-symbols-outlined text-on-error-container mt-xs" style="font-variation-settings: 'FILL' 1;">warning</span>
+<p class="font-body-md text-body-md text-on-error-container flex-1">
+                        Use medicines only according to a valid prescription or healthcare professional's advice.
+                    </p>
+</div>
+<!-- Desktop Add to Cart (Sticky Bottom on Mobile) -->
+<!-- Expandable Details Sections -->
+<div class="flex flex-col gap-sm mb-xl">
+<!-- Manufacturer -->
+<div class="bg-surface-container-lowest rounded-xl m3-elevation-1 overflow-hidden border border-outline-variant m3-elevation-2">
+<button class="w-full p-md flex items-center justify-between text-left hover:bg-surface-container-low transition-colors" onclick="toggleExpansion(this)">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-primary">factory</span>
+<span class="font-title-md text-title-md text-on-surface">Manufacturer</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant expansion-icon">expand_more</span>
+</button>
+<div class="expansion-content px-md pb-md">
+<p class="font-body-md text-body-md text-on-surface-variant">
+                                Beximco Pharmaceuticals Ltd.
+                            </p>
+</div>
+</div>
+<!-- Medicine Details -->
+<div class="bg-surface-container-lowest rounded-xl m3-elevation-1 overflow-hidden border border-outline-variant m3-elevation-2">
+<button class="w-full p-md flex items-center justify-between text-left hover:bg-surface-container-low transition-colors" onclick="toggleExpansion(this)">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-primary">medication</span>
+<span class="font-title-md text-title-md text-on-surface">Medicine Details</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant expansion-icon">expand_more</span>
+</button>
+<div class="expansion-content px-md pb-md">
+<p class="font-body-md text-body-md text-on-surface-variant mb-sm">
+<strong>Indications:</strong> Indicated for the relief of fever, headache, migraine, toothache, neuralgia, periodic pain, and rheumatic pain.
+                            </p>
+<p class="font-body-md text-body-md text-on-surface-variant">
+<strong>Dosage:</strong> Adults: 1-2 tablets every 4-6 hours. Maximum 8 tablets in 24 hours. Do not exceed the stated dose.
+                            </p>
+</div>
+</div>
+<!-- Safety Notice -->
+<div class="bg-surface-container-lowest rounded-xl m3-elevation-1 overflow-hidden border border-outline-variant m3-elevation-2">
+<button class="w-full p-md flex items-center justify-between text-left hover:bg-surface-container-low transition-colors" onclick="toggleExpansion(this)">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-primary">health_and_safety</span>
+<span class="font-title-md text-title-md text-on-surface">Safety Notice</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant expansion-icon">expand_more</span>
+</button>
+<div class="expansion-content px-md pb-md">
+<p class="font-body-md text-body-md text-on-surface-variant">
+                                Avoid taking alcohol while taking this medicine. Consult a doctor if symptoms persist for more than 3 days. Not recommended for children under 12 years without medical advice.
+                            </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Mobile Sticky Bottom Action Bar (Hidden on Desktop) -->
+<div class="fixed bottom-0 left-0 w-full bg-surface-container-lowest border-t border-outline-variant px-margin-mobile py-md pb-[calc(16px+env(safe-area-inset-bottom))] z-40 m3-elevation-2">
+<div class="max-w-4xl mx-auto flex flex-col gap-md">
+<div class="flex items-center justify-between">
+<div>
+<p class="text-label-md text-outline">Total Price</p>
+<p class="text-headline-md font-bold text-primary">৳ 25.00</p>
+</div>
+<div class="flex items-center bg-surface-container-high rounded-full overflow-hidden h-[48px]">
+<button class="w-[48px] h-full flex items-center justify-center text-on-surface-variant hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined">remove</span>
+</button>
+<span class="w-[40px] text-center font-title-md">10</span>
+<button class="w-[48px] h-full flex items-center justify-center text-on-surface-variant hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+</div>
+<button class="w-full h-[56px] bg-primary text-on-primary rounded-xl font-title-md flex items-center justify-center gap-sm hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined">shopping_cart_checkout</span>
+            Add to Cart
+        </button>
+</div>
+</div>
+<script>
+        function toggleExpansion(button) {
+            const content = button.nextElementSibling;
+            const icon = button.querySelector('.expansion-icon');
+            
+            content.classList.toggle('open');
+            icon.classList.toggle('open');
+        }
+    </script>
+</body></html>

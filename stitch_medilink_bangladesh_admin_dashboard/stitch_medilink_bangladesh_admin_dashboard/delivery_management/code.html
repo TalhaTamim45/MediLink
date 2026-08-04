@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Delivery Management | MediLink BD</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed": "#04006d",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-container": "#292b8d",
+                        "primary": "#006b32",
+                        "secondary-fixed": "#e1e0ff",
+                        "surface-container": "#e5eeff",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed": "#3a0b00",
+                        "on-surface": "#0b1c30",
+                        "surface": "#f8f9ff",
+                        "surface-container-high": "#dce9ff",
+                        "inverse-surface": "#213145",
+                        "outline-variant": "#bccabb",
+                        "tertiary-fixed-dim": "#ffb59e",
+                        "primary-fixed-dim": "#5adf82",
+                        "primary-fixed": "#78fc9c",
+                        "surface-container-low": "#eff4ff",
+                        "error": "#ba1a1a",
+                        "surface-bright": "#f8f9ff",
+                        "secondary-fixed-dim": "#c0c1ff",
+                        "on-background": "#0b1c30",
+                        "inverse-on-surface": "#eaf1ff",
+                        "secondary-container": "#959aff",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#cbdbf5",
+                        "on-primary-fixed": "#00210b",
+                        "tertiary-container": "#d1430a",
+                        "tertiary": "#a93200",
+                        "surface-tint": "#006d33",
+                        "on-primary-container": "#f7fff3",
+                        "background": "#f8f9ff",
+                        "secondary": "#4f54b4",
+                        "on-tertiary-fixed-variant": "#842500",
+                        "on-secondary-fixed-variant": "#373a9b",
+                        "outline": "#6d7b6d",
+                        "on-primary-fixed-variant": "#005225",
+                        "surface-variant": "#d3e4fe",
+                        "on-surface-variant": "#3d4a3e",
+                        "error-container": "#ffdad6",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed": "#ffdbd0",
+                        "inverse-primary": "#5adf82",
+                        "on-tertiary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "surface-container-highest": "#d3e4fe",
+                        "primary-container": "#008740",
+                        "on-tertiary-container": "#fffbff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-margin": "24px",
+                        "base": "4px",
+                        "md": "16px",
+                        "lg": "24px",
+                        "gutter": "16px",
+                        "xs": "4px",
+                        "sm": "8px",
+                        "xl": "32px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "title-md": ["Inter"],
+                        "display-md": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-sm": ["11px", {"lineHeight": "16px", "fontWeight": "600"}],
+                        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "title-lg": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "title-md": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                        "display-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #bccabb; border-radius: 10px; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            border: 1px solid #bccabb;
+        }
+    </style>
+</head>
+<body class="bg-surface font-body-md text-on-surface">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-screen w-[280px] bg-surface border-r border-outline-variant flex flex-col py-md z-50">
+<div class="px-6 mb-8">
+<h1 class="font-title-lg text-title-lg font-bold text-primary">MediLink BD</h1>
+<p class="text-label-md font-label-md text-on-surface-variant">Admin Console</p>
+</div>
+<nav class="flex-1 overflow-y-auto space-y-1">
+<div class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors cursor-pointer">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md">Dashboard</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors cursor-pointer">
+<span class="material-symbols-outlined">local_pharmacy</span>
+<span class="font-label-md">Pharmacies</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors cursor-pointer">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-md">Customers</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors cursor-pointer">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="font-label-md">Orders</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors cursor-pointer">
+<span class="material-symbols-outlined">description</span>
+<span class="font-label-md">Prescriptions</span>
+</div>
+<!-- Active Navigation: Deliveries -->
+<div class="flex items-center gap-3 px-4 py-3 text-primary bg-surface-container-high border-r-4 border-primary font-bold">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="font-label-md">Deliveries</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors cursor-pointer">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-md">Payments</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors cursor-pointer">
+<span class="material-symbols-outlined">gavel</span>
+<span class="font-label-md">Disputes</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors cursor-pointer">
+<span class="material-symbols-outlined">assessment</span>
+<span class="font-label-md">Reports</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors cursor-pointer">
+<span class="material-symbols-outlined">notifications</span>
+<span class="font-label-md">Notifications</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors cursor-pointer">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md">Settings</span>
+</div>
+</nav>
+</aside>
+<!-- TopNavBar -->
+<header class="fixed top-0 left-[280px] w-[calc(100%-280px)] h-16 bg-surface border-b border-outline-variant flex justify-between items-center px-lg z-40">
+<div class="flex items-center bg-surface-container-low px-4 py-2 rounded-full w-96 border border-outline-variant focus-within:border-primary transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-md w-full ml-2 text-on-surface" placeholder="Search Delivery ID, Rider, or Customer..." type="text"/>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-full transition-transform active:scale-90">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-full transition-transform active:scale-90">
+<span class="material-symbols-outlined">help</span>
+</button>
+<div class="h-8 w-px bg-outline-variant mx-2"></div>
+<div class="flex items-center gap-3 pl-2">
+<div class="text-right hidden sm:block">
+<p class="text-label-md font-bold text-on-surface leading-none">Admin Profile</p>
+<p class="text-[10px] text-on-surface-variant">Ops Manager</p>
+</div>
+<img class="w-10 h-10 rounded-full border border-outline-variant object-cover" data-alt="A professional headshot of a senior medical operations manager in a clinical setting. The subject is wearing a crisp white lab coat over a dark shirt, looking confidently into the camera. The background is a blurred hospital administrative office with soft, natural daylight filtering through large windows, maintaining a clean and professional healthcare aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBT11_WcPpB-V3QjBp9FlSS03ElatXwK1zHVUY_S_ExT7bm4wB1bX3mn3vC-wXLdLAxVVHdee-2GBwbI9e8B0-JFWyq4pwOkD9qJDtcHY4JOU0-PNjpNfM-sa9GXI-vbyePX2gco6MstiQNpXkBaYh9FiCsCm7mZhWy0BNQBt2AypExV58BYuMc0YyGhDtCAdy5lJtCbEiTJJeXxlfzuR0XBTaD-ZY8VuQAgAD6Ipy3eLoy7jpcaR13YFzsR8eMiUZkoK7tb67AExA"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-[280px] pt-16 min-h-screen p-lg bg-surface">
+<!-- Dashboard Header -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+<div>
+<h2 class="font-display-md text-display-md text-on-surface">Delivery Logistics</h2>
+<p class="text-body-md text-on-surface-variant">Real-time oversight of pharmacy logistics and rider performance.</p>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 px-4 py-2 bg-white border border-outline-variant text-primary font-bold rounded-lg hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined">filter_list</span>
+<span class="text-label-md">Filter Deliveries</span>
+</button>
+<button class="flex items-center gap-2 px-4 py-2 bg-primary text-on-primary font-bold rounded-lg shadow-sm hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined">add</span>
+<span class="text-label-md">Dispatch Rider</span>
+</button>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-12 gap-6">
+<!-- Live Active Deliveries (Major Section) -->
+<div class="col-span-12 lg:col-span-8 space-y-6">
+<div class="bg-white border border-outline-variant rounded-xl overflow-hidden">
+<div class="px-6 py-4 border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
+<h3 class="font-title-lg text-title-lg text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">sensors</span>
+                            Active Deliveries
+                        </h3>
+<span class="px-3 py-1 bg-primary-container text-on-primary-container text-label-md rounded-full font-bold">14 Live</span>
+</div>
+<div class="divide-y divide-outline-variant">
+<!-- Delivery Row 1 -->
+<div class="p-6 hover:bg-surface-container-low transition-colors group">
+<div class="flex flex-col xl:flex-row gap-6">
+<div class="flex-1">
+<div class="flex justify-between items-start mb-3">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 bg-surface-container rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">delivery_truck_speed</span>
+</div>
+<div>
+<p class="font-bold text-on-surface text-body-lg">DL-98241</p>
+<p class="text-label-md text-on-surface-variant">Pharmacy: Lazz Pharma (Dhanmondi)</p>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="flex items-center gap-1 text-[#006b32] font-bold text-label-md">
+<span class="w-2 h-2 bg-[#006b32] rounded-full animate-pulse"></span>
+                                                IN TRANSIT
+                                            </span>
+<p class="text-label-sm text-on-surface-variant">Est. Arrival: 14:20</p>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4 mt-4 bg-surface-container-lowest p-3 rounded-lg border border-outline-variant/30">
+<div>
+<p class="text-label-sm text-on-surface-variant uppercase tracking-wider">Rider</p>
+<div class="flex items-center gap-2 mt-1">
+<img class="w-6 h-6 rounded-full object-cover" data-alt="A portrait of a local delivery rider wearing a green MediLink BD vest and a clean motorcycle helmet. He has a friendly and professional expression, standing next to a well-maintained delivery bike in a bustling Dhaka street scene with blurred traffic. The lighting is bright and clear, emphasizing a reliable service persona." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBayIPWrn2fx11js4-7wYkXkwA0zr5_1MCeDb2C-hjjB6JDQ3I5O3ardnSS0yQRUrJNrnNgSUYbYpgP9HBUwR-yARoAllWg2psgyZXdBsA4gwxXVh7ZE6m3grUPUfdDCvAStXuAA26gPJuKh-VGj7LcplJ1hKt1rip29sc7_2dKgMjAuAjtg34z6FiRodXk7KESJP_sK9CEihVmOrfxUW5sA2q1fHXhiRCymxg5hOYKtIun8V3JZU0Ej66tH4RXJrV8lZhH3pQ7CyE"/>
+<span class="font-title-md text-on-surface text-sm">Tanvir Ahmed</span>
+</div>
+</div>
+<div>
+<p class="text-label-sm text-on-surface-variant uppercase tracking-wider">OTP Verification</p>
+<p class="text-sm font-bold text-primary flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-xs">verified_user</span>
+                                                Pending Delivery
+                                            </p>
+</div>
+</div>
+</div>
+<div class="xl:w-64 h-32 rounded-lg overflow-hidden border border-outline-variant relative">
+<div class="w-full h-full bg-cover bg-center" data-alt="A detailed digital map interface showing the dense urban layout of Dhaka, Bangladesh. A small green delivery icon is positioned on a street, with a thin glowing path leading to a blue destination marker. The map uses a clean, light-mode palette with soft grays for buildings and vibrant green for the delivery route." data-location="Dhaka, Bangladesh" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDCKr8dTak73sVKwPPSSLxTdIxBNOfzwWLjJr_AG8_hzQmQb9vQIdDuxx8_yKvEfWl_krNYofOJtUfczZUTclfwHH7VooYV0nuVk6YQT7fRQLmVQrJ2eLqQ7lWufhzc9K2zQGh7-mHdfMG7ER56n4fxdrf_T2Xx2RGNvmC5ILYrfpP5be7vNPpmtHmACEHpXWAAHZh88PbchjdIrX8W-s_qZvmvq-8AfxOJNC4e7Nu69PXV_iM5qEbjXBNEqbCZG5vWbDFTh9Mx4p8')"></div>
+<div class="absolute inset-0 bg-black/5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="bg-white/90 px-3 py-1 rounded text-xs font-bold text-primary shadow-sm">View Live Tracking</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Delivery Row 2 -->
+<div class="p-6 hover:bg-surface-container-low transition-colors group">
+<div class="flex flex-col xl:flex-row gap-6">
+<div class="flex-1">
+<div class="flex justify-between items-start mb-3">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 bg-surface-container rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">delivery_truck_speed</span>
+</div>
+<div>
+<p class="font-bold text-on-surface text-body-lg">DL-98245</p>
+<p class="text-label-md text-on-surface-variant">Pharmacy: Popular Pharma (Banani)</p>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="flex items-center gap-1 text-[#a93200] font-bold text-label-md">
+<span class="w-2 h-2 bg-[#a93200] rounded-full"></span>
+                                                DELAYED
+                                            </span>
+<p class="text-label-sm text-on-surface-variant">Traffic Holdup (15m)</p>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4 mt-4 bg-surface-container-lowest p-3 rounded-lg border border-outline-variant/30">
+<div>
+<p class="text-label-sm text-on-surface-variant uppercase tracking-wider">Rider</p>
+<div class="flex items-center gap-2 mt-1">
+<img class="w-6 h-6 rounded-full object-cover" data-alt="A portrait of a male pharmacy courier in a professional uniform. He looks focused and reliable, holding a secure medical delivery box. The background shows a modern streetscape in Dhaka with soft, warm afternoon light. High-quality corporate aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbNeFfP1tJ8JaGbmfyL8ysNKJmigKCdwI-bXwwdckNV3KG4OoTT_yT-sYKClpLWZy5WvC-NpItIt6zgid7Us0iWMrKxGleW4aFCuHzn6cb3kJkhqtvi5O9mcBtfEO8lXtaBWDV217VlvHSYadViOL5O_7Q3mqEqLhLIZ-Iq2Zk1gFAwUFucXVd_pIoE-y5jR85guxM3OXcPXSB1aOM-l4UnkESrKTfUoopCixrWxPdO619DX9pLTaYaEPn3VmBTrFkLcC4-3zf0K0"/>
+<span class="font-title-md text-on-surface text-sm">Imran Khan</span>
+</div>
+</div>
+<div>
+<p class="text-label-sm text-on-surface-variant uppercase tracking-wider">OTP Verification</p>
+<p class="text-sm font-bold text-primary flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-xs">verified_user</span>
+                                                Pending Delivery
+                                            </p>
+</div>
+</div>
+</div>
+<div class="xl:w-64 h-32 rounded-lg overflow-hidden border border-outline-variant relative">
+<div class="w-full h-full bg-cover bg-center" data-alt="A top-down view of a digital GPS navigation map featuring the Banani district in Dhaka. The map shows a highlighted traffic congestion zone in orange, with a stalled green vehicle marker. The visual style is crisp and professional, using a clinical light-mode color scheme of whites, grays, and brand greens." data-location="Dhaka, Bangladesh" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDCKr8dTak73sVKwPPSSLxTdIxBNOfzwWLjJr_AG8_hzQmQb9vQIdDuxx8_yKvEfWl_krNYofOJtUfczZUTclfwHH7VooYV0nuVk6YQT7fRQLmVQrJ2eLqQ7lWufhzc9K2zQGh7-mHdfMG7ER56n4fxdrf_T2Xx2RGNvmC5ILYrfpP5be7vNPpmtHmACEHpXWAAHZh88PbchjdIrX8W-s_qZvmvq-8AfxOJNC4e7Nu69PXV_iM5qEbjXBNEqbCZG5vWbDFTh9Mx4p8')"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Stats & Exceptions (Sidebar Content) -->
+<div class="col-span-12 lg:col-span-4 space-y-6">
+<!-- Quick Stats -->
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-white p-4 rounded-xl border border-outline-variant">
+<p class="text-label-md text-on-surface-variant mb-1">Delivered Today</p>
+<h4 class="text-display-md font-bold text-primary">142</h4>
+<p class="text-[10px] text-primary flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-xs">trending_up</span>
+                            +12% vs yesterday
+                        </p>
+</div>
+<div class="bg-white p-4 rounded-xl border border-outline-variant">
+<p class="text-label-md text-on-surface-variant mb-1">Avg. Time</p>
+<h4 class="text-display-md font-bold text-on-surface">32m</h4>
+<p class="text-[10px] text-on-surface-variant mt-1">Dhaka Metropolitan Area</p>
+</div>
+</div>
+<!-- Delayed Deliveries Section -->
+<div class="bg-white border border-outline-variant rounded-xl overflow-hidden shadow-sm">
+<div class="px-5 py-3 border-b border-outline-variant bg-tertiary-fixed flex justify-between items-center">
+<h3 class="font-title-md text-on-tertiary-fixed flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary">history_toggle_off</span>
+                            Delayed Alerts
+                        </h3>
+<span class="text-label-sm font-bold text-tertiary">3 Critical</span>
+</div>
+<div class="p-0">
+<div class="p-4 border-b border-outline-variant hover:bg-surface-container transition-colors">
+<div class="flex justify-between items-start mb-2">
+<p class="font-bold text-sm text-on-surface">DL-98110</p>
+<span class="text-[10px] bg-tertiary text-white px-2 py-0.5 rounded-full font-bold">+45 Min</span>
+</div>
+<p class="text-xs text-on-surface-variant mb-3">Customer: Rahim Sheikh (Uttara Sector 4)</p>
+<button class="w-full py-2 bg-tertiary-fixed-dim text-on-tertiary-fixed-variant text-label-sm font-bold rounded hover:opacity-80 transition-opacity">Contact Rider</button>
+</div>
+<div class="p-4 border-b border-outline-variant hover:bg-surface-container transition-colors">
+<div class="flex justify-between items-start mb-2">
+<p class="font-bold text-sm text-on-surface">DL-98222</p>
+<span class="text-[10px] bg-tertiary text-white px-2 py-0.5 rounded-full font-bold">+28 Min</span>
+</div>
+<p class="text-xs text-on-surface-variant mb-3">Customer: Nazma Begum (Mirpur 10)</p>
+<button class="w-full py-2 bg-tertiary-fixed-dim text-on-tertiary-fixed-variant text-label-sm font-bold rounded hover:opacity-80 transition-opacity">Contact Rider</button>
+</div>
+</div>
+<div class="p-3 bg-surface-container-low text-center">
+<button class="text-label-sm font-bold text-primary hover:underline">View All Exceptions</button>
+</div>
+</div>
+<!-- Failed Deliveries Section -->
+<div class="bg-white border border-outline-variant rounded-xl overflow-hidden shadow-sm">
+<div class="px-5 py-3 border-b border-outline-variant bg-error-container flex justify-between items-center">
+<h3 class="font-title-md text-on-error-container flex items-center gap-2">
+<span class="material-symbols-outlined text-error">report</span>
+                            Failed Deliveries
+                        </h3>
+<span class="text-label-sm font-bold text-error">Today: 2</span>
+</div>
+<div class="p-0 divide-y divide-outline-variant">
+<div class="p-4 flex gap-3">
+<div class="w-10 h-10 bg-error-container/30 rounded flex-shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-error">cancel</span>
+</div>
+<div>
+<p class="font-bold text-sm text-on-surface">DL-98001</p>
+<p class="text-xs text-on-surface-variant">Reason: OTP Verification Failed (Customer Absent)</p>
+<div class="mt-2 flex gap-2">
+<button class="text-[10px] font-bold text-primary underline">Reschedule</button>
+<button class="text-[10px] font-bold text-error underline">Return to Pharmacy</button>
+</div>
+</div>
+</div>
+<div class="p-4 flex gap-3">
+<div class="w-10 h-10 bg-error-container/30 rounded flex-shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-error">block</span>
+</div>
+<div>
+<p class="font-bold text-sm text-on-surface">DL-97992</p>
+<p class="text-xs text-on-surface-variant">Reason: Address Unreachable (Gully Blocked)</p>
+<div class="mt-2 flex gap-2">
+<button class="text-[10px] font-bold text-primary underline">Call Customer</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Recent Completed Deliveries (Table View) -->
+<div class="col-span-12">
+<div class="bg-white border border-outline-variant rounded-xl overflow-hidden">
+<div class="px-6 py-4 border-b border-outline-variant">
+<h3 class="font-title-lg text-title-lg text-on-surface">Recent Completions</h3>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-surface-container-low border-b border-outline-variant">
+<tr>
+<th class="px-6 py-3 text-label-md font-bold text-on-surface-variant uppercase tracking-wider">Order ID</th>
+<th class="px-6 py-3 text-label-md font-bold text-on-surface-variant uppercase tracking-wider">Rider</th>
+<th class="px-6 py-3 text-label-md font-bold text-on-surface-variant uppercase tracking-wider">Destination</th>
+<th class="px-6 py-3 text-label-md font-bold text-on-surface-variant uppercase tracking-wider text-center">OTP Status</th>
+<th class="px-6 py-3 text-label-md font-bold text-on-surface-variant uppercase tracking-wider">Completion Time</th>
+<th class="px-6 py-3 text-label-md font-bold text-on-surface-variant uppercase tracking-wider text-right">Fee (BDT)</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr class="hover:bg-surface-container transition-colors">
+<td class="px-6 py-3 font-bold text-primary">DL-98230</td>
+<td class="px-6 py-3">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-full bg-secondary-container flex items-center justify-center text-[10px] text-white">SA</div>
+<span class="text-sm">Sabbir Ahmed</span>
+</div>
+</td>
+<td class="px-6 py-3 text-sm">Gulshan 2, Dhaka</td>
+<td class="px-6 py-3 text-center">
+<span class="px-2 py-0.5 bg-primary-fixed text-on-primary-fixed text-[10px] rounded font-bold">VERIFIED</span>
+</td>
+<td class="px-6 py-3 text-sm">13:45 (On-Time)</td>
+<td class="px-6 py-3 text-sm text-right font-mono">120.00</td>
+</tr>
+<tr class="hover:bg-surface-container transition-colors">
+<td class="px-6 py-3 font-bold text-primary">DL-98228</td>
+<td class="px-6 py-3">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-full bg-primary-container flex items-center justify-center text-[10px] text-white">MK</div>
+<span class="text-sm">Morshed Khan</span>
+</div>
+</td>
+<td class="px-6 py-3 text-sm">Mohammadpur, Dhaka</td>
+<td class="px-6 py-3 text-center">
+<span class="px-2 py-0.5 bg-primary-fixed text-on-primary-fixed text-[10px] rounded font-bold">VERIFIED</span>
+</td>
+<td class="px-6 py-3 text-sm">13:30 (On-Time)</td>
+<td class="px-6 py-3 text-sm text-right font-mono">85.00</td>
+</tr>
+<tr class="hover:bg-surface-container transition-colors">
+<td class="px-6 py-3 font-bold text-primary">DL-98225</td>
+<td class="px-6 py-3">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-full bg-outline flex items-center justify-center text-[10px] text-white">FA</div>
+<span class="text-sm">Faisal Ali</span>
+</div>
+</td>
+<td class="px-6 py-3 text-sm">Basundhara R/A, Dhaka</td>
+<td class="px-6 py-3 text-center">
+<span class="px-2 py-0.5 bg-primary-fixed text-on-primary-fixed text-[10px] rounded font-bold">VERIFIED</span>
+</td>
+<td class="px-6 py-3 text-sm">13:12 (Early)</td>
+<td class="px-6 py-3 text-sm text-right font-mono">150.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- FAB for Quick Actions -->
+<button class="fixed bottom-8 right-8 w-14 h-14 bg-primary text-on-primary rounded-full shadow-lg flex items-center justify-center hover:scale-110 active:scale-95 transition-transform group z-50">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add</span>
+<span class="absolute right-full mr-4 bg-inverse-surface text-inverse-on-surface px-3 py-1 rounded-lg text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-md">Emergency Dispatch</span>
+</button>
+<script>
+        // Simple Micro-interaction for UI
+        document.querySelectorAll('nav div, .hover\\:bg-surface-container').forEach(el => {
+            el.addEventListener('click', () => {
+                const ripple = document.createElement('div');
+                ripple.className = 'absolute inset-0 bg-primary/5 pointer-events-none opacity-0 transition-opacity duration-300';
+                el.classList.add('relative');
+                el.appendChild(ripple);
+                setTimeout(() => ripple.classList.remove('opacity-0'), 10);
+                setTimeout(() => {
+                    ripple.classList.add('opacity-0');
+                    setTimeout(() => ripple.remove(), 300);
+                }, 400);
+            });
+        });
+    </script>
+</body></html>

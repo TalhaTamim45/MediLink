@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Customer Management | MediLink Admin</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed": "#04006d",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary-container": "#292b8d",
+                    "primary": "#006b32",
+                    "secondary-fixed": "#e1e0ff",
+                    "surface-container": "#e5eeff",
+                    "on-primary": "#ffffff",
+                    "on-tertiary-fixed": "#3a0b00",
+                    "on-surface": "#0b1c30",
+                    "surface": "#f8f9ff",
+                    "surface-container-high": "#dce9ff",
+                    "inverse-surface": "#213145",
+                    "outline-variant": "#bccabb",
+                    "tertiary-fixed-dim": "#ffb59e",
+                    "primary-fixed-dim": "#5adf82",
+                    "primary-fixed": "#78fc9c",
+                    "surface-container-low": "#eff4ff",
+                    "error": "#ba1a1a",
+                    "surface-bright": "#f8f9ff",
+                    "secondary-fixed-dim": "#c0c1ff",
+                    "on-background": "#0b1c30",
+                    "inverse-on-surface": "#eaf1ff",
+                    "secondary-container": "#959aff",
+                    "on-secondary": "#ffffff",
+                    "surface-dim": "#cbdbf5",
+                    "on-primary-fixed": "#00210b",
+                    "tertiary-container": "#d1430a",
+                    "tertiary": "#a93200",
+                    "surface-tint": "#006d33",
+                    "on-primary-container": "#f7fff3",
+                    "background": "#f8f9ff",
+                    "secondary": "#4f54b4",
+                    "on-tertiary-fixed-variant": "#842500",
+                    "on-secondary-fixed-variant": "#373a9b",
+                    "outline": "#6d7b6d",
+                    "on-primary-fixed-variant": "#005225",
+                    "surface-variant": "#d3e4fe",
+                    "on-surface-variant": "#3d4a3e",
+                    "error-container": "#ffdad6",
+                    "on-error-container": "#93000a",
+                    "tertiary-fixed": "#ffdbd0",
+                    "inverse-primary": "#5adf82",
+                    "on-tertiary": "#ffffff",
+                    "on-error": "#ffffff",
+                    "surface-container-highest": "#d3e4fe",
+                    "primary-container": "#008740",
+                    "on-tertiary-container": "#fffbff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "container-margin": "24px",
+                    "base": "4px",
+                    "md": "16px",
+                    "lg": "24px",
+                    "gutter": "16px",
+                    "xs": "4px",
+                    "sm": "8px",
+                    "xl": "32px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-sm": ["Inter"],
+                    "title-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "title-md": ["Inter"],
+                    "display-md": ["Inter"],
+                    "label-md": ["Inter"]
+            },
+            "fontSize": {
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-sm": ["11px", {"lineHeight": "16px", "fontWeight": "600"}],
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "title-lg": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "title-md": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                    "display-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #bccabb; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #6d7b6d; }
+    </style>
+</head>
+<body class="bg-surface font-body-md text-on-surface">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-screen w-[280px] bg-surface border-r border-outline-variant flex flex-col py-md z-50">
+<div class="px-lg mb-xl">
+<h1 class="font-title-lg text-title-lg font-bold text-primary">MediLink BD</h1>
+<p class="font-label-md text-label-md text-on-surface-variant">Admin Console</p>
+</div>
+<nav class="flex-1 overflow-y-auto px-sm space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="local_pharmacy">local_pharmacy</span>
+<span class="font-label-md text-label-md">Pharmacies</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-primary bg-surface-container-high border-r-4 border-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="group" style="font-variation-settings: 'FILL' 1;">group</span>
+<span class="font-label-md text-label-md">Customers</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
+<span class="font-label-md text-label-md">Orders</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span class="font-label-md text-label-md">Prescriptions</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="local_shipping">local_shipping</span>
+<span class="font-label-md text-label-md">Deliveries</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="font-label-md text-label-md">Payments</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="gavel">gavel</span>
+<span class="font-label-md text-label-md">Disputes</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="assessment">assessment</span>
+<span class="font-label-md text-label-md">Reports</span>
+</a>
+<div class="pt-xl mt-xl border-t border-outline-variant mx-4">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="font-label-md text-label-md">Notifications</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</div>
+</nav>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-[280px] min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="flex justify-between items-center h-16 px-lg bg-surface border-b border-outline-variant sticky top-0 z-40">
+<div class="flex items-center flex-1 max-w-xl">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" data-icon="search">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-full font-body-md text-body-md focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all" placeholder="Search customers, ID, or phone..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-full transition-transform scale-95 active:scale-90">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-full relative transition-transform scale-95 active:scale-90">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border-2 border-surface"></span>
+</button>
+<div class="h-8 w-[1px] bg-outline-variant mx-2"></div>
+<div class="flex items-center gap-3">
+<div class="text-right">
+<p class="font-label-md text-label-md font-bold text-on-surface">Admin User</p>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-wider">Super Admin</p>
+</div>
+<img class="w-10 h-10 rounded-full border border-outline-variant object-cover" data-alt="A professional headshot of a senior healthcare administrator, smiling warmly in a bright, modern office setting with medical research equipment softly blurred in the background. The lighting is crisp and high-key, reinforcing a light-mode aesthetic. The color palette is composed of soft whites, slate blues, and professional greens, matching a clean healthcare brand identity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjIHizdXrpjdcYWiovKxn8uPOh81U1RfoHkudB9jd-i06UfqQVk7HcHPXDHvUx3_D6SxDnS5bUnVguQLivTctWIUA1EG68nK6f_eahv8lSr_uoAqkZAtNQloHUp2e8pz9AcoeVXP5W1-82a_3k4gmIsAl-4RFafPILACl63fxiBGwKhkUE1Y9gzSQ-LMlVqfcd23fhfcOKPxVKA3HUNpln1i7Vngll35_7Y1pnw-r0WLEnWQUtZFtYoejsImlbpYvxgOaLK8bZ6ac"/>
+</div>
+</div>
+</header>
+<!-- Content Canvas -->
+<div class="p-lg flex-1 overflow-auto">
+<div class="flex flex-col gap-lg">
+<!-- Header & Stats Bento Grid -->
+<div class="grid grid-cols-12 gap-gutter">
+<div class="col-span-12 lg:col-span-8">
+<h2 class="font-display-md text-display-md text-on-surface">Customer Management</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Monitor, verify, and manage your user base across Bangladesh.</p>
+</div>
+<div class="col-span-12 lg:col-span-4 flex justify-end items-start gap-3">
+<button class="flex items-center gap-2 px-md py-2 border border-primary text-primary font-title-md text-title-md rounded-lg hover:bg-surface-container transition-all">
+<span class="material-symbols-outlined" data-icon="download">download</span>
+                            Export List
+                        </button>
+<button class="flex items-center gap-2 px-md py-2 bg-primary text-on-primary font-title-md text-title-md rounded-lg shadow-sm hover:opacity-90 transition-all">
+<span class="material-symbols-outlined" data-icon="person_add">person_add</span>
+                            Add Customer
+                        </button>
+</div>
+</div>
+<!-- Stats Cards -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-gutter">
+<div class="bg-surface-container-lowest border border-outline-variant p-md rounded-xl flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+</div>
+<div>
+<p class="text-label-md font-label-md text-on-surface-variant">Total Customers</p>
+<p class="text-title-lg font-title-lg text-on-surface">12,482</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-md rounded-xl flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-green-50 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="verified" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<div>
+<p class="text-label-md font-label-md text-on-surface-variant">Active Now</p>
+<p class="text-title-lg font-title-lg text-on-surface">8,921</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-md rounded-xl flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-orange-50 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined" data-icon="pending_actions">pending_actions</span>
+</div>
+<div>
+<p class="text-label-md font-label-md text-on-surface-variant">Pending Verification</p>
+<p class="text-title-lg font-title-lg text-on-surface">156</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-md rounded-xl flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-red-50 flex items-center justify-center text-error">
+<span class="material-symbols-outlined" data-icon="block">block</span>
+</div>
+<div>
+<p class="text-label-md font-label-md text-on-surface-variant">Suspended Accounts</p>
+<p class="text-title-lg font-title-lg text-on-surface">24</p>
+</div>
+</div>
+</div>
+<!-- Table Container -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden flex flex-col shadow-sm">
+<!-- Filters Bar -->
+<div class="p-md border-b border-outline-variant flex flex-wrap items-center justify-between gap-md bg-surface-container-low/30">
+<div class="flex items-center gap-3">
+<span class="text-label-md font-label-md text-on-surface-variant">Filter by Status:</span>
+<div class="flex bg-surface-container border border-outline-variant rounded-lg p-1">
+<button class="px-3 py-1.5 rounded-md text-label-md font-label-md bg-surface-container-lowest shadow-sm text-primary">All</button>
+<button class="px-3 py-1.5 rounded-md text-label-md font-label-md text-on-surface-variant hover:text-primary transition-colors">Active</button>
+<button class="px-3 py-1.5 rounded-md text-label-md font-label-md text-on-surface-variant hover:text-primary transition-colors">Suspended</button>
+<button class="px-3 py-1.5 rounded-md text-label-md font-label-md text-on-surface-variant hover:text-primary transition-colors">Pending</button>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<button class="flex items-center gap-2 px-md py-1.5 border border-outline-variant text-on-surface-variant font-label-md text-label-md rounded-lg hover:bg-surface-container transition-all">
+<span class="material-symbols-outlined text-[18px]" data-icon="filter_list">filter_list</span>
+                                Advanced Filters
+                            </button>
+<button class="flex items-center gap-2 px-md py-1.5 border border-outline-variant text-on-surface-variant font-label-md text-label-md rounded-lg hover:bg-surface-container transition-all">
+<span class="material-symbols-outlined text-[18px]" data-icon="sort">sort</span>
+                                Sort by: Newest
+                            </button>
+</div>
+</div>
+<!-- Customer Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low/50">
+<th class="px-lg py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Customer Name</th>
+<th class="px-lg py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Phone</th>
+<th class="px-lg py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Location</th>
+<th class="px-lg py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider text-right">Total Orders</th>
+<th class="px-lg py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Account Status</th>
+<th class="px-lg py-4 font-label-md text-label-md text-on-surface-variant uppercase tracking-wider text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors group">
+<td class="px-lg py-4">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-bold">AK</div>
+<div>
+<p class="font-title-md text-title-md text-on-surface">Abul Kashem</p>
+<p class="text-label-md text-on-surface-variant">ID: #ML-2941</p>
+</div>
+</div>
+</td>
+<td class="px-lg py-4 font-body-md text-body-md text-on-surface">+880 1711-223344</td>
+<td class="px-lg py-4 font-body-md text-body-md text-on-surface">Dhaka, Bangladesh</td>
+<td class="px-lg py-4 font-body-md text-body-md text-on-surface text-right tabular-nums">42</td>
+<td class="px-lg py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-primary">
+<span class="w-1.5 h-1.5 rounded-full bg-primary mr-1.5"></span>
+                                            Active
+                                        </span>
+</td>
+<td class="px-lg py-4 text-right">
+<div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-lg transition-all" title="View Profile">
+<span class="material-symbols-outlined text-[20px]" data-icon="visibility">visibility</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-error hover:bg-error-container rounded-lg transition-all" title="Suspend Account">
+<span class="material-symbols-outlined text-[20px]" data-icon="block">block</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors group">
+<td class="px-lg py-4">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-tertiary-container text-on-tertiary flex items-center justify-center font-bold">NS</div>
+<div>
+<p class="font-title-md text-title-md text-on-surface">Nusrat Sultana</p>
+<p class="text-label-md text-on-surface-variant">ID: #ML-8812</p>
+</div>
+</div>
+</td>
+<td class="px-lg py-4 font-body-md text-body-md text-on-surface">+880 1922-334455</td>
+<td class="px-lg py-4 font-body-md text-body-md text-on-surface">Chittagong, BD</td>
+<td class="px-lg py-4 font-body-md text-body-md text-on-surface text-right tabular-nums">0</td>
+<td class="px-lg py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-tertiary">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary mr-1.5"></span>
+                                            Pending Verification
+                                        </span>
+</td>
+<td class="px-lg py-4 text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="px-3 py-1 bg-primary text-on-primary text-xs font-bold rounded hover:opacity-90 transition-all">Verify Identity</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg transition-all">
+<span class="material-symbols-outlined text-[20px]" data-icon="more_vert">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors group">
+<td class="px-lg py-4">
+<div class="flex items-center gap-3">
+<img class="w-9 h-9 rounded-full object-cover" data-alt="A small, circular avatar portrait of a young Bangladeshi man with short black hair, wearing a casual polo shirt. The background is a flat, clean neutral grey typical of a professional user profile photo. High quality digital photography with professional studio lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHQTuwk1etLfWgCucqdiO_1BdQGfkybqVBu86GAoQS5wa7gR8mwf_Z35P_qbVSoCEg9FXYLBp2eagcSm4QI9A4Taee0zJYGxbh7KWWvLRNoQ5d8ryFpGPyoueTsRIyQ9gDxd47oZ-0BPkjZ8sz_qu_Z5ZX7cojzHjwTtH__EW2W4BzgPzTDq60Gs-eLPEebVIPAY6eVvk0NG6GYZ2XRiOyScmxzyYCKS0Q-h1Aq0KIPupcSXn6YU09aSKJmRYW60ITOusrcdIdiIA"/>
+<div>
+<p class="font-title-md text-title-md text-on-surface">Rafiqul Islam</p>
+<p class="text-label-md text-on-surface-variant">ID: #ML-4432</p>
+</div>
+</div>
+</td>
+<td class="px-lg py-4 font-body-md text-body-md text-on-surface">+880 1833-445566</td>
+<td class="px-lg py-4 font-body-md text-body-md text-on-surface">Sylhet, BD</td>
+<td class="px-lg py-4 font-body-md text-body-md text-on-surface text-right tabular-nums">128</td>
+<td class="px-lg py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-error">
+<span class="w-1.5 h-1.5 rounded-full bg-error mr-1.5"></span>
+                                            Suspended
+                                        </span>
+</td>
+<td class="px-lg py-4 text-right">
+<div class="flex items-center justify-end gap-1">
+<button class="p-2 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-lg transition-all" title="View Profile">
+<span class="material-symbols-outlined text-[20px]" data-icon="visibility">visibility</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-lg transition-all" title="Unsuspend">
+<span class="material-symbols-outlined text-[20px]" data-icon="settings_backup_restore">settings_backup_restore</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors group">
+<td class="px-lg py-4">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-secondary-container text-on-secondary flex items-center justify-center font-bold">MA</div>
+<div>
+<p class="font-title-md text-title-md text-on-surface">Marium Akter</p>
+<p class="text-label-md text-on-surface-variant">ID: #ML-1102</p>
+</div>
+</div>
+</td>
+<td class="px-lg py-4 font-body-md text-body-md text-on-surface">+880 1544-556677</td>
+<td class="px-lg py-4 font-body-md text-body-md text-on-surface">Rajshahi, BD</td>
+<td class="px-lg py-4 font-body-md text-body-md text-on-surface text-right tabular-nums">18</td>
+<td class="px-lg py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-primary">
+<span class="w-1.5 h-1.5 rounded-full bg-primary mr-1.5"></span>
+                                            Active
+                                        </span>
+</td>
+<td class="px-lg py-4 text-right">
+<div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-lg transition-all" title="View Profile">
+<span class="material-symbols-outlined text-[20px]" data-icon="visibility">visibility</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-error hover:bg-error-container rounded-lg transition-all" title="Suspend Account">
+<span class="material-symbols-outlined text-[20px]" data-icon="block">block</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="px-lg py-4 border-t border-outline-variant flex items-center justify-between bg-surface-container-low/30">
+<p class="text-label-md text-on-surface-variant">Showing <span class="font-bold text-on-surface">1-4</span> of <span class="font-bold text-on-surface">12,482</span> customers</p>
+<div class="flex items-center gap-2">
+<button class="p-1.5 border border-outline-variant rounded hover:bg-surface-container disabled:opacity-30" disabled="">
+<span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-primary text-on-primary rounded text-label-md font-bold">1</button>
+<button class="w-8 h-8 flex items-center justify-center hover:bg-surface-container rounded text-label-md">2</button>
+<button class="w-8 h-8 flex items-center justify-center hover:bg-surface-container rounded text-label-md">3</button>
+<span class="px-2 text-on-surface-variant">...</span>
+<button class="w-8 h-8 flex items-center justify-center hover:bg-surface-container rounded text-label-md">3,121</button>
+<button class="p-1.5 border border-outline-variant rounded hover:bg-surface-container">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Footer Quick Actions / Insights (Optional but adds SaaS quality) -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter mt-4">
+<div class="bg-surface-container p-lg rounded-xl border border-outline-variant relative overflow-hidden group">
+<div class="relative z-10">
+<h4 class="font-title-md text-title-md text-primary mb-1">Account Verifications</h4>
+<p class="text-body-md text-on-surface-variant mb-4">Verification queue has increased by 12% today.</p>
+<button class="text-label-md font-bold text-primary flex items-center gap-1 group-hover:gap-2 transition-all">
+                                Review Queue <span class="material-symbols-outlined text-[16px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+<span class="material-symbols-outlined absolute -bottom-4 -right-4 text-9xl text-primary/5 select-none" data-icon="how_to_reg">how_to_reg</span>
+</div>
+<div class="bg-surface-container p-lg rounded-xl border border-outline-variant relative overflow-hidden group">
+<div class="relative z-10">
+<h4 class="font-title-md text-title-md text-primary mb-1">Growth Analytics</h4>
+<p class="text-body-md text-on-surface-variant mb-4">Customer acquisition is trending up in Barishal region.</p>
+<button class="text-label-md font-bold text-primary flex items-center gap-1 group-hover:gap-2 transition-all">
+                                View Trends <span class="material-symbols-outlined text-[16px]" data-icon="trending_up">trending_up</span>
+</button>
+</div>
+<span class="material-symbols-outlined absolute -bottom-4 -right-4 text-9xl text-primary/5 select-none" data-icon="query_stats">query_stats</span>
+</div>
+<div class="bg-surface-container p-lg rounded-xl border border-outline-variant relative overflow-hidden group">
+<div class="relative z-10">
+<h4 class="font-title-md text-title-md text-primary mb-1">Support Insights</h4>
+<p class="text-body-md text-on-surface-variant mb-4">3 suspended users have requested profile appeals.</p>
+<button class="text-label-md font-bold text-primary flex items-center gap-1 group-hover:gap-2 transition-all">
+                                Resolve Disputes <span class="material-symbols-outlined text-[16px]" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+<span class="material-symbols-outlined absolute -bottom-4 -right-4 text-9xl text-primary/5 select-none" data-icon="contact_support">contact_support</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Simple micro-interactions
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.classList.add('scale-95');
+                setTimeout(() => this.classList.remove('scale-95'), 100);
+            });
+        });
+
+        // Search highlight logic placeholder
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('input', (e) => {
+            // Logic for filtering table rows would go here
+            console.log('Searching for:', e.target.value);
+        });
+    </script>
+</body></html>

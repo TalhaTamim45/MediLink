@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>MediLink - Map View</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "error-container": "#ffdad6",
+                        "outline-variant": "#bdc9c5",
+                        "surface-container-high": "#e8e8e8",
+                        "primary-fixed": "#90f4e3",
+                        "on-tertiary-fixed": "#000767",
+                        "surface-variant": "#e2e2e2",
+                        "on-tertiary-fixed-variant": "#343d96",
+                        "on-primary-fixed": "#00201c",
+                        "primary-fixed-dim": "#73d8c7",
+                        "secondary": "#40627b",
+                        "primary-container": "#008577",
+                        "on-tertiary-container": "#ffffff",
+                        "surface-container": "#eeeeee",
+                        "on-secondary-fixed-variant": "#274a62",
+                        "secondary-fixed": "#c9e6ff",
+                        "on-primary-container": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "surface": "#f9f9f9",
+                        "on-primary-fixed-variant": "#005047",
+                        "on-primary": "#ffffff",
+                        "inverse-primary": "#73d8c7",
+                        "secondary-container": "#bee1fe",
+                        "inverse-on-surface": "#f1f1f1",
+                        "surface-container-low": "#f3f3f3",
+                        "surface-bright": "#f9f9f9",
+                        "on-surface-variant": "#3e4946",
+                        "on-background": "#1a1c1c",
+                        "secondary-fixed-dim": "#a8cbe7",
+                        "tertiary": "#4c55ae",
+                        "on-tertiary": "#ffffff",
+                        "inverse-surface": "#2f3131",
+                        "on-error": "#ffffff",
+                        "surface-container-highest": "#e2e2e2",
+                        "surface-tint": "#006b5f",
+                        "on-secondary-fixed": "#001e2f",
+                        "tertiary-fixed-dim": "#bdc2ff",
+                        "primary": "#006a5e",
+                        "surface-dim": "#dadada",
+                        "on-surface": "#1a1c1c",
+                        "on-secondary-container": "#43647d",
+                        "tertiary-fixed": "#e0e0ff",
+                        "on-secondary": "#ffffff",
+                        "background": "#f9f9f9",
+                        "tertiary-container": "#656ec9",
+                        "outline": "#6d7a76",
+                        "error": "#ba1a1a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xs": "4px",
+                        "md": "16px",
+                        "margin-tablet": "32px",
+                        "sm": "8px",
+                        "base": "8px",
+                        "xxl": "48px",
+                        "xl": "32px",
+                        "margin-mobile": "16px",
+                        "gutter": "16px",
+                        "lg": "24px",
+                        "touch-target": "48px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "title-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "label-lg": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", { "lineHeight": "24px", "letterSpacing": "0.25px", "fontWeight": "400" }],
+                        "title-md": ["16px", { "lineHeight": "24px", "letterSpacing": "0.15px", "fontWeight": "600" }],
+                        "headline-md": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "title-lg": ["22px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "letterSpacing": "0.5px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "700" }],
+                        "display-lg": ["57px", { "lineHeight": "64px", "letterSpacing": "-0.25px", "fontWeight": "700" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "500" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .map-marker { animation: pulse 2s infinite; }
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 106, 94, 0.4); }
+            70% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(0, 106, 94, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 106, 94, 0); }
+        }
+        
+        /* Bottom Sheet Drag Area styling */
+        .bottom-sheet {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Hide scrollbar for clean UI */
+        ::-webkit-scrollbar { width: 0px; background: transparent; }
+    </style>
+</head>
+<body class="bg-background text-on-background h-screen w-screen overflow-hidden flex flex-col relative">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky z-50 bg-surface shadow-sm">
+<div class="flex items-center justify-between px-margin-mobile h-touch-target w-full">
+<button class="flex items-center justify-center w-12 h-12 text-primary hover:bg-surface-container-high transition-colors rounded-full active:scale-95 transition-transform duration-100">
+<span class="material-symbols-outlined" data-icon="health_and_safety">health_and_safety</span>
+</button>
+<h1 class="text-title-lg font-title-lg font-bold text-primary">MediLink</h1>
+<button class="flex items-center justify-center w-12 h-12 text-on-surface-variant hover:bg-surface-container-high transition-colors rounded-full active:scale-95 transition-transform duration-100 relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-3 w-2 h-2 bg-error rounded-full"></span>
+</button>
+</div>
+<!-- Search and Filter Bar beneath TopAppBar -->
+<div class="px-margin-mobile pb-md bg-surface">
+<div class="flex flex-col gap-sm">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full pl-12 pr-12 py-3 rounded-full bg-surface-container border-none focus:ring-2 focus:ring-primary text-body-md font-body-md text-on-surface shadow-sm" placeholder="Search pharmacies in Dhaka..." type="text"/>
+<button class="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">tune</span>
+</button>
+</div>
+<div class="flex gap-sm overflow-x-auto pb-1 scrollbar-hide">
+<button class="flex items-center gap-2 px-4 py-2 rounded-full bg-secondary-container text-on-secondary-container border border-outline-variant font-label-md text-label-md whitespace-nowrap">
+<span class="material-symbols-outlined text-sm">filter_list</span>
+                        Filter
+                        <span class="material-symbols-outlined text-sm">expand_more</span>
+</button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-full bg-surface-container text-on-surface-variant border border-outline-variant font-label-md text-label-md whitespace-nowrap">
+<span class="material-symbols-outlined text-sm">local_pharmacy</span>
+                        Open Now
+                    </button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-full bg-surface-container text-on-surface-variant border border-outline-variant font-label-md text-label-md whitespace-nowrap">
+<span class="material-symbols-outlined text-sm">star</span>
+                        Top Rated
+                    </button>
+</div>
+</div>
+</div>
+</header>
+<!-- Map Canvas (Main Content) -->
+<main class="flex-1 relative w-full h-full bg-surface-container-low">
+<!-- Map Background Image Placeholder -->
+<div class="absolute inset-0 w-full h-full">
+<img alt="Map of Dhaka" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/AP1WRLtEMF9fR18WjFSpzIwXNRxmQLQaCLSTOv4tRO3tCQS-TbyPbUwmaG85hjQMBtHC03UWTaDDyp-bt61oiWbBG8Zbqbe9cX1PGWNYJMwm7KGAPiD2ZMcfJ0RWCGVx2dGMDQ9r1SRW4cpVDJEY74KZMJxdwVD2xPgtmvcXYlkloLV5RmWELlGKHXDHxuroNydHDWg8bccVjKAIdsKzu68QTSI8qLwfzh_y-GFrjbA5RtzUClNC0-4fNI3-hxwp"/>
+<!-- Map Markers Overlay -->
+<!-- Marker 1: Lazz Pharma (Central) -->
+<div class="absolute top-[35%] left-[45%] flex flex-col items-center transform -translate-x-1/2 -translate-y-1/2 group z-10">
+<div class="bg-primary text-on-primary rounded-full p-2 shadow-lg map-marker cursor-pointer border-2 border-surface">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">local_pharmacy</span>
+</div>
+</div>
+<!-- Marker 2: Medix Pharmacy -->
+<div class="absolute top-[50%] left-[30%] flex flex-col items-center transform -translate-x-1/2 -translate-y-1/2 z-0">
+<div class="bg-primary text-on-primary rounded-full p-1.5 shadow-md border-2 border-surface opacity-80 hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">local_pharmacy</span>
+</div>
+</div>
+<!-- Marker 3: Apollo Pharma -->
+<div class="absolute top-[25%] left-[65%] flex flex-col items-center transform -translate-x-1/2 -translate-y-1/2 z-0">
+<div class="bg-primary text-on-primary rounded-full p-1.5 shadow-md border-2 border-surface opacity-80 hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">local_pharmacy</span>
+</div>
+</div>
+<!-- User Location Marker -->
+<div class="absolute top-[40%] left-[50%] flex flex-col items-center transform -translate-x-1/2 -translate-y-1/2 z-0">
+<div class="bg-tertiary text-on-tertiary rounded-full p-1 shadow-md border-2 border-surface relative">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">my_location</span>
+<div class="absolute inset-0 bg-tertiary rounded-full opacity-20 animate-ping"></div>
+</div>
+</div>
+</div>
+<!-- Map Controls -->
+<div class="absolute top-4 right-4 flex flex-col gap-2 z-20">
+<button class="w-12 h-12 bg-surface text-on-surface rounded-xl shadow-sm flex items-center justify-center hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">layers</span>
+</button>
+<button class="w-12 h-12 bg-surface text-on-surface rounded-xl shadow-sm flex items-center justify-center hover:bg-surface-container-high transition-colors mt-8">
+<span class="material-symbols-outlined">my_location</span>
+</button>
+</div>
+</main>
+<!-- Bottom Sheet (Nearby Pharmacies) -->
+<div class="bottom-sheet absolute bottom-[72px] md:bottom-0 left-0 w-full bg-surface rounded-t-3xl shadow-[0_-4px_16px_rgba(0,0,0,0.1)] z-40 flex flex-col max-h-[60vh]">
+<!-- Drag Handle -->
+<div class="w-full flex justify-center pt-3 pb-2 cursor-grab active:cursor-grabbing">
+<div class="w-12 h-1.5 bg-outline-variant rounded-full"></div>
+</div>
+<!-- Sheet Header -->
+<div class="px-margin-mobile pb-sm">
+<h2 class="text-title-md font-title-md text-on-surface">Nearby Pharmacies</h2>
+</div>
+<!-- Pharmacy List -->
+<div class="flex-1 overflow-y-auto px-margin-mobile pb-xl">
+<div class="flex flex-col gap-sm">
+<!-- Pharmacy Card 1 (Active/Closest) -->
+<div class="bg-surface-container-lowest rounded-xl p-md border border-primary-fixed-dim shadow-sm flex flex-col gap-sm">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 bg-primary-container text-on-primary-container rounded-full flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">local_pharmacy</span>
+</div>
+<div>
+<div class="flex items-center gap-1">
+<h3 class="text-title-md font-title-md text-on-surface">Lazz Pharma - Central</h3>
+<span class="material-symbols-outlined text-primary text-[16px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<p class="text-label-md font-label-md text-on-surface-variant">Dhanmondi, Dhaka</p>
+</div>
+</div>
+<div class="text-right flex flex-col items-end">
+<span class="text-label-md font-label-md text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-md">1.2 km</span>
+<div class="flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-[#F59E0B] text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-label-md font-label-md font-bold text-on-surface">4.8</span>
+</div>
+</div>
+</div>
+<div class="flex gap-sm mt-2">
+<button class="flex-1 h-[48px] bg-primary text-on-primary rounded-lg font-label-lg text-label-lg flex items-center justify-center gap-2 hover:bg-primary-fixed-variant transition-colors">
+<span class="material-symbols-outlined text-[18px]">directions</span>
+                            Directions
+                        </button>
+<button class="w-[48px] h-[48px] border-2 border-primary text-primary rounded-lg flex items-center justify-center hover:bg-primary-container hover:text-on-primary-container transition-colors shrink-0">
+<span class="material-symbols-outlined text-[20px]">call</span>
+</button>
+</div>
+</div>
+<!-- Pharmacy Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-md border border-surface-variant shadow-sm flex flex-col gap-sm">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 bg-surface-container-high text-on-surface-variant rounded-full flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined">local_pharmacy</span>
+</div>
+<div>
+<div class="flex items-center gap-1">
+<h3 class="text-title-md font-title-md text-on-surface">Medix Pharmacy</h3>
+<span class="material-symbols-outlined text-primary text-[16px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<p class="text-label-md font-label-md text-on-surface-variant">Gulshan, Dhaka</p>
+</div>
+</div>
+<div class="text-right flex flex-col items-end">
+<span class="text-label-md font-label-md text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-md">3.5 km</span>
+<div class="flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-[#F59E0B] text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-label-md font-label-md font-bold text-on-surface">4.5</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Pharmacy Card 3 -->
+<div class="bg-surface-container-lowest rounded-xl p-md border border-surface-variant shadow-sm flex flex-col gap-sm mb-8">
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 bg-surface-container-high text-on-surface-variant rounded-full flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined">local_pharmacy</span>
+</div>
+<div>
+<div class="flex items-center gap-1">
+<h3 class="text-title-md font-title-md text-on-surface">Apollo Pharma</h3>
+</div>
+<p class="text-label-md font-label-md text-on-surface-variant">Banani, Dhaka</p>
+</div>
+</div>
+<div class="text-right flex flex-col items-end">
+<span class="text-label-md font-label-md text-on-surface-variant bg-surface-container px-2 py-0.5 rounded-md">5.0 km</span>
+<div class="flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-[#F59E0B] text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-label-md font-label-md font-bold text-on-surface">4.2</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-2 bg-surface border-t border-surface-variant z-50 rounded-t-xl shadow-[0_-1px_3px_0_rgba(0,0,0,0.1)] pb-safe">
+<!-- Home (Inactive) -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-variant transition-colors px-4 py-1 rounded-full w-16 h-14 active:scale-90 transition-transform duration-150">
+<span class="material-symbols-outlined mb-1">home</span>
+<span class="font-label-md text-label-md">Home</span>
+</button>
+<!-- Map (Active) -->
+<button class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-4 py-1 w-16 h-14 hover:bg-surface-variant transition-colors active:scale-90 transition-transform duration-150">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">map</span>
+<span class="font-label-md text-label-md font-bold">Map</span>
+</button>
+<!-- Orders (Inactive) -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-variant transition-colors px-4 py-1 rounded-full w-16 h-14 active:scale-90 transition-transform duration-150">
+<span class="material-symbols-outlined mb-1">receipt_long</span>
+<span class="font-label-md text-label-md">Orders</span>
+</button>
+<!-- Profile (Inactive) -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-variant transition-colors px-4 py-1 rounded-full w-16 h-14 active:scale-90 transition-transform duration-150">
+<span class="material-symbols-outlined mb-1">person</span>
+<span class="font-label-md text-label-md">Profile</span>
+</button>
+</nav>
+</body></html>

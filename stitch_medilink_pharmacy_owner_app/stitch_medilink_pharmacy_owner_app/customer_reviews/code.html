@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MediLink - Customer Reviews</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .star-fill {
+      font-variation-settings: 'FILL' 1;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #bfcaba;
+      border-radius: 10px;
+    }
+  </style>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+                  "on-primary-container": "#cbffc2",
+                  "on-error-container": "#93000a",
+                  "error": "#ba1a1a",
+                  "secondary-fixed-dim": "#90d792",
+                  "on-primary-fixed": "#002204",
+                  "error-container": "#ffdad6",
+                  "primary": "#0d631b",
+                  "surface": "#fbf9f9",
+                  "tertiary-fixed-dim": "#91d78a",
+                  "secondary": "#286b33",
+                  "on-surface-variant": "#40493d",
+                  "on-background": "#1b1c1c",
+                  "on-surface": "#1b1c1c",
+                  "outline": "#707a6c",
+                  "surface-variant": "#e3e2e2",
+                  "surface-container-highest": "#e3e2e2",
+                  "surface-container-high": "#e9e8e7",
+                  "primary-fixed": "#a3f69c",
+                  "primary-container": "#2e7d32",
+                  "background": "#fbf9f9",
+                  "on-tertiary-fixed": "#002203",
+                  "on-secondary-fixed-variant": "#07521d",
+                  "inverse-surface": "#303031",
+                  "on-primary": "#ffffff",
+                  "tertiary-fixed": "#acf4a4",
+                  "surface-container-low": "#f5f3f3",
+                  "primary-fixed-dim": "#88d982",
+                  "surface-bright": "#fbf9f9",
+                  "on-tertiary": "#ffffff",
+                  "on-primary-fixed-variant": "#005312",
+                  "on-error": "#ffffff",
+                  "on-tertiary-container": "#c8ffbf",
+                  "on-tertiary-fixed-variant": "#0c5216",
+                  "surface-dim": "#dbdad9",
+                  "secondary-fixed": "#abf4ac",
+                  "on-secondary-fixed": "#002107",
+                  "tertiary": "#1f6223",
+                  "secondary-container": "#abf4ac",
+                  "surface-container": "#efeded",
+                  "surface-tint": "#1b6d24",
+                  "inverse-on-surface": "#f2f0f0",
+                  "on-secondary-container": "#2e7238",
+                  "on-secondary": "#ffffff",
+                  "outline-variant": "#bfcaba",
+                  "inverse-primary": "#88d982"
+          },
+          "borderRadius": {
+                  "DEFAULT": "0.25rem",
+                  "lg": "0.5rem",
+                  "xl": "0.75rem",
+                  "full": "9999px"
+          },
+          "spacing": {
+                  "margin-mobile": "16px",
+                  "xs": "4px",
+                  "xl": "32px",
+                  "container-max": "1440px",
+                  "sm": "8px",
+                  "md": "16px",
+                  "margin-desktop": "32px",
+                  "lg": "24px",
+                  "gutter": "24px",
+                  "base": "8px"
+          },
+          "fontFamily": {
+                  "headline-lg-mobile": ["Inter"],
+                  "title-lg": ["Inter"],
+                  "label-lg": ["Inter"],
+                  "body-lg": ["Inter"],
+                  "label-sm": ["Inter"],
+                  "display-lg": ["Inter"],
+                  "headline-lg": ["Inter"],
+                  "body-md": ["Inter"]
+          },
+          "fontSize": {
+                  "headline-lg-mobile": ["28px", {"lineHeight": "36px", "letterSpacing": "0px", "fontWeight": "600"}],
+                  "title-lg": ["22px", {"lineHeight": "28px", "letterSpacing": "0px", "fontWeight": "500"}],
+                  "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "500"}],
+                  "body-lg": ["16px", {"lineHeight": "24px", "letterSpacing": "0.5px", "fontWeight": "400"}],
+                  "label-sm": ["11px", {"lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500"}],
+                  "display-lg": ["57px", {"lineHeight": "64px", "letterSpacing": "-0.25px", "fontWeight": "400"}],
+                  "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "0px", "fontWeight": "600"}],
+                  "body-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.25px", "fontWeight": "400"}]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-24 md:pb-0">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center h-16 px-margin-mobile md:px-margin-desktop w-full bg-surface-container dark:bg-surface-container-highest">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="local_pharmacy">local_pharmacy</span>
+<h1 class="font-title-lg text-title-lg font-bold text-primary dark:text-primary-fixed-dim">MediLink</h1>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden md:flex items-center gap-6 mr-6">
+<a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-colors" href="#">Dashboard</a>
+<a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-colors" href="#">Orders</a>
+<a class="font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-colors" href="#">Inventory</a>
+<a class="font-label-lg text-label-lg text-primary font-bold" href="#">Reviews</a>
+</div>
+<div class="w-10 h-10 rounded-full bg-surface-variant flex items-center justify-center overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a middle-aged pharmacy owner with a kind smile, wearing a clean white lab coat. The background is a soft-focus pharmaceutical pharmacy setting with shelves of neatly organized medicine bottles. The lighting is bright and airy, reflecting a clean, corporate pharmaceutical aesthetic with soft greens and neutrals." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBYojOew90kJJcWCdCSTNVjBICyZKfiT-Hl4QQNrfNpjWEyiivl-1aDfaCxHx8C1H2RHSx_STLDYNTKjtLWV4yuJgylYj9tx5-Y2GAQPcL-xKCADvS8av-lMgJU4q-SpsS-sscqfQcfxFCgnqSntQ0oEIINI3B9-zKQImVwqIprhgEgZpssBaqHb6NIlQG7DhRRU0Bg32oa_DKJxSRtfYyInLyFZHQA1ut8JEz8Q6BtcImovm5I3bOYGsKut64r8ocSEjk8G9rsKRVu"/>
+</div>
+</div>
+</header>
+<main class="pt-24 pb-12 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+<div class="mb-xl">
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">Customer Sentiment</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Analyze pharmaceutical service quality through patient feedback.</p>
+</div>
+<!-- Review Overview Section - Bento Style -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-gutter mb-xl">
+<!-- Rating Card -->
+<div class="md:col-span-4 bg-white p-lg rounded-xl border border-outline-variant shadow-sm flex flex-col items-center justify-center text-center">
+<span class="font-display-lg text-display-lg text-on-surface font-bold">4.8</span>
+<div class="flex gap-1 my-2">
+<span class="material-symbols-outlined text-primary star-fill" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary star-fill" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary star-fill" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary star-fill" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary" data-icon="star_half">star_half</span>
+</div>
+<p class="font-label-lg text-label-lg text-on-surface-variant">Based on 1,248 pharmacy visits</p>
+</div>
+<!-- Stats Bar Chart Card -->
+<div class="md:col-span-8 bg-white p-lg rounded-xl border border-outline-variant shadow-sm">
+<h3 class="font-title-lg text-title-lg text-on-surface mb-md">Rating Distribution</h3>
+<div class="space-y-3">
+<!-- 5 Star -->
+<div class="flex items-center gap-4">
+<span class="font-label-sm text-label-sm w-12 shrink-0">5 Stars</span>
+<div class="grow h-3 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full transition-all duration-1000" style="width: 82%"></div>
+</div>
+<span class="font-label-sm text-label-sm w-10 text-right">82%</span>
+</div>
+<!-- 4 Star -->
+<div class="flex items-center gap-4">
+<span class="font-label-sm text-label-sm w-12 shrink-0">4 Stars</span>
+<div class="grow h-3 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary/70 rounded-full transition-all duration-1000" style="width: 12%"></div>
+</div>
+<span class="font-label-sm text-label-sm w-10 text-right">12%</span>
+</div>
+<!-- 3 Star -->
+<div class="flex items-center gap-4">
+<span class="font-label-sm text-label-sm w-12 shrink-0">3 Stars</span>
+<div class="grow h-3 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-secondary-container rounded-full transition-all duration-1000" style="width: 4%"></div>
+</div>
+<span class="font-label-sm text-label-sm w-10 text-right">4%</span>
+</div>
+<!-- 2 Star -->
+<div class="flex items-center gap-4">
+<span class="font-label-sm text-label-sm w-12 shrink-0">2 Stars</span>
+<div class="grow h-3 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-error-container/50 rounded-full transition-all duration-1000" style="width: 1%"></div>
+</div>
+<span class="font-label-sm text-label-sm w-10 text-right">1%</span>
+</div>
+<!-- 1 Star -->
+<div class="flex items-center gap-4">
+<span class="font-label-sm text-label-sm w-12 shrink-0">1 Star</span>
+<div class="grow h-3 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-error rounded-full transition-all duration-1000" style="width: 1%"></div>
+</div>
+<span class="font-label-sm text-label-sm w-10 text-right">1%</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Filter Bar -->
+<div class="flex flex-wrap items-center gap-3 mb-lg">
+<button class="px-5 py-2 rounded-full bg-primary text-on-primary font-label-lg text-label-lg flex items-center gap-2">
+<span>All Reviews</span>
+</button>
+<button class="px-5 py-2 rounded-full border border-outline-variant bg-surface hover:bg-surface-variant transition-colors text-on-surface-variant font-label-lg text-label-lg flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] star-fill" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span>5 Stars</span>
+</button>
+<button class="px-5 py-2 rounded-full border border-outline-variant bg-surface hover:bg-surface-variant transition-colors text-on-surface-variant font-label-lg text-label-lg flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] star-fill" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span>4 Stars</span>
+</button>
+<button class="px-5 py-2 rounded-full border border-outline-variant bg-surface hover:bg-surface-variant transition-colors text-on-surface-variant font-label-lg text-label-lg flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="warning">warning</span>
+<span>Critical</span>
+</button>
+<div class="grow"></div>
+<div class="relative w-full md:w-64">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" data-icon="search">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-white border border-outline-variant rounded-full text-body-md focus:ring-2 focus:ring-primary outline-none" placeholder="Search keywords..." type="text"/>
+</div>
+</div>
+<!-- Reviews Feed -->
+<div class="space-y-gutter">
+<!-- Review Card 1 -->
+<div class="bg-white p-lg rounded-xl border border-outline-variant shadow-sm hover:border-primary/30 transition-all duration-300">
+<div class="flex flex-col md:flex-row justify-between md:items-start gap-4 mb-md">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-bold text-lg">AS</div>
+<div>
+<h4 class="font-title-lg text-title-lg text-on-surface">Alice Simmons</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant">October 24, 2023</p>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<div class="flex gap-1">
+<span class="material-symbols-outlined text-primary star-fill" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary star-fill" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary star-fill" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary star-fill" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary star-fill" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+</div>
+<span class="px-3 py-1 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm">Verified Patient</span>
+</div>
+</div>
+<p class="font-body-lg text-body-lg text-on-surface leading-relaxed mb-lg">
+          The pharmacist was incredibly helpful in explaining my new medication's side effects. I appreciate the professional and calm environment at MediLink. The wait time was minimal even during peak hours.
+        </p>
+<div class="flex justify-between items-center pt-md border-t border-outline-variant/30">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]" data-icon="thumb_up">thumb_up</span>
+<span class="font-label-sm text-label-sm">Helpful (12)</span>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary text-on-secondary hover:bg-secondary/90 transition-colors font-label-lg text-label-lg">
+<span class="material-symbols-outlined text-[18px]" data-icon="reply">reply</span>
+            Reply
+          </button>
+</div>
+</div>
+<!-- Review Card 2 -->
+<div class="bg-white p-lg rounded-xl border border-outline-variant shadow-sm hover:border-primary/30 transition-all duration-300">
+<div class="flex flex-col md:flex-row justify-between md:items-start gap-4 mb-md">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-tertiary-container flex items-center justify-center text-on-tertiary-container font-bold text-lg">JM</div>
+<div>
+<h4 class="font-title-lg text-title-lg text-on-surface">James Miller</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant">October 22, 2023</p>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<div class="flex gap-1">
+<span class="material-symbols-outlined text-primary star-fill" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary star-fill" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary star-fill" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-primary star-fill" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-outline-variant" data-icon="star">star</span>
+</div>
+<span class="px-3 py-1 rounded-full bg-primary/10 text-primary font-label-sm text-label-sm">Verified Patient</span>
+</div>
+</div>
+<p class="font-body-lg text-body-lg text-on-surface leading-relaxed mb-lg">
+          Fast service and they always have my prescriptions in stock. One star off only because the parking lot was quite full, but the service inside was impeccable. Highly recommended for chronic care patients.
+        </p>
+<div class="flex justify-between items-center pt-md border-t border-outline-variant/30">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]" data-icon="thumb_up">thumb_up</span>
+<span class="font-label-sm text-label-sm">Helpful (4)</span>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary text-on-secondary hover:bg-secondary/90 transition-colors font-label-lg text-label-lg">
+<span class="material-symbols-outlined text-[18px]" data-icon="reply">reply</span>
+            Reply
+          </button>
+</div>
+</div>
+<!-- Review Card 3 (Critical) -->
+<div class="bg-error-container/10 p-lg rounded-xl border border-error/20 shadow-sm hover:border-error/40 transition-all duration-300">
+<div class="flex flex-col md:flex-row justify-between md:items-start gap-4 mb-md">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-error-container flex items-center justify-center text-on-error-container font-bold text-lg">RK</div>
+<div>
+<h4 class="font-title-lg text-title-lg text-on-surface">Robert Klein</h4>
+<p class="font-label-sm text-label-sm text-on-surface-variant">October 19, 2023</p>
+</div>
+</div>
+<div class="flex flex-col items-end gap-1">
+<div class="flex gap-1">
+<span class="material-symbols-outlined text-error star-fill" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-error star-fill" data-icon="star" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-outline-variant" data-icon="star">star</span>
+<span class="material-symbols-outlined text-outline-variant" data-icon="star">star</span>
+<span class="material-symbols-outlined text-outline-variant" data-icon="star">star</span>
+</div>
+<span class="px-3 py-1 rounded-full bg-error/10 text-error font-label-sm text-label-sm">Needs Attention</span>
+</div>
+</div>
+<p class="font-body-lg text-body-lg text-on-surface leading-relaxed mb-lg">
+          Had a bit of trouble with the online refill system yesterday. It wouldn't recognize my insurance provider. I had to call the pharmacy directly, which took 10 minutes on hold. The staff was nice once I got through though.
+        </p>
+<div class="flex justify-between items-center pt-md border-t border-outline-variant/30">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]" data-icon="thumb_up">thumb_up</span>
+<span class="font-label-sm text-label-sm">Helpful (2)</span>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 rounded-lg bg-error text-on-error hover:bg-error/90 transition-colors font-label-lg text-label-lg">
+<span class="material-symbols-outlined text-[18px]" data-icon="reply">reply</span>
+            Address Issue
+          </button>
+</div>
+</div>
+</div>
+<!-- Pagination -->
+<div class="mt-xl flex justify-center items-center gap-2">
+<button class="w-10 h-10 rounded-full flex items-center justify-center border border-outline-variant hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span>
+</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center bg-primary text-on-primary font-label-lg">1</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-variant font-label-lg">2</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-variant font-label-lg">3</button>
+<span class="px-2">...</span>
+<button class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-surface-variant font-label-lg">12</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center border border-outline-variant hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</main>
+<!-- BottomNavBar (Mobile only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center h-20 bg-surface-container dark:bg-surface-container shadow-lg pb-safe px-2 z-50 rounded-t-xl">
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-1" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-sm text-label-sm">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-1" href="#">
+<span class="material-symbols-outlined" data-icon="prescriptions">prescriptions</span>
+<span class="font-label-sm text-label-sm">Orders</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-1" href="#">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="font-label-sm text-label-sm">Inventory</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-secondary-container dark:bg-secondary-container text-on-secondary-container dark:text-on-secondary-container rounded-full px-5 py-1" href="#">
+<span class="material-symbols-outlined" data-icon="payments" style="font-variation-settings: 'FILL' 1;">payments</span>
+<span class="font-label-sm text-label-sm">Earnings</span>
+</a>
+</nav>
+<script>
+    // Micro-interactions for hover effects on bars
+    document.querySelectorAll('.grow.h-3').forEach(bar => {
+      bar.addEventListener('mouseenter', () => {
+        bar.querySelector('div').style.filter = 'brightness(1.1)';
+      });
+      bar.addEventListener('mouseleave', () => {
+        bar.querySelector('div').style.filter = 'brightness(1)';
+      });
+    });
+
+    // Simple scroll animation for headers
+    window.addEventListener('scroll', () => {
+      const header = document.querySelector('header');
+      if (window.scrollY > 20) {
+        header.classList.add('shadow-md');
+        header.style.backgroundColor = 'rgba(239, 237, 237, 0.95)';
+        header.style.backdropFilter = 'blur(8px)';
+      } else {
+        header.classList.remove('shadow-md');
+        header.style.backgroundColor = '';
+        header.style.backdropFilter = '';
+      }
+    });
+  </script>
+</body></html>

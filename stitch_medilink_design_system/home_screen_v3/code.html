@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MediLink Customer App - Home</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-highest": "#e2e2e2",
+                        "on-primary-fixed-variant": "#005047",
+                        "tertiary-fixed-dim": "#bdc2ff",
+                        "outline": "#6d7a76",
+                        "primary-fixed-dim": "#73d8c7",
+                        "on-tertiary-fixed": "#000767",
+                        "on-error": "#ffffff",
+                        "surface-bright": "#f9f9f9",
+                        "on-surface": "#1a1c1c",
+                        "on-tertiary-fixed-variant": "#343d96",
+                        "surface-container": "#eeeeee",
+                        "secondary-fixed-dim": "#a8cbe7",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#dadada",
+                        "on-primary-fixed": "#00201c",
+                        "on-background": "#1a1c1c",
+                        "error-container": "#ffdad6",
+                        "surface-container-high": "#e8e8e8",
+                        "on-tertiary-container": "#ffffff",
+                        "on-surface-variant": "#3e4946",
+                        "tertiary-fixed": "#e0e0ff",
+                        "secondary-fixed": "#c9e6ff",
+                        "error": "#ba1a1a",
+                        "inverse-on-surface": "#f1f1f1",
+                        "on-primary-container": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "on-secondary-container": "#43647d",
+                        "primary-container": "#008577",
+                        "primary-fixed": "#90f4e3",
+                        "inverse-surface": "#2f3131",
+                        "inverse-primary": "#73d8c7",
+                        "secondary": "#40627b",
+                        "on-secondary-fixed": "#001e2f",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "primary": "#006a5e",
+                        "surface-container-low": "#f3f3f3",
+                        "on-secondary-fixed-variant": "#274a62",
+                        "background": "#f9f9f9",
+                        "outline-variant": "#bdc9c5",
+                        "tertiary-container": "#656ec9",
+                        "secondary-container": "#bee1fe",
+                        "on-error-container": "#93000a",
+                        "surface-tint": "#006b5f",
+                        "surface": "#f9f9f9",
+                        "tertiary": "#4c55ae",
+                        "surface-variant": "#e2e2e2"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "lg": "24px",
+                        "base": "8px",
+                        "xl": "32px",
+                        "margin-mobile": "16px",
+                        "touch-target": "48px",
+                        "sm": "8px",
+                        "md": "16px",
+                        "gutter": "16px",
+                        "xxl": "48px",
+                        "xs": "4px",
+                        "margin-tablet": "32px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Inter"],
+                        "title-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "label-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "headline-lg-mobile": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500" }],
+                        "title-md": ["16px", { "lineHeight": "24px", "letterSpacing": "0.15px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "letterSpacing": "0.5px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "letterSpacing": "0.25px", "fontWeight": "400" }],
+                        "title-lg": ["22px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "500" }],
+                        "headline-md": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "display-lg": ["57px", { "lineHeight": "64px", "letterSpacing": "-0.25px", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .material-symbols-outlined.fill { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background min-h-screen pb-[80px]">
+<!-- TopAppBar -->
+<header class="bg-surface shadow-sm sticky top-0 z-40">
+<div class="flex items-center justify-between px-margin-mobile h-[72px] w-full">
+<div class="flex items-center gap-4">
+<img class="w-12 h-12 rounded-full object-cover border border-outline-variant shadow-sm" data-alt="A close up portrait photo of a smiling elderly man from Bangladesh, conveying trust and warmth. The lighting is soft and natural, emphasizing a bright, modern light-mode healthcare aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBbWPtu_LWiJnyqEtmG2pjZu1QOdvGKuGKB46XYOpUmbPsi_4Z5TU5By2NklOzlsQkVHg3sTv3zql831YV7WBnRSIzDOd_-88oJk8yldI1uuTuEgu1qjyjfTZs0RxvnAx-1It22lZ6BOqKJsp9iLmov0Y91kbbeJHGsQZ061PejeNw2yQDDm2nJFUQbNZplWglnAoPnvDDkLrvLsQqRocEu58S7X6MxJeTuY4LRFfGiOe6TqhSGKWSXVoSS-Wkb1Sqr6y64CVGmFWfa"/>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface">Hello, User!</span>
+<div class="flex items-center gap-1 text-on-surface-variant cursor-pointer group">
+<span class="material-symbols-outlined text-[16px] text-primary">location_on</span>
+<span class="font-label-md text-label-md truncate max-w-[150px]">12/A, Dhanmondi, Dhaka</span>
+<span class="font-label-md text-label-md text-primary font-bold group-hover:underline ml-1">Change</span>
+</div>
+</div>
+</div>
+<button class="h-touch-target w-touch-target flex items-center justify-center text-on-surface-variant hover:bg-surface-container-highest rounded-full transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-[10px] right-[12px] w-2 h-2 bg-error rounded-full border border-surface"></span>
+</button>
+</div>
+</header>
+<main class="px-margin-mobile py-lg max-w-3xl mx-auto space-y-xl">
+<!-- Search Section -->
+<section>
+<div class="relative w-full shadow-sm rounded-full overflow-hidden bg-surface-container-lowest border border-outline-variant focus-within:border-primary focus-within:ring-2 focus-within:ring-primary-container transition-all">
+<span class="material-symbols-outlined absolute left-4 top-1/2 transform -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full h-touch-target pl-12 pr-12 bg-transparent border-none focus:ring-0 font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant h-16" placeholder="Search medicines..." type="text"/>
+<button class="absolute right-2 top-1/2 transform -translate-y-1/2 h-10 w-10 flex items-center justify-center text-primary hover:bg-surface-container rounded-full transition-colors">
+<span class="material-symbols-outlined">mic</span>
+</button>
+</div>
+</section>
+<!-- Quick Actions Bento -->
+<section>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<!-- Action Card 1 -->
+<button class="flex flex-col items-center justify-center p-4 bg-primary-container/10 border-2 border-primary-container rounded-xl hover:bg-primary-container/20 active:scale-95 transition-all h-[120px] shadow-md">
+<span class="material-symbols-outlined text-primary text-[32px] mb-2 fill">prescriptions</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold text-center">Upload<br/>Prescription</span>
+</button>
+<!-- Action Card 2 -->
+<button class="flex flex-col items-center justify-center p-4 bg-surface rounded-xl border border-outline-variant hover:bg-surface-container transition-colors h-[100px] shadow-sm active:scale-95">
+<span class="material-symbols-outlined text-secondary text-[32px] mb-2">local_pharmacy</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold text-center">Nearby<br/>Pharmacies</span>
+</button>
+<!-- Action Card 3 -->
+<button class="flex flex-col items-center justify-center p-4 bg-surface rounded-xl border border-outline-variant hover:bg-surface-container transition-colors h-[100px] shadow-sm active:scale-95">
+<span class="material-symbols-outlined text-tertiary text-[32px] mb-2">receipt_long</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold text-center">My<br/>Orders</span>
+</button>
+<!-- Action Card 4 -->
+<button class="flex flex-col items-center justify-center p-4 bg-surface rounded-xl border border-outline-variant hover:bg-surface-container transition-colors h-[100px] shadow-sm active:scale-95">
+<span class="material-symbols-outlined text-on-surface-variant text-[32px] mb-2">bookmarks</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold text-center">Saved<br/>Addresses</span>
+</button>
+</div>
+</section>
+<!-- Pharmacy Section -->
+<section>
+<div class="flex items-center justify-between mb-4">
+<span class="text-primary font-label-md text-label-md uppercase tracking-wider mb-1 block">Featured Nearby</span><h2 class="font-title-lg text-title-lg text-on-surface">Nearby Verified Pharmacies</h2>
+<button class="font-label-lg text-label-lg text-primary hover:underline">See All</button>
+</div>
+<div class="gap-4"><div class="space-y-4"></div></div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-xxl px-base pb-safe bg-surface-container-lowest border-t border-outline-variant shadow-lg md:hidden rounded-t-xl">
+<button class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-2xl px-4 py-1 scale-90 transition-transform duration-150">
+<span class="material-symbols-outlined text-primary font-bold text-[28px]">home</span>
+<span class="font-label-md text-label-md text-primary font-bold mt-1">Home</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-container-highest rounded-2xl transition-colors">
+<span class="material-symbols-outlined">map</span>
+<span class="font-label-md text-label-md mt-1">Map</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-container-highest rounded-2xl transition-colors">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="font-label-md text-label-md mt-1">Orders</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-container-highest rounded-2xl transition-colors">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-md text-label-md mt-1">Profile</span>
+</button>
+</nav>
+<!-- Floating Action Button (FAB) for Emergency -->
+<button class="fixed bottom-[100px] right-4 md:right-8 bg-error hover:bg-error-container text-on-error hover:text-on-error-container w-16 h-16 rounded-full shadow-lg flex items-center justify-center transition-all z-40 group border-2 border-surface">
+<span class="material-symbols-outlined text-[32px] group-hover:scale-110 transition-transform">emergency</span>
+</button>
+</body></html>

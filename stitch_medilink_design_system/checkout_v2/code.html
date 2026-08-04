@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Checkout - MediLink Bangladesh</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-high": "#e8e8e8",
+                        "primary-container": "#008577",
+                        "on-surface-variant": "#3e4946",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-container": "#ffffff",
+                        "surface": "#f9f9f9",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-highest": "#e2e2e2",
+                        "outline": "#6d7a76",
+                        "on-primary": "#ffffff",
+                        "inverse-surface": "#2f3131",
+                        "secondary": "#40627b",
+                        "on-error-container": "#93000a",
+                        "error": "#ba1a1a",
+                        "on-error": "#ffffff",
+                        "surface-tint": "#006b5f",
+                        "surface-dim": "#dadada",
+                        "surface-bright": "#f9f9f9",
+                        "primary-fixed": "#90f4e3",
+                        "on-primary-fixed-variant": "#005047",
+                        "on-secondary-container": "#43647d",
+                        "on-surface": "#1a1c1c",
+                        "on-secondary-fixed-variant": "#274a62",
+                        "tertiary-container": "#656ec9",
+                        "secondary-fixed-dim": "#a8cbe7",
+                        "on-tertiary-fixed": "#000767",
+                        "on-tertiary-fixed-variant": "#343d96",
+                        "on-secondary-fixed": "#001e2f",
+                        "secondary-fixed": "#c9e6ff",
+                        "primary": "#006a5e",
+                        "on-primary-container": "#ffffff",
+                        "surface-container": "#eeeeee",
+                        "on-background": "#1a1c1c",
+                        "secondary-container": "#bee1fe",
+                        "tertiary-fixed": "#e0e0ff",
+                        "primary-fixed-dim": "#73d8c7",
+                        "background": "#f9f9f9",
+                        "tertiary-fixed-dim": "#bdc2ff",
+                        "surface-variant": "#e2e2e2",
+                        "surface-container-low": "#f3f3f3",
+                        "error-container": "#ffdad6",
+                        "tertiary": "#4c55ae",
+                        "on-primary-fixed": "#00201c",
+                        "on-tertiary": "#ffffff",
+                        "inverse-on-surface": "#f1f1f1",
+                        "outline-variant": "#bdc9c5",
+                        "inverse-primary": "#73d8c7"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xxl": "48px",
+                        "md": "16px",
+                        "xl": "32px",
+                        "lg": "24px",
+                        "margin-tablet": "32px",
+                        "xs": "4px",
+                        "gutter": "16px",
+                        "touch-target": "48px",
+                        "sm": "8px",
+                        "margin-mobile": "16px",
+                        "base": "8px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "label-lg": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "title-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", { "lineHeight": "28px", "letterSpacing": "0.5px", "fontWeight": "400" }],
+                        "title-lg": ["22px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
+                        "title-md": ["16px", { "lineHeight": "24px", "letterSpacing": "0.15px", "fontWeight": "600" }],
+                        "display-lg": ["57px", { "lineHeight": "64px", "letterSpacing": "-0.25px", "fontWeight": "700" }],
+                        "headline-md": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "letterSpacing": "0.25px", "fontWeight": "400" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { -webkit-tap-highlight-color: transparent; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .icon-filled { font-variation-settings: 'FILL' 1; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background font-body-md antialiased pb-32">
+<!-- Top App Bar -->
+<header class="w-full top-0 sticky bg-surface dark:bg-on-background flex justify-between items-center px-margin-mobile h-touch-target z-50">
+<button class="w-touch-target h-touch-target flex items-center justify-start text-on-surface hover:bg-surface-container-low transition-colors rounded-full active:scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="font-title-lg text-title-lg text-primary dark:text-primary-fixed-dim">Checkout</h1>
+<div class="w-touch-target"></div>
+</header>
+<main class="px-margin-mobile pt-md pb-xxl space-y-lg max-w-2xl mx-auto">
+<!-- Estimated Delivery -->
+<section class="bg-surface-container-low p-md rounded-xl flex items-center gap-md">
+<div class="w-12 h-12 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container shrink-0">
+<span class="material-symbols-outlined icon-filled" data-icon="local_shipping">local_shipping</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant">Estimated Delivery</p>
+<p class="font-title-md text-title-md text-on-surface">Today, 4:30 PM – 5:00 PM</p>
+</div>
+</section>
+<!-- Delivery Address -->
+<section class="bg-surface-container-lowest p-md rounded-xl shadow-sm border border-outline-variant">
+<div class="flex justify-between items-start mb-sm">
+<div class="flex items-center gap-sm text-primary">
+<span class="material-symbols-outlined" data-icon="location_on">location_on</span>
+<h2 class="font-title-md text-title-md text-on-surface">Delivery Address</h2>
+</div>
+<button class="font-label-lg text-label-lg text-primary border border-outline-variant px-3 py-1 rounded-full hover:bg-surface-container-low transition-colors active:scale-95">Edit</button>
+</div>
+<div class="ml-8">
+<p class="font-title-md text-title-md text-on-surface">Md. Rahim Uddin</p>
+<p class="font-body-md text-body-md text-on-surface-variant">House 45, Road 12, Block E<br/>Banani, Dhaka 1213</p>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">+880 1712-345678</p>
+</div>
+</section>
+<!-- Pharmacy Information -->
+<section class="bg-surface-container-lowest p-md rounded-xl shadow-sm border border-outline-variant">
+<div class="flex items-center gap-sm text-secondary mb-sm">
+<span class="material-symbols-outlined" data-icon="local_pharmacy">local_pharmacy</span>
+<h2 class="font-title-md text-title-md text-on-surface">Fulfilling Pharmacy</h2>
+</div>
+<div class="ml-8">
+<p class="font-title-md text-title-md text-on-surface">Lazz Pharma - Banani Branch</p>
+<p class="font-body-md text-body-md text-on-surface-variant">1.2 km away • Banani Super Market</p>
+</div>
+</section>
+<!-- Ordered Medicines -->
+<section>
+<h2 class="font-title-md text-title-md text-on-surface mb-md">Ordered Items (2)</h2>
+<div class="space-y-sm">
+<!-- Item 1 -->
+<div class="bg-surface-container-lowest p-sm rounded-lg flex items-center gap-md border border-outline-variant">
+<div class="w-16 h-16 bg-surface-container-high rounded-md overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="A close up, brightly lit photograph of a blister pack of small white round pills on a clean white medical surface. The packaging is white with subtle blue and green corporate medical branding. High contrast, clinical modern aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8OzPT9r3r5wxo6OjPZB4x7qFSP7GR3sb577hV6jT2EkIx9IJs8IOeeXGIwXD7URDZxAz61KveeLeJJq_GEf_EYRi-HrwGkiiStm0Gf265uj1Vj_dssEfSe8I4IgPW2LN30B-RmVR6TDTKCCNc-7e1lVuu1QUd54oFGW_AgtDeMUbQ4gNzCUlZpv2-pASkni1yemT56tma0unmOJO2HKeUXxmhcByWTgnRNvRjPd-7XVbOdh8ljW9f5IqGO0tlw5O6lsm7WnpRmEVm"/>
+</div>
+<div class="flex-grow">
+<h3 class="font-title-md text-title-md text-on-surface">Napa Extend 665mg</h3>
+<p class="font-label-md text-label-md text-on-surface-variant">Paracetamol • Square Pharma</p>
+<p class="font-body-md text-body-md text-on-surface mt-1">2 Strips (24 tablets)</p>
+</div>
+<div class="text-right">
+<p class="font-title-md text-title-md text-primary">৳ 48.00</p>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="bg-surface-container-lowest p-sm rounded-lg flex items-center gap-md border border-outline-variant">
+<div class="w-16 h-16 bg-surface-container-high rounded-md overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="A small white plastic bottle with a green cap sitting on a clean, light gray surface. The label is partially visible with medical typography. Soft, diffuse lighting creating a sterile and trustworthy medical atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDfR5jV8iQa_MtiD8cr8PVslesaHMcCQWDTUnHUaBi5g6juAnsEe2K8u1yLrKIZHCFTPqATEYQRwMF45AttG0N_gy0sw3VRKaYhwSSHvViDQu76nOn889mm49zwIqSYCM7o7i4BPAh1BvGNnJvMXufxkBeF5o1fyiCm-QpahJnIXUxUXVbUW278ISgpEbjp0zN3KZ6AQJ79kZaiu888x8Tlu25iU_OVDKSXuZ_M-KPrHS9Bm-DY2gP1biFz29P1fi0pMQe--1AY2y14"/>
+</div>
+<div class="flex-grow">
+<h3 class="font-title-md text-title-md text-on-surface">Seclo 20mg</h3>
+<p class="font-label-md text-label-md text-on-surface-variant">Omeprazole • Square Pharma</p>
+<p class="font-body-md text-body-md text-on-surface mt-1">1 Box (100 capsules)</p>
+</div>
+<div class="text-right">
+<p class="font-title-md text-title-md text-primary">৳ 500.00</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Delivery Instructions -->
+<section class="bg-surface-container-lowest p-md rounded-xl shadow-sm border border-outline-variant"><div class="flex items-center gap-sm text-primary mb-sm"><span class="material-symbols-outlined" data-icon="note_alt">note_alt</span><h2 class="font-title-md text-title-md text-on-surface">Delivery Note</h2></div><div class="ml-8"><div class="relative"><textarea class="w-full bg-transparent border-2 border-outline-variant rounded-lg p-md text-body-md font-body-md text-on-surface focus:border-primary focus:ring-0 transition-colors" id="instructions" placeholder="e.g., Leave with the guard, call before arriving..." rows="2"></textarea></div></div></section>
+<!-- Payment Method -->
+<section class="bg-surface-container-lowest p-md rounded-xl shadow-sm border border-outline-variant">
+<h2 class="font-title-md text-title-md text-on-surface mb-md">Payment Method</h2>
+<div class="flex items-center gap-md p-sm bg-surface-container-low rounded-lg border-2 border-primary">
+<span class="material-symbols-outlined text-primary" data-icon="payments">payments</span>
+<div class="flex-grow">
+<p class="font-title-md text-title-md text-on-surface">Cash on Delivery</p>
+<p class="font-label-md text-label-md text-on-surface-variant">Pay when you receive the order</p>
+</div>
+<span class="material-symbols-outlined text-primary icon-filled" data-icon="check_circle">check_circle</span>
+</div>
+</section>
+<!-- Price Breakdown -->
+<section class="bg-surface-container-lowest p-md rounded-xl shadow-sm border border-outline-variant">
+<h2 class="font-title-md text-title-md text-on-surface mb-md">Order Summary</h2>
+<div class="space-y-sm font-body-md text-body-md">
+<div class="flex justify-between text-on-surface-variant">
+<span>Subtotal</span>
+<span>৳ 548.00</span>
+</div>
+<div class="flex justify-between text-on-surface-variant">
+<span>Delivery Fee</span>
+<span>৳ 50.00</span>
+</div>
+<div class="flex justify-between text-on-surface-variant">
+<span>Platform Fee</span>
+<span>৳ 5.00</span>
+</div>
+<div class="border-t border-outline-variant pt-sm mt-sm flex justify-between font-title-lg text-title-lg text-on-surface">
+<span>Total</span>
+<span class="text-primary">৳ 603.00</span>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Action Area -->
+<div class="fixed bottom-0 left-0 w-full bg-surface border-t border-outline-variant p-margin-mobile z-50">
+<div class="max-w-2xl mx-auto flex items-center justify-between gap-md">
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant">Total to pay</p>
+<p class="font-title-lg text-title-lg text-primary">৳ 603.00</p>
+</div>
+<button class="bg-primary text-on-primary font-title-md text-title-md px-xl py-3 rounded-xl min-h-[56px] flex-grow active:scale-95 transition-transform duration-150 flex items-center justify-center gap-2">
+                Place Order
+                <span class="material-symbols-outlined" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</div>
+</body></html>

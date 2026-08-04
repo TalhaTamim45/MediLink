@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MediLink - Forgot Password</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-highest": "#e2e2e2",
+                        "on-primary-fixed-variant": "#005047",
+                        "tertiary-fixed-dim": "#bdc2ff",
+                        "outline": "#6d7a76",
+                        "primary-fixed-dim": "#73d8c7",
+                        "on-tertiary-fixed": "#000767",
+                        "on-error": "#ffffff",
+                        "surface-bright": "#f9f9f9",
+                        "on-surface": "#1a1c1c",
+                        "on-tertiary-fixed-variant": "#343d96",
+                        "surface-container": "#eeeeee",
+                        "secondary-fixed-dim": "#a8cbe7",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#dadada",
+                        "on-primary-fixed": "#00201c",
+                        "on-background": "#1a1c1c",
+                        "error-container": "#ffdad6",
+                        "surface-container-high": "#e8e8e8",
+                        "on-tertiary-container": "#ffffff",
+                        "on-surface-variant": "#3e4946",
+                        "tertiary-fixed": "#e0e0ff",
+                        "secondary-fixed": "#c9e6ff",
+                        "error": "#ba1a1a",
+                        "inverse-on-surface": "#f1f1f1",
+                        "on-primary-container": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "on-secondary-container": "#43647d",
+                        "primary-container": "#008577",
+                        "primary-fixed": "#90f4e3",
+                        "inverse-surface": "#2f3131",
+                        "inverse-primary": "#73d8c7",
+                        "secondary": "#40627b",
+                        "on-secondary-fixed": "#001e2f",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "primary": "#006a5e",
+                        "surface-container-low": "#f3f3f3",
+                        "on-secondary-fixed-variant": "#274a62",
+                        "background": "#f9f9f9",
+                        "outline-variant": "#bdc9c5",
+                        "tertiary-container": "#656ec9",
+                        "secondary-container": "#bee1fe",
+                        "on-error-container": "#93000a",
+                        "surface-tint": "#006b5f",
+                        "surface": "#f9f9f9",
+                        "tertiary": "#4c55ae",
+                        "surface-variant": "#e2e2e2"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "lg": "24px",
+                        "base": "8px",
+                        "xl": "32px",
+                        "margin-mobile": "16px",
+                        "touch-target": "48px",
+                        "sm": "8px",
+                        "md": "16px",
+                        "gutter": "16px",
+                        "xxl": "48px",
+                        "xs": "4px",
+                        "margin-tablet": "32px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Inter"],
+                        "title-md": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "label-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "headline-lg-mobile": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500" }],
+                        "title-md": ["16px", { "lineHeight": "24px", "letterSpacing": "0.15px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "letterSpacing": "0.5px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "letterSpacing": "0.25px", "fontWeight": "400" }],
+                        "title-lg": ["22px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "500" }],
+                        "headline-md": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "display-lg": ["57px", { "lineHeight": "64px", "letterSpacing": "-0.25px", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen flex flex-col font-body-md antialiased selection:bg-primary-container selection:text-on-primary-container">
+<!-- Top Navigation omitted for linear/transactional flow as per instructions -->
+<main class="flex-grow flex items-center justify-center p-margin-mobile">
+<div class="w-full max-w-md bg-surface-container-lowest rounded-xl shadow-lg border border-surface-variant overflow-hidden">
+<div class="p-xl space-y-6">
+<!-- Header -->
+<div class="text-center space-y-2">
+<div class="w-16 h-16 bg-primary-container/20 rounded-full flex items-center justify-center mx-auto mb-4 text-primary">
+<span class="material-symbols-outlined text-4xl" data-weight="fill">lock_reset</span>
+</div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Forgot Password</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Enter your registered phone number or email to receive a One-Time Password (OTP) for resetting your account access.</p>
+</div>
+<!-- Form Area -->
+<div class="space-y-6" id="request-form">
+<div class="space-y-1">
+<label class="font-label-lg text-label-lg text-on-surface" for="contact-input">Phone or Email</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">contact_mail</span>
+</div>
+<input class="w-full pl-10 pr-4 py-3 rounded-lg border border-outline-variant bg-surface focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors font-body-md text-body-md" id="contact-input" placeholder="+880 1712-345678" type="text" value="+880 "/>
+</div>
+</div>
+<div class="space-y-3 pt-2">
+<button class="w-full h-touch-target bg-primary text-on-primary rounded-[16px] font-title-md text-title-md hover:bg-primary/90 transition-colors flex items-center justify-center shadow-sm" onclick="showSuccessState()" type="button">
+                            Send OTP
+                        </button>
+<button class="w-full h-touch-target bg-transparent text-primary border-2 border-primary rounded-[16px] font-title-md text-title-md hover:bg-primary-container/10 transition-colors flex items-center justify-center" type="button">
+                            Back to Login
+                        </button>
+</div>
+</div>
+<!-- Success State (Hidden by default) -->
+<div class="hidden flex flex-col items-center justify-center space-y-4 py-4 text-center" id="success-state">
+<div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center text-green-600 mb-2">
+<span class="material-symbols-outlined text-4xl" data-weight="fill">check_circle</span>
+</div>
+<h2 class="font-title-lg text-title-lg text-on-surface">OTP Sent Successfully</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">We've sent a 6-digit code to your contact method. Please check and enter it on the next screen.</p>
+<button class="mt-4 w-full h-touch-target bg-primary text-on-primary rounded-[16px] font-title-md text-title-md hover:bg-primary/90 transition-colors flex items-center justify-center shadow-sm" type="button">
+                        Continue to Enter OTP
+                    </button>
+<button class="text-primary font-label-md text-label-md hover:underline mt-2" onclick="resetForm()" type="button">
+                        Didn't receive it? Resend
+                    </button>
+</div>
+</div>
+<!-- Healthcare Brand Footer -->
+<div class="bg-surface-container py-4 text-center border-t border-surface-variant">
+<div class="flex items-center justify-center space-x-2 text-on-surface-variant opacity-80">
+<span class="material-symbols-outlined text-[16px]">health_and_safety</span>
+<span class="font-label-md text-label-md font-bold tracking-widest uppercase">MediLink Secure</span>
+</div>
+</div>
+</div>
+</main>
+<script>
+        function showSuccessState() {
+            document.getElementById('request-form').classList.add('hidden');
+            document.getElementById('success-state').classList.remove('hidden');
+            document.getElementById('success-state').classList.add('flex');
+        }
+
+        function resetForm() {
+            document.getElementById('success-state').classList.add('hidden');
+            document.getElementById('success-state').classList.remove('flex');
+            document.getElementById('request-form').classList.remove('hidden');
+        }
+    </script>
+</body></html>

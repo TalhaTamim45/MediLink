@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Select Pharmacy</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-high": "#e8e8e8",
+                        "primary-container": "#008577",
+                        "on-surface-variant": "#3e4946",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-container": "#ffffff",
+                        "surface": "#f9f9f9",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-highest": "#e2e2e2",
+                        "outline": "#6d7a76",
+                        "on-primary": "#ffffff",
+                        "inverse-surface": "#2f3131",
+                        "secondary": "#40627b",
+                        "on-error-container": "#93000a",
+                        "error": "#ba1a1a",
+                        "on-error": "#ffffff",
+                        "surface-tint": "#006b5f",
+                        "surface-dim": "#dadada",
+                        "surface-bright": "#f9f9f9",
+                        "primary-fixed": "#90f4e3",
+                        "on-primary-fixed-variant": "#005047",
+                        "on-secondary-container": "#43647d",
+                        "on-surface": "#1a1c1c",
+                        "on-secondary-fixed-variant": "#274a62",
+                        "tertiary-container": "#656ec9",
+                        "secondary-fixed-dim": "#a8cbe7",
+                        "on-tertiary-fixed": "#000767",
+                        "on-tertiary-fixed-variant": "#343d96",
+                        "on-secondary-fixed": "#001e2f",
+                        "secondary-fixed": "#c9e6ff",
+                        "primary": "#006a5e",
+                        "on-primary-container": "#ffffff",
+                        "surface-container": "#eeeeee",
+                        "on-background": "#1a1c1c",
+                        "secondary-container": "#bee1fe",
+                        "tertiary-fixed": "#e0e0ff",
+                        "primary-fixed-dim": "#73d8c7",
+                        "background": "#f9f9f9",
+                        "tertiary-fixed-dim": "#bdc2ff",
+                        "surface-variant": "#e2e2e2",
+                        "surface-container-low": "#f3f3f3",
+                        "error-container": "#ffdad6",
+                        "tertiary": "#4c55ae",
+                        "on-primary-fixed": "#00201c",
+                        "on-tertiary": "#ffffff",
+                        "inverse-on-surface": "#f1f1f1",
+                        "outline-variant": "#bdc9c5",
+                        "inverse-primary": "#73d8c7"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xxl": "48px",
+                        "md": "16px",
+                        "xl": "32px",
+                        "lg": "24px",
+                        "margin-tablet": "32px",
+                        "xs": "4px",
+                        "gutter": "16px",
+                        "touch-target": "48px",
+                        "sm": "8px",
+                        "margin-mobile": "16px",
+                        "base": "8px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "label-lg": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "title-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", { "lineHeight": "28px", "letterSpacing": "0.5px", "fontWeight": "400" }],
+                        "title-lg": ["22px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
+                        "title-md": ["16px", { "lineHeight": "24px", "letterSpacing": "0.15px", "fontWeight": "600" }],
+                        "display-lg": ["57px", { "lineHeight": "64px", "letterSpacing": "-0.25px", "fontWeight": "700" }],
+                        "headline-md": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "letterSpacing": "0.25px", "fontWeight": "400" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="w-full top-0 sticky bg-surface dark:bg-on-background flex justify-between items-center px-margin-mobile h-touch-target z-50">
+<button class="w-12 h-12 flex items-center justify-center text-primary dark:text-primary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-variant rounded-full active:scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined" data-icon="location_on">location_on</span>
+</button>
+<h1 class="font-headline-md-mobile text-headline-md-mobile font-bold text-primary dark:text-primary-fixed-dim">MediLink Bangladesh</h1>
+<button class="w-12 h-12 flex items-center justify-center text-primary dark:text-primary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-variant rounded-full active:scale-95 transition-transform duration-150">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+</header>
+<main class="max-w-3xl mx-auto px-margin-mobile py-md">
+<!-- Search and Filter -->
+<div class="mb-lg space-y-md">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full pl-12 pr-12 py-3 rounded-full bg-surface-container-highest border-none focus:ring-2 focus:ring-primary text-body-lg placeholder-on-surface-variant" placeholder="Search pharmacies by name or location..." type="text"/>
+<button class="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-low">
+<span class="material-symbols-outlined">tune</span>
+</button>
+</div>
+<div class="flex gap-sm overflow-x-auto pb-sm scrollbar-hide">
+<button class="whitespace-nowrap px-4 py-2 rounded-lg bg-secondary-container text-on-secondary-container font-label-lg flex items-center gap-xs">
+<span class="material-symbols-outlined text-[18px]">verified</span> Verified First
+                </button>
+<button class="whitespace-nowrap px-4 py-2 rounded-lg bg-surface border border-outline-variant text-on-surface-variant font-label-lg">
+                    Fastest Delivery
+                </button>
+<button class="whitespace-nowrap px-4 py-2 rounded-lg bg-surface border border-outline-variant text-on-surface-variant font-label-lg">
+                    Highest Rated
+                </button>
+</div>
+</div>
+<h2 class="font-title-lg text-title-lg mb-md">Nearby Verified Pharmacies</h2>
+<!-- Pharmacy List -->
+<div class="space-y-md">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-md shadow-md border border-outline-variant/30 flex flex-col gap-md">
+<div class="flex items-start gap-md">
+<div class="w-20 h-20 rounded-lg bg-surface-container-high flex items-center justify-center overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="A modern, clean logo for Lazz Pharma, featuring a subtle green medical cross in a bright, modern light-mode setting. The overall feel is professional and trustworthy." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCEoS8693yGoHzKUx9UHNVmwfYzAIdiVEY2EWgCsxCgdfNif4h-jSvFTF3mJaOICPrE5JM2IztS1XuFbBEKDtEJBNMMtO58MI7ymdJ3g3eIWwSH0OjLoFXat9JQT_V4T740cm4OiTyLJFlH_v5WaxqaEs8MhWZYVNIITHLgVMrEiMpRCci1I2poHew90d2cTuZ9bieeNWJVYqJRyowbC7JPCib8etxU5SJ8I5vVn9OPSYN5Sa4PWhTshPbYlhhqyiLvUpHP7qHLFslJ"/>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<div>
+<div class="flex items-center gap-xs mb-xs">
+<h3 class="font-title-md text-title-md">Lazz Pharma</h3>
+<span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<p class="text-label-md text-on-surface-variant flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">map</span> 1.2 km away
+                                </p>
+</div>
+<div class="flex items-center gap-xs bg-surface-container-low px-2 py-1 rounded-md">
+<span class="material-symbols-outlined text-[16px] text-[#fbbf24]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-lg">4.8</span>
+</div>
+</div>
+<div class="mt-sm grid grid-cols-2 gap-y-xs text-label-md text-on-surface-variant">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">timer</span>
+                                Est. 30-45 min delivery
+                            </div>
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">moped</span>
+                                Delivery: ৳50
+                            </div>
+<div class="flex items-center gap-xs col-span-2">
+<span class="material-symbols-outlined text-[16px]">receipt_long</span>
+                                Quotation time: 10-15 min
+                            </div>
+</div>
+</div>
+</div>
+<button class="w-full py-3 bg-primary text-on-primary font-label-lg rounded-lg hover:bg-surface-tint transition-colors active:scale-[0.98]">
+                    Select Pharmacy
+                </button>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-md shadow-md border border-outline-variant/30 flex flex-col gap-md">
+<div class="flex items-start gap-md">
+<div class="w-20 h-20 rounded-lg bg-surface-container-high flex items-center justify-center overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="A modern, clean logo for Tamanna Pharmacy, featuring a mortar and pestle icon in a bright, modern light-mode setting. The style is clean, corporate and reliable." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAjblqppfeYSpG6jlS6dUW8BQBQuXtsWUEIg2_6CGDSzAuwzZpGm4_M0jA05MBZFMxzuO_KGitolR1t4uBkv6ozn-Uicw-MlAkVw8L1z9lcN7vtLgFqgs2isMwJvfukBR7kx_TPHMoEaeTBenqj3SR8SGWfCJg-PxSN0cZoviPVhwfhBhwkauVtwMZXdaYeSTOKdntITOjYfJ9tS_S6DmyMVpSO4qLEoa2xpB3ghXRNsdioCOhn7HvAa__k4Kst7G8IagAD-1fr8BB-"/>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<div>
+<div class="flex items-center gap-xs mb-xs">
+<h3 class="font-title-md text-title-md">Tamanna Pharmacy</h3>
+<span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<p class="text-label-md text-on-surface-variant flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">map</span> 2.5 km away
+                                </p>
+</div>
+<div class="flex items-center gap-xs bg-surface-container-low px-2 py-1 rounded-md">
+<span class="material-symbols-outlined text-[16px] text-[#fbbf24]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-lg">4.6</span>
+</div>
+</div>
+<div class="mt-sm grid grid-cols-2 gap-y-xs text-label-md text-on-surface-variant">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">timer</span>
+                                Est. 45-60 min delivery
+                            </div>
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">moped</span>
+                                Delivery: ৳60
+                            </div>
+<div class="flex items-center gap-xs col-span-2">
+<span class="material-symbols-outlined text-[16px]">receipt_long</span>
+                                Quotation time: ~20 min
+                            </div>
+</div>
+</div>
+</div>
+<button class="w-full py-3 bg-primary text-on-primary font-label-lg rounded-lg hover:bg-surface-tint transition-colors active:scale-[0.98]">
+                    Select Pharmacy
+                </button>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest rounded-xl p-md shadow-md border border-outline-variant/30 flex flex-col gap-md opacity-80">
+<div class="flex items-start gap-md">
+<div class="w-20 h-20 rounded-lg bg-surface-container-high flex items-center justify-center overflow-hidden shrink-0">
+<span class="material-symbols-outlined text-outline text-[32px]">local_pharmacy</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<div>
+<div class="flex items-center gap-xs mb-xs">
+<h3 class="font-title-md text-title-md">Care Corner</h3>
+</div>
+<p class="text-label-md text-on-surface-variant flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">map</span> 3.1 km away
+                                </p>
+</div>
+<div class="flex items-center gap-xs bg-surface-container-low px-2 py-1 rounded-md">
+<span class="material-symbols-outlined text-[16px] text-[#fbbf24]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-lg">4.2</span>
+</div>
+</div>
+<div class="mt-sm grid grid-cols-2 gap-y-xs text-label-md text-on-surface-variant">
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">timer</span>
+                                Est. 60+ min delivery
+                            </div>
+<div class="flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">moped</span>
+                                Delivery: ৳70
+                            </div>
+<div class="flex items-center gap-xs col-span-2">
+<span class="material-symbols-outlined text-[16px]">receipt_long</span>
+                                Quotation time: ~30 min
+                            </div>
+</div>
+</div>
+</div>
+<button class="w-full py-3 bg-surface border-2 border-primary text-primary font-label-lg rounded-lg hover:bg-primary-container hover:text-on-primary-container transition-colors active:scale-[0.98]">
+                    Select Pharmacy
+                </button>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Hidden on md, visible on mobile) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-2 py-2 pb-safe bg-surface dark:bg-on-background border-t border-outline-variant dark:border-outline shadow-md rounded-t-xl md:hidden">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-1 hover:bg-surface-container-highest dark:hover:bg-surface-variant active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-label-md text-label-md mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-1 hover:bg-surface-container-highest dark:hover:bg-surface-variant active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="map">map</span>
+<span class="font-label-md text-label-md mt-1">Map</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-secondary-container dark:bg-secondary-fixed-dim text-on-secondary-container dark:text-on-secondary-fixed rounded-2xl px-4 py-1 hover:bg-surface-container-highest dark:hover:bg-surface-variant active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span class="font-label-md text-label-md mt-1">Orders</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-1 hover:bg-surface-container-highest dark:hover:bg-surface-variant active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-md text-label-md mt-1">Profile</span>
+</a>
+</nav>
+</body></html>

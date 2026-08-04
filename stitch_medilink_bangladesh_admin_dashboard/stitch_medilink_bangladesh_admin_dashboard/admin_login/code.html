@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MediLink BD | Admin Login</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "background": "#f8f9ff",
+                    "tertiary-fixed-dim": "#ffb59e",
+                    "surface-container-low": "#eff4ff",
+                    "inverse-primary": "#5adf82",
+                    "surface-bright": "#f8f9ff",
+                    "on-error-container": "#93000a",
+                    "secondary-fixed": "#e1e0ff",
+                    "on-surface-variant": "#3d4a3e",
+                    "surface-variant": "#d3e4fe",
+                    "surface-dim": "#cbdbf5",
+                    "primary-fixed-dim": "#5adf82",
+                    "on-tertiary-fixed": "#3a0b00",
+                    "on-tertiary": "#ffffff",
+                    "outline": "#6d7b6d",
+                    "primary-container": "#008740",
+                    "on-primary": "#ffffff",
+                    "on-secondary-container": "#292b8d",
+                    "on-error": "#ffffff",
+                    "on-surface": "#0b1c30",
+                    "on-secondary": "#ffffff",
+                    "on-primary-fixed-variant": "#005225",
+                    "error": "#ba1a1a",
+                    "inverse-on-surface": "#eaf1ff",
+                    "on-background": "#0b1c30",
+                    "tertiary": "#a93200",
+                    "surface-container-highest": "#d3e4fe",
+                    "on-primary-container": "#f7fff3",
+                    "primary": "#006b32",
+                    "tertiary-fixed": "#ffdbd0",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary-fixed-variant": "#842500",
+                    "surface-container-high": "#dce9ff",
+                    "surface-container": "#e5eeff",
+                    "primary-fixed": "#78fc9c",
+                    "on-primary-fixed": "#00210b",
+                    "secondary-fixed-dim": "#c0c1ff",
+                    "inverse-surface": "#213145",
+                    "secondary": "#4f54b4",
+                    "outline-variant": "#bccabb",
+                    "tertiary-container": "#d1430a",
+                    "on-secondary-fixed": "#04006d",
+                    "on-secondary-fixed-variant": "#373a9b",
+                    "surface": "#f8f9ff",
+                    "error-container": "#ffdad6",
+                    "secondary-container": "#959aff",
+                    "surface-tint": "#006d33",
+                    "on-tertiary-container": "#fffbff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xs": "4px",
+                    "base": "4px",
+                    "md": "16px",
+                    "container-margin": "24px",
+                    "sm": "8px",
+                    "lg": "24px",
+                    "gutter": "16px",
+                    "xl": "32px"
+            },
+            "fontFamily": {
+                    "label-sm": ["Inter"],
+                    "label-md": ["Inter"],
+                    "title-md": ["Inter"],
+                    "display-md": ["Inter"],
+                    "title-lg": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-sm": ["Inter"]
+            },
+            "fontSize": {
+                    "label-sm": ["11px", {"lineHeight": "16px", "fontWeight": "600"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                    "title-md": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                    "display-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "title-lg": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .login-card {
+            box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-background min-h-screen flex items-center justify-center p-md">
+<!-- Content Area: The login shell is focused, hence no SideNav or TopNavBar as per the 'Transactional' rule -->
+<main class="w-full max-w-[440px] animate-in fade-in slide-in-from-bottom-4 duration-700">
+<!-- Branding Header -->
+<div class="flex flex-col items-center mb-xl">
+<div class="w-16 h-16 bg-primary-container rounded-xl flex items-center justify-center mb-md text-on-primary">
+<span class="material-symbols-outlined text-[40px]" data-icon="local_hospital">local_hospital</span>
+</div>
+<h1 class="font-display-md text-display-md text-on-surface">MediLink BD</h1>
+<p class="font-title-md text-title-md text-on-surface-variant">Admin Console</p>
+</div>
+<!-- Login Container -->
+<div class="login-card bg-surface-container-lowest border border-outline-variant rounded-xl p-xl overflow-hidden relative">
+<!-- Decorative Accent -->
+<div class="absolute top-0 left-0 w-full h-1 bg-primary"></div>
+<form class="space-y-lg" id="loginForm">
+<!-- Email Input -->
+<div class="space-y-xs">
+<label class="font-label-md text-label-md text-on-surface-variant px-xs" for="email">Email Address</label>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-md flex items-center pointer-events-none text-outline">
+<span class="material-symbols-outlined" data-icon="mail">mail</span>
+</div>
+<input class="w-full h-12 pl-11 pr-md bg-surface border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary focus:border-primary transition-all" id="email" placeholder="admin@medilink.com.bd" required="" type="email"/>
+</div>
+</div>
+<!-- Password Input -->
+<div class="space-y-xs">
+<div class="flex justify-between items-center px-xs">
+<label class="font-label-md text-label-md text-on-surface-variant" for="password">Password</label>
+<a class="font-label-md text-label-md text-primary hover:underline" href="#">Forgot password?</a>
+</div>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-md flex items-center pointer-events-none text-outline">
+<span class="material-symbols-outlined" data-icon="lock">lock</span>
+</div>
+<input class="w-full h-12 pl-11 pr-11 bg-surface border border-outline-variant rounded-lg font-body-md text-body-md text-on-surface placeholder:text-outline focus:ring-2 focus:ring-primary focus:border-primary transition-all" id="password" placeholder="••••••••" required="" type="password"/>
+<button class="absolute inset-y-0 right-0 pr-md flex items-center text-outline hover:text-on-surface-variant transition-colors" onclick="togglePassword()" type="button">
+<span class="material-symbols-outlined" data-icon="visibility" id="password-toggle-icon">visibility</span>
+</button>
+</div>
+</div>
+<!-- Remember Me -->
+<div class="flex items-center gap-sm px-xs">
+<input class="w-5 h-5 rounded border-outline-variant text-primary focus:ring-primary cursor-pointer" id="remember" type="checkbox"/>
+<label class="font-body-md text-body-md text-on-surface-variant cursor-pointer select-none" for="remember">Remember this session</label>
+</div>
+<!-- Action Button -->
+<button class="w-full h-12 bg-primary text-on-primary font-title-md text-title-md rounded-lg flex items-center justify-center gap-sm hover:bg-primary-container active:scale-[0.98] transition-all" type="submit">
+<span class="material-symbols-outlined" data-icon="verified_user" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+                    Secure Login
+                </button>
+</form>
+<!-- Language Switcher (Contextual for BD market) -->
+<div class="mt-xl pt-lg border-t border-outline-variant flex justify-center gap-md">
+<button class="font-label-md text-label-md text-primary">English</button>
+<span class="text-outline-variant">|</span>
+<button class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors">বাংলা</button>
+</div>
+</div>
+<!-- Security Notice Footer -->
+<footer class="mt-xl flex flex-col items-center gap-md">
+<div class="flex items-center gap-sm bg-surface-container-high px-md py-sm rounded-full border border-outline-variant">
+<span class="material-symbols-outlined text-tertiary" data-icon="gavel" style="font-size: 18px;">gavel</span>
+<p class="font-label-md text-label-md text-on-surface-variant">Authorized Access Only</p>
+</div>
+<p class="font-body-md text-body-md text-outline text-center leading-relaxed max-w-[320px]">
+                This system is monitored. Unauthorized access attempts are logged and may be prosecuted under the Digital Security Act.
+            </p>
+<div class="flex items-center gap-base opacity-40">
+<span class="material-symbols-outlined text-sm" data-icon="copyright">copyright</span>
+<span class="font-label-sm text-label-sm">2024 MediLink Bangladesh. All rights reserved.</span>
+</div>
+</footer>
+</main>
+<!-- Micro-interactions Script -->
+<script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('password-toggle-icon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.innerText = 'visibility_off';
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.innerText = 'visibility';
+            }
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalContent = btn.innerHTML;
+            
+            // Loading state simulation
+            btn.disabled = true;
+            btn.innerHTML = `
+                <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span class="ml-2">Verifying Credentials...</span>
+            `;
+            
+            setTimeout(() => {
+                // Success feedback before potential redirect
+                btn.classList.replace('bg-primary', 'bg-tertiary-container');
+                btn.innerHTML = `
+                    <span class="material-symbols-outlined" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                    Access Granted
+                `;
+                console.log('Redirecting to Admin Dashboard...');
+            }, 1500);
+        });
+    </script>
+</body></html>

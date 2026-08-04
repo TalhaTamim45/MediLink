@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MediLink - Pharmacies</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-dim": "#dadada",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed-variant": "#005047",
+                        "on-primary-fixed": "#00201c",
+                        "on-secondary-fixed-variant": "#274a62",
+                        "on-error-container": "#93000a",
+                        "tertiary": "#4c55ae",
+                        "on-tertiary-fixed": "#000767",
+                        "primary-fixed-dim": "#73d8c7",
+                        "on-surface-variant": "#3e4946",
+                        "on-primary": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "inverse-surface": "#2f3131",
+                        "on-secondary-fixed": "#001e2f",
+                        "tertiary-fixed-dim": "#bdc2ff",
+                        "outline-variant": "#bdc9c5",
+                        "background": "#f9f9f9",
+                        "tertiary-fixed": "#e0e0ff",
+                        "secondary": "#40627b",
+                        "surface-variant": "#e2e2e2",
+                        "secondary-container": "#bee1fe",
+                        "on-surface": "#1a1c1c",
+                        "inverse-primary": "#73d8c7",
+                        "surface-container-high": "#e8e8e8",
+                        "outline": "#6d7a76",
+                        "on-background": "#1a1c1c",
+                        "on-tertiary-container": "#ffffff",
+                        "surface": "#f9f9f9",
+                        "tertiary-container": "#656ec9",
+                        "on-secondary-container": "#43647d",
+                        "primary-fixed": "#90f4e3",
+                        "surface-container": "#eeeeee",
+                        "surface-container-highest": "#e2e2e2",
+                        "surface-tint": "#006b5f",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary-fixed": "#c9e6ff",
+                        "error": "#ba1a1a",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#343d96",
+                        "surface-bright": "#f9f9f9",
+                        "on-primary-container": "#ffffff",
+                        "secondary-fixed-dim": "#a8cbe7",
+                        "inverse-on-surface": "#f1f1f1",
+                        "primary": "#006a5e",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#f3f3f3",
+                        "primary-container": "#008577"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "xl": "32px",
+                        "gutter": "16px",
+                        "sm": "8px",
+                        "margin-mobile": "16px",
+                        "xxl": "48px",
+                        "md": "16px",
+                        "lg": "24px",
+                        "xs": "4px",
+                        "margin-tablet": "32px",
+                        "touch-target": "48px",
+                        "safe": "env(safe-area-inset-bottom)"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "label-lg": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "title-md": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500" }],
+                        "headline-md": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
+                        "display-lg": ["57px", { "lineHeight": "64px", "letterSpacing": "-0.25px", "fontWeight": "700" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "700" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "letterSpacing": "0.5px", "fontWeight": "400" }],
+                        "title-md": ["16px", { "lineHeight": "24px", "letterSpacing": "0.15px", "fontWeight": "600" }],
+                        "title-lg": ["22px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "letterSpacing": "0.25px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body-md min-h-screen pb-xxl">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-surface-dim docked full-width top-0 bg-surface dark:bg-surface-dim shadow-sm shadow-sm flex items-center justify-between px-margin-mobile h-touch-target w-full sticky z-40">
+<div class="flex items-center gap-2">
+<button aria-label="Location" class="w-touch-target h-touch-target flex items-center justify-center text-primary dark:text-primary-fixed-dim hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-colors rounded-full">
+<span aria-hidden="true" class="material-symbols-outlined" data-icon="location_on">location_on</span>
+</button>
+<span class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim">MediLink</span>
+</div>
+<button aria-label="Notifications" class="w-touch-target h-touch-target flex items-center justify-center text-primary dark:text-primary-fixed-dim hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-colors rounded-full">
+<span aria-hidden="true" class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+</header>
+<!-- Main Content Area -->
+<main class="max-w-screen-md mx-auto px-margin-mobile pt-md pb-[100px]">
+<!-- Search and Filter Bar -->
+<section class="mb-lg">
+<div class="relative flex items-center gap-sm">
+<div class="relative flex-1">
+<span class="material-symbols-outlined absolute left-md top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full h-[56px] pl-[48px] pr-md rounded-full bg-surface-container-low border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors font-body-md text-on-surface placeholder:text-on-surface-variant" placeholder="Search pharmacies..." type="text"/>
+</div>
+<button aria-label="Filter" class="h-[56px] w-[56px] rounded-full bg-primary text-on-primary flex items-center justify-center shadow-sm hover:opacity-90 transition-opacity flex-shrink-0">
+<span class="material-symbols-outlined" data-icon="tune">tune</span>
+</button>
+</div>
+<!-- Quick Chips -->
+<div class="flex overflow-x-auto gap-sm mt-sm pb-xs no-scrollbar">
+<button class="px-md py-sm rounded-lg bg-surface-container-highest text-on-surface font-label-lg whitespace-nowrap hover:bg-surface-variant transition-colors border border-transparent">Open Now</button>
+<button class="px-md py-sm rounded-lg bg-surface-container-highest text-on-surface font-label-lg whitespace-nowrap hover:bg-surface-variant transition-colors border border-transparent">Top Rated</button>
+<button class="px-md py-sm rounded-lg bg-surface-container-highest text-on-surface font-label-lg whitespace-nowrap hover:bg-surface-variant transition-colors border border-transparent">Near Me</button>
+<button class="px-md py-sm rounded-lg bg-surface-container-highest text-on-surface font-label-lg whitespace-nowrap hover:bg-surface-variant transition-colors border border-transparent">Fast Delivery</button>
+</div>
+</section>
+<!-- Pharmacy List -->
+<section class="flex flex-col gap-md">
+<!-- Card 1 -->
+<article class="bg-surface-container-lowest rounded-xl shadow-sm border border-surface-variant p-md flex gap-md hover:bg-surface-bright transition-colors cursor-pointer relative overflow-hidden">
+<div class="w-[80px] h-[80px] rounded-lg flex-shrink-0 bg-surface-container overflow-hidden">
+<img alt="Lazz Pharma Logo" class="w-full h-full object-cover" data-alt="A clean, modern logo for a pharmacy featuring a stylized medical cross in shades of teal and green against a crisp white background. Professional healthcare branding." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCQ5prBoyfpH7GS5rv2R70ZQTN_DDwYckr5LKPvRz6Gl4rx1hl3O8kt5MUYavNJ8lHlWKqZPJg3-GN7LGwEqjhRRSsOz-wZNFD9Qujfwhf6BSk6ndTYcE151xSIlG6xPzbmPJnXOe1IpDx4NAkfb0bIfQ8OEJsxZuut_s5dneSAO1S4qqSvjmN0THZr7_XMi3blH6jb-xAgvkIzERhDRSs5jt-GmwM5UAUJtB4XdXVs6QJ_eLXwMQYkVAlAGRur51ebATfFSboT68ja"/>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start mb-xs">
+<div class="flex items-center gap-xs">
+<h2 class="font-title-md text-title-md text-on-surface truncate">Lazz Pharma</h2>
+<span class="material-symbols-outlined text-primary text-[18px]" data-icon="verified" data-weight="fill" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm truncate mb-xs">64/B, Panthapath, Dhaka</p>
+<div class="flex flex-wrap items-center gap-x-md gap-y-xs font-label-md text-label-md text-on-surface-variant">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-secondary text-[16px]" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-on-surface font-semibold">4.8</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="directions_run">directions_run</span>
+<span>1.2 km</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="schedule">schedule</span>
+<span>20-30 min</span>
+</div>
+</div>
+</div>
+<div class="absolute top-md right-md">
+<span class="bg-[#E8F5E9] text-[#2E7D32] font-label-md px-2 py-1 rounded-full border border-[#C8E6C9]">Open</span>
+</div>
+</article>
+<!-- Card 2 -->
+<article class="bg-surface-container-lowest rounded-xl shadow-sm border border-surface-variant p-md flex gap-md hover:bg-surface-bright transition-colors cursor-pointer relative overflow-hidden">
+<div class="w-[80px] h-[80px] rounded-lg flex-shrink-0 bg-surface-container overflow-hidden">
+<img alt="Arogga Pharmacy Logo" class="w-full h-full object-cover" data-alt="A minimalist pharmacy storefront icon with a glowing green cross, modern flat design aesthetic suitable for a healthcare application." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDiyZ2HTWuZFPA3Aon76POjl4L47V1jm6XFbU1mFalLyD2pdB9vH9uY6K8VxAVaDrBCzFZB6UiO_78qEZyXS9syKnHRl8vOi6vI4lDaGWojX_k0Tz7gnECD6uoEDOWWM0O5x8gT7A6pdtpkgbls2MZuUX_4jSbksG3_EZDy0k0AAa39zT53Nb_9F8_CZz_kBBkfusmi7o-PUNvAnpB29wZ2E2Z7MYe13cZ4RctgPwmP2tn7XuobnmJwiqMZDPhVcSmjs7xl591-iRgS"/>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start mb-xs">
+<div class="flex items-center gap-xs">
+<h2 class="font-title-md text-title-md text-on-surface truncate">Arogga Pharmacy</h2>
+<span class="material-symbols-outlined text-primary text-[18px]" data-icon="verified" data-weight="fill" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm truncate mb-xs">Dhanmondi 27, Dhaka</p>
+<div class="flex flex-wrap items-center gap-x-md gap-y-xs font-label-md text-label-md text-on-surface-variant">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-secondary text-[16px]" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-on-surface font-semibold">4.9</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="directions_run">directions_run</span>
+<span>2.5 km</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="schedule">schedule</span>
+<span>35-45 min</span>
+</div>
+</div>
+</div>
+<div class="absolute top-md right-md">
+<span class="bg-[#E8F5E9] text-[#2E7D32] font-label-md px-2 py-1 rounded-full border border-[#C8E6C9]">Open</span>
+</div>
+</article>
+<!-- Card 3 -->
+<article class="bg-surface-container-lowest rounded-xl shadow-sm border border-surface-variant p-md flex gap-md hover:bg-surface-bright transition-colors cursor-pointer relative overflow-hidden">
+<div class="w-[80px] h-[80px] rounded-lg flex-shrink-0 bg-surface-container overflow-hidden">
+<img alt="Tazreen Pharma Logo" class="w-full h-full object-cover" data-alt="A clean logo showing a mortar and pestle integrated with a location pin, teal and blue color palette, professional medical branding." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBK4rh47GC_X-sO7wEDkfLVEXrAhe4T4GZWg2GKKcBZH2R-IJzovtucxmf6b2pIrb_qsdprOAqwgmQRZHELvk6hdtTLZXi6PnHzc3hoNpzNWCU9-ZqK6Me0Jrhh4c8YuqS4YPdN9J8PTbcBxR1UWwKtL7QX9beAZQmobKGtrqlruNzjXAEZNzV_y9wj9DjvVaxURwAOTc8u7R66Zr6d8lYAfagRuLGgmpC6WCXO0MnHcCjn9kE6Utt2UWR8az5fpbtANYtcMwhqOAVV"/>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between items-start mb-xs">
+<div class="flex items-center gap-xs">
+<h2 class="font-title-md text-title-md text-on-surface truncate">Tazreen Pharma</h2>
+</div>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant text-sm truncate mb-xs">Mirpur 10 Circle, Dhaka</p>
+<div class="flex flex-wrap items-center gap-x-md gap-y-xs font-label-md text-label-md text-on-surface-variant">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-secondary text-[16px]" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-on-surface font-semibold">4.6</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="directions_run">directions_run</span>
+<span>3.8 km</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="schedule">schedule</span>
+<span>45-60 min</span>
+</div>
+</div>
+</div>
+<div class="absolute top-md right-md">
+<span class="bg-[#FFEBEE] text-[#C62828] font-label-md px-2 py-1 rounded-full border border-[#FFCDD2]">Closed</span>
+</div>
+</article>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="bg-surface-container-lowest dark:bg-surface-container-low docked full-width bottom-0 rounded-t-xl border-t border-outline-variant dark:border-outline shadow-lg fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-xxl px-base pb-safe hidden md:hidden">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-1 hover:bg-surface-container-highest dark:hover:bg-surface-variant w-full h-full" href="#">
+<span aria-hidden="true" class="material-symbols-outlined mb-1" data-icon="home">home</span>
+<span class="font-label-md text-label-md">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-secondary-container dark:bg-secondary-fixed-variant text-on-secondary-container dark:text-on-secondary-fixed-variant rounded-2xl px-4 py-1 scale-90 transition-transform duration-150 w-full h-full" href="#">
+<span aria-hidden="true" class="material-symbols-outlined mb-1" data-icon="map" data-weight="fill" style="font-variation-settings: 'FILL' 1;">map</span>
+<span class="font-label-md text-label-md">Map</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-1 hover:bg-surface-container-highest dark:hover:bg-surface-variant w-full h-full" href="#">
+<span aria-hidden="true" class="material-symbols-outlined mb-1" data-icon="receipt_long">receipt_long</span>
+<span class="font-label-md text-label-md">Orders</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-1 hover:bg-surface-container-highest dark:hover:bg-surface-variant w-full h-full" href="#">
+<span aria-hidden="true" class="material-symbols-outlined mb-1" data-icon="person">person</span>
+<span class="font-label-md text-label-md">Profile</span>
+</a>
+</nav>
+<div class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-xxl px-base pb-safe bg-surface-container-lowest dark:bg-surface-container-low docked full-width bottom-0 rounded-t-xl md:hidden shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-1 w-full h-full" href="#">
+<span aria-hidden="true" class="material-symbols-outlined mb-1" data-icon="home">home</span>
+<span class="font-label-md text-label-md">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-secondary-container dark:bg-secondary-fixed-variant text-on-secondary-container dark:text-on-secondary-fixed-variant rounded-2xl px-4 py-1 scale-90 transition-transform duration-150 w-full h-full" href="#">
+<span aria-hidden="true" class="material-symbols-outlined mb-1" data-icon="map" data-weight="fill" style="font-variation-settings: 'FILL' 1;">map</span>
+<span class="font-label-md text-label-md font-bold text-primary">Map</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-1 w-full h-full" href="#">
+<span aria-hidden="true" class="material-symbols-outlined mb-1" data-icon="receipt_long">receipt_long</span>
+<span class="font-label-md text-label-md">Orders</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant dark:text-outline-variant px-4 py-1 w-full h-full" href="#">
+<span aria-hidden="true" class="material-symbols-outlined mb-1" data-icon="person">person</span>
+<span class="font-label-md text-label-md">Profile</span>
+</a>
+</div>
+<style>
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
+</body></html>

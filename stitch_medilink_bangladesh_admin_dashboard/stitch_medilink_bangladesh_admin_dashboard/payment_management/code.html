@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MediLink BD | Payment Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed": "#04006d",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary-container": "#292b8d",
+                    "primary": "#006b32",
+                    "secondary-fixed": "#e1e0ff",
+                    "surface-container": "#e5eeff",
+                    "on-primary": "#ffffff",
+                    "on-tertiary-fixed": "#3a0b00",
+                    "on-surface": "#0b1c30",
+                    "surface": "#f8f9ff",
+                    "surface-container-high": "#dce9ff",
+                    "inverse-surface": "#213145",
+                    "outline-variant": "#bccabb",
+                    "tertiary-fixed-dim": "#ffb59e",
+                    "primary-fixed-dim": "#5adf82",
+                    "primary-fixed": "#78fc9c",
+                    "surface-container-low": "#eff4ff",
+                    "error": "#ba1a1a",
+                    "surface-bright": "#f8f9ff",
+                    "secondary-fixed-dim": "#c0c1ff",
+                    "on-background": "#0b1c30",
+                    "inverse-on-surface": "#eaf1ff",
+                    "secondary-container": "#959aff",
+                    "on-secondary": "#ffffff",
+                    "surface-dim": "#cbdbf5",
+                    "on-primary-fixed": "#00210b",
+                    "tertiary-container": "#d1430a",
+                    "tertiary": "#a93200",
+                    "surface-tint": "#006d33",
+                    "on-primary-container": "#f7fff3",
+                    "background": "#f8f9ff",
+                    "secondary": "#4f54b4",
+                    "on-tertiary-fixed-variant": "#842500",
+                    "on-secondary-fixed-variant": "#373a9b",
+                    "outline": "#6d7b6d",
+                    "on-primary-fixed-variant": "#005225",
+                    "surface-variant": "#d3e4fe",
+                    "on-surface-variant": "#3d4a3e",
+                    "error-container": "#ffdad6",
+                    "on-error-container": "#93000a",
+                    "tertiary-fixed": "#ffdbd0",
+                    "inverse-primary": "#5adf82",
+                    "on-tertiary": "#ffffff",
+                    "on-error": "#ffffff",
+                    "surface-container-highest": "#d3e4fe",
+                    "primary-container": "#008740",
+                    "on-tertiary-container": "#fffbff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "container-margin": "24px",
+                    "base": "4px",
+                    "md": "16px",
+                    "lg": "24px",
+                    "gutter": "16px",
+                    "xs": "4px",
+                    "sm": "8px",
+                    "xl": "32px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-sm": ["Inter"],
+                    "title-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "title-md": ["Inter"],
+                    "display-md": ["Inter"],
+                    "label-md": ["Inter"]
+            },
+            "fontSize": {
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-sm": ["11px", {"lineHeight": "16px", "fontWeight": "600"}],
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "title-lg": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "title-md": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                    "display-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
+            border: 1px solid #e2e8f0;
+        }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: auto auto;
+            gap: 16px;
+        }
+        .bento-item-large { grid-column: span 2; grid-row: span 2; }
+        .tabular-nums { font-variant-numeric: tabular-nums; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-screen w-[280px] bg-surface dark:bg-inverse-surface border-r border-outline-variant flex flex-col py-md z-50">
+<div class="px-lg mb-xl">
+<h1 class="font-title-lg text-title-lg font-bold text-primary">MediLink BD</h1>
+<p class="font-label-md text-label-md text-on-surface-variant">Admin Console</p>
+</div>
+<nav class="flex-1 overflow-y-auto px-sm space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">local_pharmacy</span>
+<span class="font-label-md text-label-md">Pharmacies</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-md text-label-md">Customers</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="font-label-md text-label-md">Orders</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">description</span>
+<span class="font-label-md text-label-md">Prescriptions</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-primary bg-surface-container-high border-r-4 border-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-md text-label-md">Payments</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="font-label-md text-label-md">Deliveries</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">gavel</span>
+<span class="font-label-md text-label-md">Disputes</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">assessment</span>
+<span class="font-label-md text-label-md">Reports</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">notifications</span>
+<span class="font-label-md text-label-md">Notifications</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</nav>
+</aside>
+<!-- Main Content Shell -->
+<div class="ml-[280px] min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="h-16 flex justify-between items-center px-lg bg-surface border-b border-outline-variant sticky top-0 z-40">
+<div class="flex items-center gap-md">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-lg w-80 font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Search transactions..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-full transition-transform active:scale-90">
+<span class="material-symbols-outlined">help</span>
+</button>
+<div class="relative">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-full transition-transform active:scale-90">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</div>
+<div class="flex items-center gap-sm ml-sm">
+<img class="w-8 h-8 rounded-full border border-outline-variant" data-alt="A professional headshot of a senior medical administrator wearing glasses and a formal white clinical coat, set against a blurred office background with warm lighting, 8k resolution, cinematic quality." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDPU2Tg-EusYs7-9Ea77wiKRZ9OQ34UNPSlA7h68KX2HEpceJAjuzhcdXo2ivWrP4EWhOhRQQmS53_eTZ0gKIUuIIHmt5Dzw2pkkOaQgW4pabquj-BuY5S5MmwqOhCjDpxuPCeZhGs9xoqxPrgwBcDj0p9WzLNmu4RXIBWHwo1viKokncPOjOQRwifBHzg8USo57Ale5OFEGNUsP62boXO77r_8Fo2NZN5wPHabKGMo2CgMEUskbfUmzjyBeFhqOtqVuj6ksAGiCaY"/>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-bold text-on-surface">Dr. Rahman</span>
+<span class="text-[10px] text-on-surface-variant uppercase tracking-wider font-semibold">Master Admin</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="p-lg flex-1">
+<div class="flex justify-between items-end mb-lg">
+<div>
+<h2 class="font-display-md text-display-md text-on-surface">Payment Management</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Monitor and reconcile all financial flows within the MediLink ecosystem.</p>
+</div>
+<button class="flex items-center gap-2 px-md py-2 bg-primary text-on-primary rounded-lg font-title-md hover:bg-primary-container transition-colors shadow-sm">
+<span class="material-symbols-outlined">download</span>
+                    Export Statement
+                </button>
+</div>
+<!-- Dashboard Bento Summary -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-md mb-xl">
+<div class="bg-surface-container-lowest border border-outline-variant p-md rounded-xl flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<span class="text-on-surface-variant font-label-md">Gross Revenue</span>
+<span class="material-symbols-outlined text-primary">trending_up</span>
+</div>
+<div class="mt-base">
+<span class="font-display-md text-display-md tabular-nums">৳ 482,930</span>
+<div class="text-primary text-[12px] font-semibold flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span>
+                            +12.5% vs last month
+                        </div>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-md rounded-xl flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<span class="text-on-surface-variant font-label-md">Avg. Payout Time</span>
+<span class="material-symbols-outlined text-secondary">schedule</span>
+</div>
+<div class="mt-base">
+<span class="font-display-md text-display-md tabular-nums">2.4 Days</span>
+<div class="text-on-surface-variant text-[12px] mt-1">Current system average</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-md rounded-xl flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<span class="text-on-surface-variant font-label-md">Pending Withdrawals</span>
+<span class="material-symbols-outlined text-tertiary">account_balance_wallet</span>
+</div>
+<div class="mt-base">
+<span class="font-display-md text-display-md tabular-nums">14</span>
+<div class="text-tertiary text-[12px] font-semibold flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-[14px]">priority_high</span>
+                            Requires immediate review
+                        </div>
+</div>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant p-md rounded-xl flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<span class="text-on-surface-variant font-label-md">Refund Rate</span>
+<span class="material-symbols-outlined text-error">assignment_return</span>
+</div>
+<div class="mt-base">
+<span class="font-display-md text-display-md tabular-nums">0.8%</span>
+<div class="text-on-surface-variant text-[12px] mt-1">Optimized performance</div>
+</div>
+</div>
+</div>
+<!-- Tabbed Interface -->
+<div class="border-b border-outline-variant mb-md flex gap-lg">
+<button class="px-base py-sm font-title-md text-primary border-b-2 border-primary">Transactions</button>
+<button class="px-base py-sm font-title-md text-on-surface-variant hover:text-primary transition-colors">Refunds</button>
+<button class="px-base py-sm font-title-md text-on-surface-variant hover:text-primary transition-colors">Pharmacy Payouts</button>
+<button class="px-base py-sm font-title-md text-on-surface-variant hover:text-primary transition-colors">Commission Tracking</button>
+<button class="px-base py-sm font-title-md text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1">
+                    Withdrawal Requests
+                    <span class="bg-tertiary text-on-tertiary px-1.5 py-0.5 rounded-full text-[10px]">14</span>
+</button>
+</div>
+<!-- Filter Bar -->
+<div class="flex items-center gap-md mb-md">
+<div class="flex items-center gap-sm bg-surface-container-low px-3 py-1.5 rounded-lg border border-outline-variant cursor-pointer hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">filter_list</span>
+<span class="font-label-md">Filter by Method</span>
+</div>
+<div class="flex items-center gap-sm bg-surface-container-low px-3 py-1.5 rounded-lg border border-outline-variant cursor-pointer hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">calendar_today</span>
+<span class="font-label-md">Last 30 Days</span>
+</div>
+<div class="flex items-center gap-sm bg-surface-container-low px-3 py-1.5 rounded-lg border border-outline-variant cursor-pointer hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">sort</span>
+<span class="font-label-md">Sort by Amount</span>
+</div>
+</div>
+<!-- Detailed Table -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant">
+<th class="px-lg py-md font-title-md text-on-surface-variant">Transaction ID</th>
+<th class="px-lg py-md font-title-md text-on-surface-variant">Customer / Pharmacy</th>
+<th class="px-lg py-md font-title-md text-on-surface-variant">Method</th>
+<th class="px-lg py-md font-title-md text-on-surface-variant">Date &amp; Time</th>
+<th class="px-lg py-md font-title-md text-on-surface-variant">Status</th>
+<th class="px-lg py-md font-title-md text-on-surface-variant text-right">Amount (BDT)</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container transition-colors group">
+<td class="px-lg py-sm font-label-md tabular-nums text-on-surface">#ML-89210-BK</td>
+<td class="px-lg py-sm">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded bg-primary-container/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">person</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md font-bold">Tanvir Ahmed</span>
+<span class="text-[11px] text-on-surface-variant">Lazz Pharma (Dhanmondi)</span>
+</div>
+</div>
+</td>
+<td class="px-lg py-sm">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-[#E2136E]"></span>
+<span class="font-label-md">bKash</span>
+</div>
+</td>
+<td class="px-lg py-sm font-label-md text-on-surface-variant">Oct 24, 2023 • 14:20</td>
+<td class="px-lg py-sm">
+<span class="px-2 py-0.5 rounded-full bg-primary/10 text-primary font-label-sm uppercase tracking-tighter">Completed</span>
+</td>
+<td class="px-lg py-sm text-right font-title-md tabular-nums">৳ 4,250.00</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container transition-colors group">
+<td class="px-lg py-sm font-label-md tabular-nums text-on-surface">#ML-89211-NG</td>
+<td class="px-lg py-sm">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded bg-secondary-container/10 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[18px]">person</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md font-bold">Sabbir Hossain</span>
+<span class="text-[11px] text-on-surface-variant">Arogga Pharmacy</span>
+</div>
+</div>
+</td>
+<td class="px-lg py-sm">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-[#F37021]"></span>
+<span class="font-label-md">Nagad</span>
+</div>
+</td>
+<td class="px-lg py-sm font-label-md text-on-surface-variant">Oct 24, 2023 • 13:45</td>
+<td class="px-lg py-sm">
+<span class="px-2 py-0.5 rounded-full bg-secondary-container/20 text-on-secondary-container font-label-sm uppercase tracking-tighter">Processing</span>
+</td>
+<td class="px-lg py-sm text-right font-title-md tabular-nums">৳ 1,840.50</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container transition-colors group">
+<td class="px-lg py-sm font-label-md tabular-nums text-on-surface">#ML-89212-CR</td>
+<td class="px-lg py-sm">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded bg-tertiary/10 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-[18px]">person</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md font-bold">Mehzabin Chowdhury</span>
+<span class="text-[11px] text-on-surface-variant">Tamanna Pharmacy</span>
+</div>
+</div>
+</td>
+<td class="px-lg py-sm">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">credit_card</span>
+<span class="font-label-md">Visa Card</span>
+</div>
+</td>
+<td class="px-lg py-sm font-label-md text-on-surface-variant">Oct 24, 2023 • 11:12</td>
+<td class="px-lg py-sm">
+<span class="px-2 py-0.5 rounded-full bg-error-container/30 text-error font-label-sm uppercase tracking-tighter">Flagged</span>
+</td>
+<td class="px-lg py-sm text-right font-title-md tabular-nums">৳ 12,300.00</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container transition-colors group">
+<td class="px-lg py-sm font-label-md tabular-nums text-on-surface">#ML-89213-BK</td>
+<td class="px-lg py-sm">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded bg-primary-container/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">person</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md font-bold">Kamrul Islam</span>
+<span class="text-[11px] text-on-surface-variant">Health Plus Drug House</span>
+</div>
+</div>
+</td>
+<td class="px-lg py-sm">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-[#E2136E]"></span>
+<span class="font-label-md">bKash</span>
+</div>
+</td>
+<td class="px-lg py-sm font-label-md text-on-surface-variant">Oct 23, 2023 • 22:15</td>
+<td class="px-lg py-sm">
+<span class="px-2 py-0.5 rounded-full bg-primary/10 text-primary font-label-sm uppercase tracking-tighter">Completed</span>
+</td>
+<td class="px-lg py-sm text-right font-title-md tabular-nums">৳ 750.00</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-surface-container transition-colors group">
+<td class="px-lg py-sm font-label-md tabular-nums text-on-surface">#ML-89214-NG</td>
+<td class="px-lg py-sm">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded bg-secondary-container/10 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[18px]">person</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md font-bold">Farzana Yeasmin</span>
+<span class="text-[11px] text-on-surface-variant">Model Pharmacy</span>
+</div>
+</div>
+</td>
+<td class="px-lg py-sm">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-[#F37021]"></span>
+<span class="font-label-md">Nagad</span>
+</div>
+</td>
+<td class="px-lg py-sm font-label-md text-on-surface-variant">Oct 23, 2023 • 20:05</td>
+<td class="px-lg py-sm">
+<span class="px-2 py-0.5 rounded-full bg-primary/10 text-primary font-label-sm uppercase tracking-tighter">Completed</span>
+</td>
+<td class="px-lg py-sm text-right font-title-md tabular-nums">৳ 2,110.00</td>
+</tr>
+</tbody>
+</table>
+<div class="p-lg flex justify-between items-center bg-surface-container-low border-t border-outline-variant">
+<span class="font-label-md text-on-surface-variant">Showing 5 of 124,082 transactions</span>
+<div class="flex items-center gap-sm">
+<button class="p-1 hover:bg-surface-container rounded-lg disabled:opacity-30" disabled="">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-8 h-8 bg-primary text-on-primary rounded-lg font-label-md">1</button>
+<button class="w-8 h-8 hover:bg-surface-container rounded-lg font-label-md">2</button>
+<button class="w-8 h-8 hover:bg-surface-container rounded-lg font-label-md">3</button>
+<span class="px-1 text-on-surface-variant">...</span>
+<button class="w-8 h-8 hover:bg-surface-container rounded-lg font-label-md">2481</button>
+<button class="p-1 hover:bg-surface-container rounded-lg">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Asymmetric Bottom Panel -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-lg mt-xl">
+<!-- Commission Tracking (Glassmorphism Effect) -->
+<div class="lg:col-span-2 glass-card p-lg rounded-2xl">
+<div class="flex justify-between items-center mb-md">
+<h3 class="font-title-lg text-title-lg text-on-surface">Commission Trend</h3>
+<div class="flex gap-2">
+<span class="flex items-center gap-1 font-label-sm text-primary">
+<span class="w-3 h-3 bg-primary rounded-full"></span> This Week
+                            </span>
+<span class="flex items-center gap-1 font-label-sm text-on-surface-variant">
+<span class="w-3 h-3 bg-outline rounded-full"></span> Last Week
+                            </span>
+</div>
+</div>
+<!-- Mock Sparkline/Chart Visual -->
+<div class="h-48 w-full flex items-end gap-2 px-md">
+<div class="flex-1 bg-primary/20 hover:bg-primary/40 transition-colors rounded-t h-[40%]"></div>
+<div class="flex-1 bg-primary/20 hover:bg-primary/40 transition-colors rounded-t h-[60%]"></div>
+<div class="flex-1 bg-primary/20 hover:bg-primary/40 transition-colors rounded-t h-[35%]"></div>
+<div class="flex-1 bg-primary/20 hover:bg-primary/40 transition-colors rounded-t h-[80%]"></div>
+<div class="flex-1 bg-primary/20 hover:bg-primary/40 transition-colors rounded-t h-[55%]"></div>
+<div class="flex-1 bg-primary/20 hover:bg-primary/40 transition-colors rounded-t h-[90%]"></div>
+<div class="flex-1 bg-primary/20 hover:bg-primary/40 transition-colors rounded-t h-[75%]"></div>
+<div class="flex-1 bg-primary/20 hover:bg-primary/40 transition-colors rounded-t h-[45%]"></div>
+<div class="flex-1 bg-primary/20 hover:bg-primary/40 transition-colors rounded-t h-[65%]"></div>
+<div class="flex-1 bg-primary/20 hover:bg-primary/40 transition-colors rounded-t h-[50%]"></div>
+</div>
+<div class="mt-md flex justify-around text-on-surface-variant font-label-sm">
+<span>14 Oct</span>
+<span>16 Oct</span>
+<span>18 Oct</span>
+<span>20 Oct</span>
+<span>22 Oct</span>
+<span>Today</span>
+</div>
+</div>
+<!-- Recent Withdrawal Requests -->
+<div class="bg-surface-container-highest/30 border border-outline-variant p-lg rounded-2xl">
+<h3 class="font-title-lg text-title-lg text-on-surface mb-md">Pending Withdrawals</h3>
+<div class="space-y-md">
+<div class="flex justify-between items-center p-sm bg-surface rounded-lg border border-outline-variant hover:border-primary transition-colors cursor-pointer">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center font-bold">LP</div>
+<div class="flex flex-col">
+<span class="font-label-md font-bold">Lazz Pharma</span>
+<span class="text-[10px] text-on-surface-variant">Request ID: #WD-0092</span>
+</div>
+</div>
+<div class="text-right">
+<div class="font-title-md tabular-nums">৳ 45,000</div>
+<div class="text-[10px] text-primary uppercase font-bold">Approve</div>
+</div>
+</div>
+<div class="flex justify-between items-center p-sm bg-surface rounded-lg border border-outline-variant hover:border-primary transition-colors cursor-pointer">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center font-bold">AP</div>
+<div class="flex flex-col">
+<span class="font-label-md font-bold">Arogga Pharmacy</span>
+<span class="text-[10px] text-on-surface-variant">Request ID: #WD-0093</span>
+</div>
+</div>
+<div class="text-right">
+<div class="font-title-md tabular-nums">৳ 12,800</div>
+<div class="text-[10px] text-primary uppercase font-bold">Approve</div>
+</div>
+</div>
+<div class="flex justify-between items-center p-sm bg-surface rounded-lg border border-outline-variant hover:border-primary transition-colors cursor-pointer opacity-80">
+<div class="flex items-center gap-sm">
+<div class="w-10 h-10 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center font-bold">TP</div>
+<div class="flex flex-col">
+<span class="font-label-md font-bold">Tamanna Pharma</span>
+<span class="text-[10px] text-on-surface-variant">Request ID: #WD-0094</span>
+</div>
+</div>
+<div class="text-right">
+<div class="font-title-md tabular-nums">৳ 3,200</div>
+<div class="text-[10px] text-on-surface-variant uppercase font-bold">Reviewing</div>
+</div>
+</div>
+<button class="w-full py-2 border border-dashed border-outline text-on-surface-variant font-label-md rounded-lg hover:bg-surface-container transition-colors">
+                            View All 14 Requests
+                        </button>
+</div>
+</div>
+</div>
+</main>
+<!-- Contextual FAB (Only on specific screens, but useful for quick action here) -->
+<button class="fixed bottom-lg right-lg w-14 h-14 bg-primary text-on-primary rounded-2xl shadow-xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-[32px]">add</span>
+</button>
+<footer class="mt-xl px-lg py-md border-t border-outline-variant bg-surface flex justify-between items-center">
+<span class="text-[12px] text-on-surface-variant">© 2023 MediLink BD • Regulatory Compliance Interface v4.2</span>
+<div class="flex gap-md">
+<a class="text-[12px] text-on-surface-variant hover:text-primary" href="#">Financial Audit Logs</a>
+<a class="text-[12px] text-on-surface-variant hover:text-primary" href="#">System Health</a>
+</div>
+</footer>
+</div>
+<script>
+        // Simple micro-interaction for rows
+        document.querySelectorAll('tbody tr').forEach(row => {
+            row.addEventListener('click', () => {
+                const id = row.querySelector('td:first-child').textContent;
+                console.log(`Navigating to transaction detail: ${id}`);
+                // In a real app, this would route or open a modal
+            });
+        });
+
+        // Tab switching logic (visual only)
+        document.querySelectorAll('.border-b button').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.border-b button').forEach(t => {
+                    t.classList.remove('text-primary', 'border-b-2', 'border-primary');
+                    t.classList.add('text-on-surface-variant');
+                });
+                this.classList.add('text-primary', 'border-b-2', 'border-primary');
+                this.classList.remove('text-on-surface-variant');
+            });
+        });
+    </script>
+</body></html>

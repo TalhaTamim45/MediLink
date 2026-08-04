@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Prescription Management | MediLink BD</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed": "#04006d",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-container": "#292b8d",
+                        "primary": "#006b32",
+                        "secondary-fixed": "#e1e0ff",
+                        "surface-container": "#e5eeff",
+                        "on-primary": "#ffffff",
+                        "on-tertiary-fixed": "#3a0b00",
+                        "on-surface": "#0b1c30",
+                        "surface": "#f8f9ff",
+                        "surface-container-high": "#dce9ff",
+                        "inverse-surface": "#213145",
+                        "outline-variant": "#bccabb",
+                        "tertiary-fixed-dim": "#ffb59e",
+                        "primary-fixed-dim": "#5adf82",
+                        "primary-fixed": "#78fc9c",
+                        "surface-container-low": "#eff4ff",
+                        "error": "#ba1a1a",
+                        "surface-bright": "#f8f9ff",
+                        "secondary-fixed-dim": "#c0c1ff",
+                        "on-background": "#0b1c30",
+                        "inverse-on-surface": "#eaf1ff",
+                        "secondary-container": "#959aff",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#cbdbf5",
+                        "on-primary-fixed": "#00210b",
+                        "tertiary-container": "#d1430a",
+                        "tertiary": "#a93200",
+                        "surface-tint": "#006d33",
+                        "on-primary-container": "#f7fff3",
+                        "background": "#f8f9ff",
+                        "secondary": "#4f54b4",
+                        "on-tertiary-fixed-variant": "#842500",
+                        "on-secondary-fixed-variant": "#373a9b",
+                        "outline": "#6d7b6d",
+                        "on-primary-fixed-variant": "#005225",
+                        "surface-variant": "#d3e4fe",
+                        "on-surface-variant": "#3d4a3e",
+                        "error-container": "#ffdad6",
+                        "on-error-container": "#93000a",
+                        "tertiary-fixed": "#ffdbd0",
+                        "inverse-primary": "#5adf82",
+                        "on-tertiary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "surface-container-highest": "#d3e4fe",
+                        "primary-container": "#008740",
+                        "on-tertiary-container": "#fffbff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "container-margin": "24px",
+                        "base": "4px",
+                        "md": "16px",
+                        "lg": "24px",
+                        "gutter": "16px",
+                        "xs": "4px",
+                        "sm": "8px",
+                        "xl": "32px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "headline-sm": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "title-md": ["Inter"],
+                        "display-md": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "label-sm": ["11px", {"lineHeight": "16px", "fontWeight": "600"}],
+                        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "title-lg": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "title-md": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                        "display-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-pill {
+            position: relative;
+        }
+        .active-pill::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 25%;
+            height: 50%;
+            width: 4px;
+            background-color: #006b32;
+            border-radius: 4px 0 0 4px;
+        }
+    </style>
+</head>
+<body class="bg-surface font-body-md text-on-surface">
+<!-- Side Navigation Bar -->
+<aside class="fixed left-0 top-0 h-screen w-[280px] bg-surface border-r border-outline-variant flex flex-col py-md z-50">
+<div class="px-lg mb-xl">
+<h1 class="font-title-lg text-title-lg font-bold text-primary">MediLink BD</h1>
+<p class="font-label-md text-label-md text-on-surface-variant">Admin Console</p>
+</div>
+<nav class="flex-1 space-y-1 overflow-y-auto px-sm">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">local_pharmacy</span>
+<span class="font-label-md">Pharmacies</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-label-md">Customers</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="font-label-md">Orders</span>
+</a>
+<!-- Active Tab: Prescriptions -->
+<a class="flex items-center gap-3 px-4 py-3 text-primary bg-surface-container-high border-r-4 border-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">description</span>
+<span class="font-label-md font-bold">Prescriptions</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+<span class="font-label-md">Deliveries</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-md">Payments</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">gavel</span>
+<span class="font-label-md">Disputes</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">assessment</span>
+<span class="font-label-md">Reports</span>
+</a>
+<div class="pt-xl border-t border-outline-variant mt-xl">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">notifications</span>
+<span class="font-label-md">Notifications</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md">Settings</span>
+</a>
+</div>
+</nav>
+</aside>
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 right-0 h-16 w-[calc(100%-280px)] bg-surface border-b border-outline-variant flex justify-between items-center px-lg z-40">
+<div class="flex items-center flex-1 max-w-xl">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-full pl-10 pr-4 py-2 text-body-md focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all" placeholder="Search prescriptions, IDs, or customers..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-full transition-transform active:scale-90">
+<span class="material-symbols-outlined">help</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-full transition-transform active:scale-90 relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<div class="h-8 w-[1px] bg-outline-variant mx-sm"></div>
+<div class="flex items-center gap-sm">
+<div class="text-right">
+<p class="font-label-md text-on-surface">Dr. Ahmed Zubair</p>
+<p class="text-[10px] text-on-surface-variant">Senior Administrator</p>
+</div>
+<div class="w-10 h-10 rounded-full bg-surface-variant border border-outline-variant overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a middle-aged South Asian male medical administrator wearing a crisp white lab coat over a formal blue shirt. He has a friendly, professional expression with short black hair and glasses. The background is a clean, softly lit medical office environment with clinical green and slate blue tones." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDnchGMuatdnFNk8sPeAcrVVN928S2H7wBIO8mzdVTtEYV5X27MPvvc268uqzQVpwqMvsrzYsjcgRYQ38vTIVOzot5veLZy0m_AFWULA-BpiTy7M7ie_GMKMrDggHTYmNyJqLffPM9HoahgYc2rV4mBQ-jCXN38HBJim5ns0Nml-sWEPcLgmikWGf2EA0NpqMfFeN7QedJbaqfm0Rk7ZTyTYXoMvbltUIvEOOa1-I1yGtvYTwLis_rrc47BpYrYBIzr3IUPaMF7l2s"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-[280px] mt-16 p-lg bg-background min-h-[calc(100vh-64px)]">
+<!-- Header & Stats -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-xl gap-md">
+<div>
+<h2 class="font-display-md text-display-md text-on-surface mb-xs">Prescription Management</h2>
+<p class="font-body-md text-on-surface-variant">Review and validate prescription submissions across the MediLink network.</p>
+</div>
+<div class="flex gap-sm">
+<button class="flex items-center gap-xs px-lg py-sm bg-surface-container-lowest border border-outline-variant text-primary rounded-lg font-title-md hover:bg-surface-container transition-all">
+<span class="material-symbols-outlined">download</span>
+                    Export Log
+                </button>
+<button class="flex items-center gap-xs px-lg py-sm bg-primary text-on-primary rounded-lg font-title-md hover:opacity-90 transition-all shadow-sm">
+<span class="material-symbols-outlined">add</span>
+                    New Request
+                </button>
+</div>
+</div>
+<!-- Filters Section -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-md mb-lg">
+<div class="flex flex-wrap items-center gap-md">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-on-surface-variant">filter_list</span>
+<span class="font-label-md text-on-surface-variant">Filter by:</span>
+</div>
+<select class="bg-surface border border-outline-variant rounded-lg text-body-md px-md py-sm focus:ring-1 focus:ring-primary outline-none">
+<option>AI Confidence: All</option>
+<option>Critical (0-60%)</option>
+<option>High (61-85%)</option>
+<option>Optimal (86-100%)</option>
+</select>
+<select class="bg-surface border border-outline-variant rounded-lg text-body-md px-md py-sm focus:ring-1 focus:ring-primary outline-none">
+<option>Status: All</option>
+<option>Pending Review</option>
+<option>Reviewed</option>
+<option>Flagged</option>
+</select>
+<select class="bg-surface border border-outline-variant rounded-lg text-body-md px-md py-sm focus:ring-1 focus:ring-primary outline-none">
+<option>All Pharmacies</option>
+<option>Lazz Pharma</option>
+<option>Arogga Central</option>
+<option>Square Pharma</option>
+</select>
+<div class="ml-auto flex items-center gap-sm">
+<span class="text-label-md text-on-surface-variant">Showing 1-12 of 142 entries</span>
+</div>
+</div>
+</div>
+<!-- Prescription Queue Table -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-low border-b border-outline-variant">
+<tr>
+<th class="px-lg py-md font-title-md text-on-surface">Prescription ID</th>
+<th class="px-lg py-md font-title-md text-on-surface">Customer</th>
+<th class="px-lg py-md font-title-md text-on-surface">Date</th>
+<th class="px-lg py-md font-title-md text-on-surface">AI Confidence</th>
+<th class="px-lg py-md font-title-md text-on-surface">Assigned Pharmacy</th>
+<th class="px-lg py-md font-title-md text-on-surface">Status</th>
+<th class="px-lg py-md font-title-md text-on-surface text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Row 1: Flagged/Low Confidence -->
+<tr class="hover:bg-surface-container transition-colors">
+<td class="px-lg py-md font-label-md text-primary font-bold">RX-94021</td>
+<td class="px-lg py-md">
+<div class="flex flex-col">
+<span class="font-title-md text-on-surface">Rahat Khan</span>
+<span class="text-label-md text-on-surface-variant">ID: 10239-B</span>
+</div>
+</td>
+<td class="px-lg py-md text-body-md text-on-surface-variant">Oct 24, 2023 | 14:30</td>
+<td class="px-lg py-md">
+<div class="flex items-center gap-sm">
+<div class="w-12 h-2 bg-error-container rounded-full overflow-hidden">
+<div class="w-[42%] h-full bg-error"></div>
+</div>
+<span class="px-sm py-1 bg-error-container text-on-error-container rounded-full text-[10px] font-bold">42% (Critical)</span>
+</div>
+</td>
+<td class="px-lg py-md text-body-md text-on-surface">Lazz Pharma - Banani</td>
+<td class="px-lg py-md">
+<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-error-container text-error text-[11px] font-bold">
+<span class="material-symbols-outlined text-[14px]">report</span>
+                                Flagged
+                            </span>
+</td>
+<td class="px-lg py-md text-right">
+<div class="flex justify-end gap-sm">
+<button class="p-2 text-primary hover:bg-primary-container/10 rounded-lg transition-all" title="View Prescription">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+<button class="p-2 text-error hover:bg-error-container/20 rounded-lg transition-all" title="Review Flags">
+<span class="material-symbols-outlined">gavel</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2: Optimal Confidence -->
+<tr class="hover:bg-surface-container transition-colors">
+<td class="px-lg py-md font-label-md text-primary font-bold">RX-94022</td>
+<td class="px-lg py-md">
+<div class="flex flex-col">
+<span class="font-title-md text-on-surface">Nusrat Jahan</span>
+<span class="text-label-md text-on-surface-variant">ID: 88291-A</span>
+</div>
+</td>
+<td class="px-lg py-md text-body-md text-on-surface-variant">Oct 24, 2023 | 14:15</td>
+<td class="px-lg py-md">
+<div class="flex items-center gap-sm">
+<div class="w-12 h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="w-[98%] h-full bg-primary"></div>
+</div>
+<span class="px-sm py-1 bg-on-primary-container text-primary rounded-full text-[10px] font-bold">98% (Optimal)</span>
+</div>
+</td>
+<td class="px-lg py-md text-body-md text-on-surface">Arogga Central</td>
+<td class="px-lg py-md">
+<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[11px] font-bold">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+                                Pending
+                            </span>
+</td>
+<td class="px-lg py-md text-right">
+<div class="flex justify-end gap-sm">
+<button class="px-sm py-1 border border-primary text-primary rounded-lg text-label-sm hover:bg-primary hover:text-on-primary transition-all">Verify Now</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-all">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3: High Confidence -->
+<tr class="hover:bg-surface-container transition-colors">
+<td class="px-lg py-md font-label-md text-primary font-bold">RX-94019</td>
+<td class="px-lg py-md">
+<div class="flex flex-col">
+<span class="font-title-md text-on-surface">Tanvir Hasan</span>
+<span class="text-label-md text-on-surface-variant">ID: 55210-C</span>
+</div>
+</td>
+<td class="px-lg py-md text-body-md text-on-surface-variant">Oct 24, 2023 | 13:55</td>
+<td class="px-lg py-md">
+<div class="flex items-center gap-sm">
+<div class="w-12 h-2 bg-secondary-container/30 rounded-full overflow-hidden">
+<div class="w-[76%] h-full bg-secondary"></div>
+</div>
+<span class="px-sm py-1 bg-secondary-fixed text-on-secondary-fixed rounded-full text-[10px] font-bold">76% (High)</span>
+</div>
+</td>
+<td class="px-lg py-md text-body-md text-on-surface">Square Pharma</td>
+<td class="px-lg py-md">
+<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-surface-container-high text-primary text-[11px] font-bold">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                                Reviewed
+                            </span>
+</td>
+<td class="px-lg py-md text-right">
+<div class="flex justify-end gap-sm">
+<button class="p-2 text-primary hover:bg-primary-container/10 rounded-lg transition-all">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-lg transition-all">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4: Low Confidence/Flagged -->
+<tr class="hover:bg-surface-container transition-colors">
+<td class="px-lg py-md font-label-md text-primary font-bold">RX-94015</td>
+<td class="px-lg py-md">
+<div class="flex flex-col">
+<span class="font-title-md text-on-surface">Meherun Nesa</span>
+<span class="text-label-md text-on-surface-variant">ID: 11042-A</span>
+</div>
+</td>
+<td class="px-lg py-md text-body-md text-on-surface-variant">Oct 24, 2023 | 12:40</td>
+<td class="px-lg py-md">
+<div class="flex items-center gap-sm">
+<div class="w-12 h-2 bg-error-container rounded-full overflow-hidden">
+<div class="w-[58%] h-full bg-tertiary"></div>
+</div>
+<span class="px-sm py-1 bg-tertiary-fixed text-on-tertiary-fixed-variant rounded-full text-[10px] font-bold">58% (Moderate)</span>
+</div>
+</td>
+<td class="px-lg py-md text-body-md text-on-surface">Lazz Pharma - Uttara</td>
+<td class="px-lg py-md">
+<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-error-container text-error text-[11px] font-bold">
+<span class="material-symbols-outlined text-[14px]">warning</span>
+                                Flagged
+                            </span>
+</td>
+<td class="px-lg py-md text-right">
+<div class="flex justify-end gap-sm">
+<button class="p-2 text-primary hover:bg-primary-container/10 rounded-lg transition-all">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+<button class="p-2 text-error hover:bg-error-container/20 rounded-lg transition-all">
+<span class="material-symbols-outlined">flag</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<!-- Pagination -->
+<div class="px-lg py-md bg-surface-container-low flex justify-between items-center border-t border-outline-variant">
+<button class="flex items-center gap-xs px-md py-1 border border-outline-variant rounded-lg text-label-md disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+                    Previous
+                </button>
+<div class="flex gap-xs">
+<button class="w-8 h-8 rounded-lg bg-primary text-on-primary text-label-md font-bold">1</button>
+<button class="w-8 h-8 rounded-lg hover:bg-surface-container transition-all text-label-md">2</button>
+<button class="w-8 h-8 rounded-lg hover:bg-surface-container transition-all text-label-md">3</button>
+<span class="w-8 h-8 flex items-center justify-center">...</span>
+<button class="w-8 h-8 rounded-lg hover:bg-surface-container transition-all text-label-md">12</button>
+</div>
+<button class="flex items-center gap-xs px-md py-1 border border-outline-variant rounded-lg text-label-md hover:bg-surface-container transition-all">
+                    Next
+                    <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- System Alerts / Quick Context -->
+<div class="mt-lg grid grid-cols-1 md:grid-cols-3 gap-lg">
+<div class="bg-surface-container-highest/50 border border-outline-variant rounded-xl p-md flex items-start gap-md">
+<div class="p-2 bg-on-primary-container text-primary rounded-lg">
+<span class="material-symbols-outlined">psychology</span>
+</div>
+<div>
+<h4 class="font-title-md text-on-surface">AI Performance</h4>
+<p class="text-body-md text-on-surface-variant">Average confidence score is 84.2% across all 142 active prescriptions today.</p>
+</div>
+</div>
+<div class="bg-surface-container-highest/50 border border-outline-variant rounded-xl p-md flex items-start gap-md">
+<div class="p-2 bg-error-container text-error rounded-lg">
+<span class="material-symbols-outlined">clinical_notes</span>
+</div>
+<div>
+<h4 class="font-title-md text-on-surface">Critical Flags</h4>
+<p class="text-body-md text-on-surface-variant">12 prescriptions require immediate human intervention due to illegible script analysis.</p>
+</div>
+</div>
+<div class="bg-surface-container-highest/50 border border-outline-variant rounded-xl p-md flex items-start gap-md">
+<div class="p-2 bg-secondary-fixed text-on-secondary-fixed rounded-lg">
+<span class="material-symbols-outlined">hub</span>
+</div>
+<div>
+<h4 class="font-title-md text-on-surface">Network Traffic</h4>
+<p class="text-body-md text-on-surface-variant">Central Dhaka pharmacy node is experiencing 2x normal prescription volume.</p>
+</div>
+</div>
+</div>
+</main>
+<!-- FAB for Emergency Registration -->
+<button class="fixed bottom-lg right-lg w-14 h-14 bg-tertiary text-on-tertiary rounded-full shadow-lg flex items-center justify-center hover:scale-105 active:scale-95 transition-all z-50 group">
+<span class="material-symbols-outlined text-[32px]">emergency</span>
+<span class="absolute right-full mr-4 bg-inverse-surface text-inverse-on-surface px-md py-sm rounded-lg text-label-md whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">Emergency Patient Entry</span>
+</button>
+<script>
+        // Micro-interaction for table rows
+        document.querySelectorAll('tr').forEach(row => {
+            row.addEventListener('click', (e) => {
+                if(e.target.tagName !== 'BUTTON' && e.target.tagName !== 'SPAN') {
+                    // Imagine a side drawer opening here
+                    console.log('Opening prescription detail view...');
+                }
+            });
+        });
+
+        // Simple interaction for select filters
+        document.querySelectorAll('select').forEach(select => {
+            select.addEventListener('change', () => {
+                const toast = document.createElement('div');
+                toast.className = 'fixed bottom-lg left-1/2 -translate-x-1/2 bg-on-surface text-surface px-lg py-sm rounded-full text-label-md shadow-xl animate-bounce z-[100]';
+                toast.innerText = 'Applying filter criteria...';
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 2000);
+            });
+        });
+    </script>
+</body></html>

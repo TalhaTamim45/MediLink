@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Active Orders - MediLink</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-container": "#bee1fe",
+                        "on-primary-container": "#ffffff",
+                        "surface-variant": "#e2e2e2",
+                        "surface-container-low": "#f3f3f3",
+                        "primary-fixed": "#90f4e3",
+                        "on-surface": "#1a1c1c",
+                        "surface-container": "#eeeeee",
+                        "error": "#ba1a1a",
+                        "primary-container": "#008577",
+                        "on-tertiary-fixed": "#000767",
+                        "outline-variant": "#bdc9c5",
+                        "secondary-fixed-dim": "#a8cbe7",
+                        "secondary": "#40627b",
+                        "on-secondary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "surface": "#f9f9f9",
+                        "outline": "#6d7a76",
+                        "tertiary-fixed-dim": "#bdc2ff",
+                        "on-error": "#ffffff",
+                        "surface-container-high": "#e8e8e8",
+                        "tertiary-fixed": "#e0e0ff",
+                        "on-secondary-container": "#43647d",
+                        "secondary-fixed": "#c9e6ff",
+                        "on-secondary-fixed": "#001e2f",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-tint": "#006b5f",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-container": "#656ec9",
+                        "surface-container-highest": "#e2e2e2",
+                        "surface-bright": "#f9f9f9",
+                        "on-tertiary-container": "#ffffff",
+                        "on-surface-variant": "#3e4946",
+                        "background": "#f9f9f9",
+                        "on-background": "#1a1c1c",
+                        "primary": "#006a5e",
+                        "on-tertiary-fixed-variant": "#343d96",
+                        "on-primary": "#ffffff",
+                        "inverse-surface": "#2f3131",
+                        "on-primary-fixed": "#00201c",
+                        "on-secondary-fixed-variant": "#274a62",
+                        "primary-fixed-dim": "#73d8c7",
+                        "on-primary-fixed-variant": "#005047",
+                        "inverse-primary": "#73d8c7",
+                        "inverse-on-surface": "#f1f1f1",
+                        "tertiary": "#4c55ae",
+                        "surface-dim": "#dadada",
+                        "on-error-container": "#93000a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "xs": "4px",
+                        "md": "16px",
+                        "base": "8px",
+                        "xl": "32px",
+                        "gutter": "16px",
+                        "xxl": "48px",
+                        "lg": "24px",
+                        "touch-target": "48px",
+                        "sm": "8px",
+                        "margin-tablet": "32px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "title-md": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "label-md": ["Inter"],
+                        "label-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "body-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", { "lineHeight": "28px", "letterSpacing": "0.5px", "fontWeight": "400" }],
+                        "title-md": ["16px", { "lineHeight": "24px", "letterSpacing": "0.15px", "fontWeight": "600" }],
+                        "title-lg": ["22px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "500" }],
+                        "headline-md": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "700" }],
+                        "display-lg": ["57px", { "lineHeight": "64px", "letterSpacing": "-0.25px", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "letterSpacing": "0.25px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen flex flex-col font-body-lg text-body-lg">
+<header class="w-full top-0 sticky bg-surface shadow-sm z-40 flex items-center justify-between px-margin-mobile h-touch-target w-full">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[24px]">health_and_safety</span>
+<span class="font-title-lg text-title-lg font-bold text-primary">MediLink</span>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-high transition-colors active:scale-95 duration-100 w-[48px] h-[48px] flex items-center justify-center rounded-full">
+            notifications
+        </button>
+</header>
+<main class="flex-grow pb-[100px] flex flex-col">
+<div class="px-margin-mobile pt-lg pb-sm">
+<h1 class="font-headline-md text-headline-md text-on-surface">Orders</h1>
+</div>
+<div class="flex px-margin-mobile border-b border-surface-variant mb-md">
+<button class="flex-1 py-sm border-b-2 border-primary text-primary font-label-lg text-label-lg text-center font-semibold">Active</button>
+<button class="flex-1 py-sm border-b-2 border-transparent text-on-surface-variant font-label-lg text-label-lg text-center hover:bg-surface-container-low transition-colors rounded-t-lg">Completed</button>
+<button class="flex-1 py-sm border-b-2 border-transparent text-on-surface-variant font-label-lg text-label-lg text-center hover:bg-surface-container-low transition-colors rounded-t-lg">Cancelled</button>
+</div>
+<div class="px-margin-mobile space-y-md">
+<div class="bg-surface-container-low rounded-xl shadow-sm p-md border border-surface-variant">
+<div class="flex justify-between items-start mb-md">
+<div>
+<h2 class="font-title-md text-title-md text-on-surface">Order #ML8924A</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-xs">Lazz Pharma • 3 Items</p>
+</div>
+<span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full font-label-md text-label-md flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">local_shipping</span>
+                        In Transit
+                    </span>
+</div>
+<div class="mb-md">
+<div class="flex justify-between font-label-md text-label-md mb-2">
+<span class="text-on-surface-variant">Ordered</span>
+<span class="text-primary font-bold">In Transit</span>
+<span class="text-on-surface-variant">Delivered</span>
+</div>
+<div class="w-full h-2 bg-surface-variant rounded-full overflow-hidden">
+<div class="w-[65%] h-full bg-primary rounded-full relative">
+<div class="absolute right-0 top-0 bottom-0 w-4 bg-white/30 animate-pulse"></div>
+</div>
+</div>
+<p class="font-label-lg text-label-lg text-on-surface mt-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">schedule</span>
+                        Est. Arrival: Today, 2:30 PM
+                    </p>
+</div>
+<div class="flex flex-col gap-sm">
+<button class="w-full min-h-[56px] bg-primary text-on-primary rounded-xl font-title-md text-title-md flex items-center justify-center hover:bg-surface-tint transition-colors shadow-sm active:scale-[0.98]">
+                        Track Order
+                    </button>
+<button class="w-full min-h-[56px] border-2 border-primary text-primary bg-transparent rounded-xl font-title-md text-title-md flex items-center justify-center hover:bg-primary-container/10 transition-colors active:scale-[0.98]">
+                        View Details
+                    </button>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-xl shadow-sm p-md border border-surface-variant opacity-80">
+<div class="flex justify-between items-start mb-md">
+<div>
+<h2 class="font-title-md text-title-md text-on-surface">Order #ML8910B</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-xs">Apollo Pharmacy • 1 Item</p>
+</div>
+<span class="bg-surface-variant text-on-surface-variant px-3 py-1 rounded-full font-label-md text-label-md flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">inventory_2</span>
+                        Processing
+                    </span>
+</div>
+<div class="mb-md">
+<div class="flex justify-between font-label-md text-label-md mb-2">
+<span class="text-primary font-bold">Ordered</span>
+<span class="text-on-surface-variant">Processing</span>
+<span class="text-on-surface-variant">Delivered</span>
+</div>
+<div class="w-full h-2 bg-surface-variant rounded-full overflow-hidden">
+<div class="w-[20%] h-full bg-primary rounded-full"></div>
+</div>
+<p class="font-label-lg text-label-lg text-on-surface mt-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">schedule</span>
+                        Est. Arrival: Tomorrow, 10:00 AM
+                    </p>
+</div>
+<div class="flex flex-col gap-sm">
+<button class="w-full min-h-[56px] border-2 border-primary text-primary bg-transparent rounded-xl font-title-md text-title-md flex items-center justify-center hover:bg-primary-container/10 transition-colors active:scale-[0.98]">
+                        View Details
+                    </button>
+</div>
+</div>
+</div>
+</main>
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 py-2 bg-surface border-t border-surface-variant rounded-t-xl z-50 shadow-[0_-1px_3px_0_rgba(0,0,0,0.1)] pb-[env(safe-area-inset-bottom,16px)]">
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-variant transition-colors active:scale-90 duration-150 rounded-xl min-w-[64px] min-h-[48px]">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-md text-label-md mt-1">Home</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-variant transition-colors active:scale-90 duration-150 rounded-xl min-w-[64px] min-h-[48px]">
+<span class="material-symbols-outlined">map</span>
+<span class="font-label-md text-label-md mt-1">Map</span>
+</button>
+<button class="flex flex-col items-center justify-center bg-secondary-container text-on-secondary-container rounded-full px-6 py-1 transition-colors active:scale-90 duration-150 min-h-[48px]">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">receipt_long</span>
+<span class="font-label-md text-label-md mt-1">Orders</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant px-4 py-1 hover:bg-surface-variant transition-colors active:scale-90 duration-150 rounded-xl min-w-[64px] min-h-[48px]">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-md text-label-md mt-1">Profile</span>
+</button>
+</nav>
+</body></html>

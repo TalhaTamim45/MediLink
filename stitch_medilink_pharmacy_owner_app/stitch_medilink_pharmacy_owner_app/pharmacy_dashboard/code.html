@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MediLink | Pharmacy Owner Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-dim": "#dbdad9",
+                      "on-surface-variant": "#40493d",
+                      "surface-variant": "#e3e2e2",
+                      "secondary-fixed": "#abf4ac",
+                      "on-tertiary-fixed": "#002203",
+                      "primary-fixed-dim": "#88d982",
+                      "inverse-primary": "#88d982",
+                      "surface-container-low": "#f5f3f3",
+                      "tertiary-fixed-dim": "#91d78a",
+                      "background": "#fbf9f9",
+                      "on-error-container": "#93000a",
+                      "surface-bright": "#fbf9f9",
+                      "on-surface": "#1b1c1c",
+                      "on-error": "#ffffff",
+                      "on-primary-fixed-variant": "#005312",
+                      "on-secondary": "#ffffff",
+                      "primary-container": "#2e7d32",
+                      "on-tertiary": "#ffffff",
+                      "outline": "#707a6c",
+                      "on-secondary-container": "#2e7238",
+                      "on-primary": "#ffffff",
+                      "on-tertiary-fixed-variant": "#0c5216",
+                      "surface-container-lowest": "#ffffff",
+                      "tertiary-fixed": "#acf4a4",
+                      "on-primary-container": "#cbffc2",
+                      "primary": "#0d631b",
+                      "surface-container-high": "#e9e8e7",
+                      "on-background": "#1b1c1c",
+                      "inverse-on-surface": "#f2f0f0",
+                      "error": "#ba1a1a",
+                      "surface-container-highest": "#e3e2e2",
+                      "tertiary": "#1f6223",
+                      "surface": "#fbf9f9",
+                      "error-container": "#ffdad6",
+                      "on-secondary-fixed": "#002107",
+                      "on-secondary-fixed-variant": "#07521d",
+                      "on-tertiary-container": "#c8ffbf",
+                      "secondary-container": "#abf4ac",
+                      "surface-tint": "#1b6d24",
+                      "secondary-fixed-dim": "#90d792",
+                      "surface-container": "#efeded",
+                      "primary-fixed": "#a3f69c",
+                      "on-primary-fixed": "#002204",
+                      "tertiary-container": "#3a7b39",
+                      "outline-variant": "#bfcaba",
+                      "secondary": "#286b33",
+                      "inverse-surface": "#303031"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-mobile": "16px",
+                      "container-max": "1440px",
+                      "gutter": "24px",
+                      "base": "8px",
+                      "xs": "4px",
+                      "xl": "32px",
+                      "sm": "8px",
+                      "lg": "24px",
+                      "md": "16px",
+                      "margin-desktop": "32px"
+              },
+              "fontFamily": {
+                      "title-lg": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "label-lg": ["Inter"],
+                      "display-lg": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "headline-lg-mobile": ["Inter"],
+                      "body-md": ["Inter"]
+              },
+              "fontSize": {
+                      "title-lg": ["22px", {"lineHeight": "28px", "letterSpacing": "0px", "fontWeight": "500"}],
+                      "body-lg": ["16px", {"lineHeight": "24px", "letterSpacing": "0.5px", "fontWeight": "400"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "0px", "fontWeight": "600"}],
+                      "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "500"}],
+                      "display-lg": ["57px", {"lineHeight": "64px", "letterSpacing": "-0.25px", "fontWeight": "400"}],
+                      "label-sm": ["11px", {"lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500"}],
+                      "headline-lg-mobile": ["28px", {"lineHeight": "36px", "letterSpacing": "0px", "fontWeight": "600"}],
+                      "body-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.25px", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #bfcaba;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #707a6c;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface min-h-screen pb-24 md:pb-0 md:pt-16">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-surface dark:bg-surface flex justify-between items-center h-16 px-margin-mobile md:px-margin-desktop w-full transition-colors duration-200">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-3xl">local_pharmacy</span>
+<h1 class="font-title-lg text-title-lg font-bold text-primary dark:text-primary-fixed-dim">MediLink</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+</button>
+<div class="h-10 w-10 rounded-full overflow-hidden border-2 border-primary-container">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a female pharmacy owner in her late 40s, wearing a clean white lab coat with a subtle green MediLink logo pin. She has a warm, confident smile and is standing in a brightly lit, modern pharmacy setting with blurred shelves of medicine in the background. The lighting is soft and clinical, conveying trust and dependability in a high-end healthcare environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxFOjND90_lr0u4oF42AD6Ao1agMLJZTPSjwafAOpQQR24XhGj-LXT6oSMy3XiYw9n7rj96tBKthPXvN2iq8wjjDu8oQglYLbpNxqS0Ysmq5izbrwZbQEwxrMBjcKI5GChd1bmMg455chdqZlp4Mk1I7HtT5S7oVPJUs0zXMbU-QPJWeqhVMzOzer3aDIL7AgzmgTWpv0_bBizshaEGngbOF4L9hMfonx_SV1QBMhLWtoLyJRZMe-XTzZXSAvurAxts2y0-RjbYwlU"/>
+</div>
+</div>
+</header>
+<main class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop py-lg space-y-lg">
+<!-- Welcome Section -->
+<section class="flex flex-col md:flex-row md:items-end justify-between gap-md">
+<div>
+<p class="text-on-surface-variant font-label-lg text-label-lg mb-1">Thursday, Oct 24</p>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Dashboard Overview</h2>
+</div>
+<div class="flex gap-2">
+<button class="bg-primary-container text-on-primary-container px-lg py-2 rounded-xl flex items-center gap-2 font-label-lg text-label-lg transition-transform active:scale-95 shadow-sm">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                    New Prescription
+                </button>
+</div>
+</section>
+<!-- KPI Grid (Bento Style) -->
+<section class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-md">
+<!-- Today's Orders -->
+<div class="bg-surface-container-lowest p-lg rounded-xl border border-surface-variant shadow-sm flex flex-col justify-between min-h-[160px] col-span-1 md:col-span-2 lg:col-span-1">
+<div class="flex justify-between items-start">
+<div class="p-2 bg-secondary-container text-on-secondary-container rounded-lg">
+<span class="material-symbols-outlined">prescriptions</span>
+</div>
+<span class="text-primary font-label-sm text-label-sm">+12% vs yesterday</span>
+</div>
+<div>
+<h3 class="text-on-surface-variant font-label-lg text-label-lg">Today's Orders</h3>
+<div class="flex items-baseline gap-2 mt-1">
+<span class="text-display-lg font-display-lg text-on-surface leading-none">39</span>
+<span class="text-on-surface-variant font-body-md text-body-md">total</span>
+</div>
+</div>
+<div class="flex gap-4 mt-2">
+<div class="flex items-center gap-1">
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+<span class="text-label-sm font-label-sm text-on-surface">24 Pending</span>
+</div>
+<div class="flex items-center gap-1">
+<div class="w-2 h-2 rounded-full bg-outline-variant"></div>
+<span class="text-label-sm font-label-sm text-on-surface-variant">15 Done</span>
+</div>
+</div>
+</div>
+<!-- Daily Revenue -->
+<div class="bg-surface-container-lowest p-lg rounded-xl border border-surface-variant shadow-sm flex flex-col justify-between min-h-[160px]">
+<div class="flex justify-between items-start">
+<div class="p-2 bg-primary-container text-on-primary-container rounded-lg">
+<span class="material-symbols-outlined">payments</span>
+</div>
+<span class="text-primary font-label-sm text-label-sm">+5.2%</span>
+</div>
+<div>
+<h3 class="text-on-surface-variant font-label-lg text-label-lg">Daily Revenue</h3>
+<div class="flex items-baseline gap-1 mt-1">
+<span class="text-display-lg font-display-lg text-on-surface leading-none">$1,240</span>
+<span class="text-title-lg font-title-lg text-on-surface-variant">.50</span>
+</div>
+</div>
+<div class="h-1.5 w-full bg-surface-container rounded-full mt-2 overflow-hidden">
+<div class="h-full bg-primary w-3/4 rounded-full"></div>
+</div>
+</div>
+<!-- Urgent Alerts -->
+<div class="bg-error-container text-on-error-container p-lg rounded-xl shadow-sm flex flex-col justify-between min-h-[160px] relative overflow-hidden group">
+<div class="absolute -right-4 -top-4 opacity-10 group-hover:scale-110 transition-transform duration-500">
+<span class="material-symbols-outlined text-[120px]">warning</span>
+</div>
+<div class="flex justify-between items-start">
+<div class="p-2 bg-on-error-container text-on-error rounded-lg">
+<span class="material-symbols-outlined">inventory_2</span>
+</div>
+<span class="bg-error text-on-error px-2 py-0.5 rounded-full font-label-sm text-label-sm">High Priority</span>
+</div>
+<div class="z-10">
+<h3 class="font-label-lg text-label-lg opacity-90">Urgent Alerts</h3>
+<div class="flex items-baseline gap-2 mt-1">
+<span class="text-display-lg font-display-lg leading-none">3</span>
+<span class="font-body-md text-body-md">Items Low Stock</span>
+</div>
+</div>
+<button class="mt-4 text-label-lg font-label-lg underline text-left z-10">Restock now</button>
+</div>
+<!-- Efficiency Metric (Asymmetric addition) -->
+<div class="bg-primary text-on-primary p-lg rounded-xl shadow-sm flex flex-col justify-between min-h-[160px] md:hidden lg:flex">
+<div class="flex justify-between items-start">
+<div class="p-2 bg-on-primary-container text-on-primary-fixed-variant rounded-lg">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">bolt</span>
+</div>
+<span class="text-primary-fixed-dim font-label-sm text-label-sm">Optimal</span>
+</div>
+<div>
+<h3 class="font-label-lg text-label-lg opacity-80">Dispense Time</h3>
+<div class="flex items-baseline gap-2 mt-1">
+<span class="text-display-lg font-display-lg leading-none">8.2</span>
+<span class="font-body-md text-body-md">min / avg</span>
+</div>
+</div>
+<p class="text-label-sm font-label-sm opacity-70">20% faster than last month</p>
+</div>
+</section>
+<!-- Main Content Area -->
+<section class="grid grid-cols-1 lg:grid-cols-3 gap-lg pb-12">
+<!-- Recent Orders List -->
+<div class="lg:col-span-2 space-y-md">
+<div class="flex items-center justify-between">
+<h3 class="font-title-lg text-title-lg text-on-surface">Recent Orders</h3>
+<button class="text-primary font-label-lg text-label-lg hover:underline transition-all">View all history</button>
+</div>
+<div class="bg-surface-container-lowest rounded-xl border border-surface-variant overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-outline-variant bg-surface-container-low">
+<th class="px-lg py-md font-label-lg text-label-lg text-on-surface-variant">Order ID</th>
+<th class="px-lg py-md font-label-lg text-label-lg text-on-surface-variant">Patient Name</th>
+<th class="px-lg py-md font-label-lg text-label-lg text-on-surface-variant">Medication</th>
+<th class="px-lg py-md font-label-lg text-label-lg text-on-surface-variant">Status</th>
+<th class="px-lg py-md font-label-lg text-label-lg text-on-surface-variant text-right">Time</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr class="hover:bg-surface-container transition-colors group">
+<td class="px-lg py-md font-body-md text-body-md">#ML-8821</td>
+<td class="px-lg py-md">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container font-label-sm">JS</div>
+<span class="font-label-lg text-label-lg">Jane Smith</span>
+</div>
+</td>
+<td class="px-lg py-md font-body-md text-body-md">Amoxicillin 500mg</td>
+<td class="px-lg py-md">
+<span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full text-label-sm font-label-sm">Processing</span>
+</td>
+<td class="px-lg py-md font-body-md text-body-md text-on-surface-variant text-right">10:45 AM</td>
+</tr>
+<tr class="hover:bg-surface-container transition-colors group">
+<td class="px-lg py-md font-body-md text-body-md">#ML-8820</td>
+<td class="px-lg py-md">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-label-sm">RM</div>
+<span class="font-label-lg text-label-lg">Robert Miller</span>
+</div>
+</td>
+<td class="px-lg py-md font-body-md text-body-md">Lisinopril 10mg</td>
+<td class="px-lg py-md">
+<span class="bg-surface-container-high text-on-surface-variant px-3 py-1 rounded-full text-label-sm font-label-sm">Completed</span>
+</td>
+<td class="px-lg py-md font-body-md text-body-md text-on-surface-variant text-right">10:12 AM</td>
+</tr>
+<tr class="hover:bg-surface-container transition-colors group">
+<td class="px-lg py-md font-body-md text-body-md">#ML-8819</td>
+<td class="px-lg py-md">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-tertiary-container flex items-center justify-center text-on-tertiary-container font-label-sm">LH</div>
+<span class="font-label-lg text-label-lg">Linda H.</span>
+</div>
+</td>
+<td class="px-lg py-md font-body-md text-body-md">Atorvastatin 40mg</td>
+<td class="px-lg py-md">
+<span class="bg-error-container text-on-error-container px-3 py-1 rounded-full text-label-sm font-label-sm">Verification Required</span>
+</td>
+<td class="px-lg py-md font-body-md text-body-md text-on-surface-variant text-right">09:55 AM</td>
+</tr>
+<tr class="hover:bg-surface-container transition-colors group">
+<td class="px-lg py-md font-body-md text-body-md">#ML-8818</td>
+<td class="px-lg py-md">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container font-label-sm">TK</div>
+<span class="font-label-lg text-label-lg">Tom Klein</span>
+</div>
+</td>
+<td class="px-lg py-md font-body-md text-body-md">Metformin 500mg</td>
+<td class="px-lg py-md">
+<span class="bg-secondary-container text-on-secondary-container px-3 py-1 rounded-full text-label-sm font-label-sm">Processing</span>
+</td>
+<td class="px-lg py-md font-body-md text-body-md text-on-surface-variant text-right">09:30 AM</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Inventory Insights / Alerts Sidebar -->
+<div class="space-y-md">
+<h3 class="font-title-lg text-title-lg text-on-surface">Inventory Insights</h3>
+<div class="bg-surface-container-low rounded-xl p-lg border border-surface-variant space-y-4">
+<div class="flex items-center justify-between pb-2 border-b border-outline-variant">
+<span class="font-label-lg text-label-lg text-on-surface">Top Alert</span>
+<span class="material-symbols-outlined text-error">priority_high</span>
+</div>
+<div class="space-y-4">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface flex items-center justify-center shrink-0 border border-outline-variant">
+<span class="material-symbols-outlined text-primary">pill</span>
+</div>
+<div class="flex-1">
+<p class="font-label-lg text-label-lg">Albuterol Inhaler</p>
+<p class="text-label-sm font-label-sm text-error">Only 2 left</p>
+</div>
+<button class="bg-primary text-on-primary p-2 rounded-lg">
+<span class="material-symbols-outlined">shopping_cart</span>
+</button>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface flex items-center justify-center shrink-0 border border-outline-variant">
+<span class="material-symbols-outlined text-primary">vaccines</span>
+</div>
+<div class="flex-1">
+<p class="font-label-lg text-label-lg">Flu Vaccine (Single)</p>
+<p class="text-label-sm font-label-sm text-on-surface-variant">Low stock: 5 left</p>
+</div>
+<button class="bg-primary text-on-primary p-2 rounded-lg">
+<span class="material-symbols-outlined">shopping_cart</span>
+</button>
+</div>
+</div>
+</div>
+<div class="bg-secondary-container text-on-secondary-container rounded-xl p-lg flex items-center gap-4 border border-outline-variant">
+<span class="material-symbols-outlined text-[40px]" style="font-variation-settings: 'FILL' 1;">insights</span>
+<div>
+<p class="font-label-lg text-label-lg font-bold">Predictive Restock</p>
+<p class="text-body-md text-body-md opacity-90">Expect higher demand for Antibiotics this weekend due to seasonal shift.</p>
+</div>
+</div>
+<!-- Ad/Promo Area (Visual interest) -->
+<div class="relative rounded-xl overflow-hidden h-48 group shadow-lg">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="A clean and modern high-angle photograph of an organized pharmacy shelf featuring assorted professional medicine bottles and packaging. The lighting is bright and airy with a slight healthcare green tint. In the center, a digital tablet displays an analytics chart, suggesting a technology-driven pharmaceutical environment. The aesthetic is clinical, precise, and highly dependable." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBV8bLRx6Ub_KunpfOyQgMjoKiuglb9p8jr6iFB38j12aFDyBPLvN34lRnrrzJZrs1hgh_BsczJ5G2T4M1pbhZ9jdHd3gR7Qd-m1S1DagsQ6dXumZi2zTOIKlN34oHkRXr4AdrNKvuZhoCB02yBEYFVylmmsGjfUB6SP3nizcexwASP5dM0QUojnNdW09Sguk0iktjVmSVEBr1XWitP2GDusD6Nk8xynjGduR6N7wIhvSL6mHuSKg-R3XhQLTCFEV1FJYxACQPP0BSc"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent flex flex-col justify-end p-lg">
+<p class="text-on-primary font-title-lg text-title-lg font-bold">Manage Suppliers</p>
+<p class="text-on-primary opacity-80 text-label-sm">Optimized ordering portal</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center h-20 pb-safe px-2 bg-surface-container dark:bg-surface-container z-50 rounded-t-xl shadow-lg border-none">
+<button class="flex flex-col items-center justify-center bg-secondary-container dark:bg-secondary-container text-on-secondary-container dark:text-on-secondary-container rounded-full px-5 py-1 scale-95 active:scale-90 transition-transform duration-150">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-label-sm text-label-sm">Dashboard</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-5 py-1 scale-95 active:scale-90 transition-transform duration-150">
+<span class="material-symbols-outlined">prescriptions</span>
+<span class="font-label-sm text-label-sm">Orders</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-5 py-1 scale-95 active:scale-90 transition-transform duration-150">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="font-label-sm text-label-sm">Inventory</span>
+</button>
+<button class="flex flex-col items-center justify-center text-on-surface-variant dark:text-on-surface-variant px-5 py-1 scale-95 active:scale-90 transition-transform duration-150">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-label-sm text-label-sm">Earnings</span>
+</button>
+</nav>
+<!-- Floating Action Button (FAB) - Only for Home/Dashboard as per instructions -->
+<button class="fixed bottom-24 right-margin-mobile md:bottom-lg md:right-margin-desktop bg-primary text-on-primary w-14 h-14 rounded-2xl shadow-xl flex items-center justify-center hover:shadow-2xl transition-all active:scale-90">
+<span class="material-symbols-outlined text-3xl">add</span>
+</button>
+<script>
+        // Micro-interaction for table rows
+        document.querySelectorAll('tbody tr').forEach(row => {
+            row.addEventListener('click', () => {
+                row.classList.add('bg-primary/5');
+                setTimeout(() => row.classList.remove('bg-primary/5'), 200);
+            });
+        });
+
+        // Simple observer for entrance animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('opacity-100', 'translate-y-0');
+                    entry.target.classList.remove('opacity-0', 'translate-y-4');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('section > div').forEach(el => {
+            el.classList.add('transition-all', 'duration-500', 'opacity-0', 'translate-y-4');
+            observer.observe(el);
+        });
+    </script>
+</body></html>

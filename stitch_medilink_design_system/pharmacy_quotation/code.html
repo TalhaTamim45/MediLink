@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Pharmacy Quotation - MediLink Bangladesh</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-high": "#e8e8e8",
+                        "primary-container": "#008577",
+                        "on-surface-variant": "#3e4946",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-container": "#ffffff",
+                        "surface": "#f9f9f9",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-highest": "#e2e2e2",
+                        "outline": "#6d7a76",
+                        "on-primary": "#ffffff",
+                        "inverse-surface": "#2f3131",
+                        "secondary": "#40627b",
+                        "on-error-container": "#93000a",
+                        "error": "#ba1a1a",
+                        "on-error": "#ffffff",
+                        "surface-tint": "#006b5f",
+                        "surface-dim": "#dadada",
+                        "surface-bright": "#f9f9f9",
+                        "primary-fixed": "#90f4e3",
+                        "on-primary-fixed-variant": "#005047",
+                        "on-secondary-container": "#43647d",
+                        "on-surface": "#1a1c1c",
+                        "on-secondary-fixed-variant": "#274a62",
+                        "tertiary-container": "#656ec9",
+                        "secondary-fixed-dim": "#a8cbe7",
+                        "on-tertiary-fixed": "#000767",
+                        "on-tertiary-fixed-variant": "#343d96",
+                        "on-secondary-fixed": "#001e2f",
+                        "secondary-fixed": "#c9e6ff",
+                        "primary": "#006a5e",
+                        "on-primary-container": "#ffffff",
+                        "surface-container": "#eeeeee",
+                        "on-background": "#1a1c1c",
+                        "secondary-container": "#bee1fe",
+                        "tertiary-fixed": "#e0e0ff",
+                        "primary-fixed-dim": "#73d8c7",
+                        "background": "#f9f9f9",
+                        "tertiary-fixed-dim": "#bdc2ff",
+                        "surface-variant": "#e2e2e2",
+                        "surface-container-low": "#f3f3f3",
+                        "error-container": "#ffdad6",
+                        "tertiary": "#4c55ae",
+                        "on-primary-fixed": "#00201c",
+                        "on-tertiary": "#ffffff",
+                        "inverse-on-surface": "#f1f1f1",
+                        "outline-variant": "#bdc9c5",
+                        "inverse-primary": "#73d8c7"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xxl": "48px",
+                        "md": "16px",
+                        "xl": "32px",
+                        "lg": "24px",
+                        "margin-tablet": "32px",
+                        "xs": "4px",
+                        "gutter": "16px",
+                        "touch-target": "48px",
+                        "sm": "8px",
+                        "margin-mobile": "16px",
+                        "base": "8px",
+                        "pb-safe": "env(safe-area-inset-bottom)"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "label-lg": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "title-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["18px", {"lineHeight": "28px", "letterSpacing": "0.5px", "fontWeight": "400"}],
+                        "title-lg": ["22px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.1px", "fontWeight": "500"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "700"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}],
+                        "title-md": ["16px", {"lineHeight": "24px", "letterSpacing": "0.15px", "fontWeight": "600"}],
+                        "display-lg": ["57px", {"lineHeight": "64px", "letterSpacing": "-0.25px", "fontWeight": "700"}],
+                        "headline-md": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "letterSpacing": "0.25px", "fontWeight": "400"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.5px", "fontWeight": "500"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f9f9f9; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .material-symbols-outlined.fill { font-variation-settings: 'FILL' 1; }
+        
+        /* Custom scrollbar for horizontal lists if needed */
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background antialiased pb-32">
+<!-- Top App Bar -->
+<header class="bg-surface w-full top-0 sticky z-50 flex justify-between items-center px-margin-mobile h-touch-target shadow-sm">
+<button aria-label="Go back" class="text-on-surface-variant p-2 -ml-2 active:scale-95 transition-transform duration-150 rounded-full hover:bg-surface-container-low">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="font-title-lg text-title-lg text-primary truncate flex-1 text-center">Pharmacy Quotation</h1>
+<button aria-label="Call Pharmacy" class="text-primary p-2 -mr-2 active:scale-95 transition-transform duration-150 rounded-full hover:bg-surface-container-low">
+<span class="material-symbols-outlined">call</span>
+</button>
+</header>
+<main class="max-w-3xl mx-auto px-margin-mobile mt-lg space-y-xl">
+<!-- Pharmacy Info Card -->
+<section class="bg-surface-container-lowest rounded-xl p-md shadow-sm border border-outline-variant flex items-start gap-md">
+<div class="w-12 h-12 rounded-full bg-surface-container flex items-center justify-center shrink-0 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A small circular logo of a local pharmacy in Bangladesh, professional medical cross symbol in green." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDEi7JppCKDior_VDOwdluPzmaRHCsQ89P_9AnjLj0K7ppI2VR7ykXc6ofyFdQGNPKtKdz91_pXeEbtApXyX1LvTvCcYMgDN3AHTeWpTSS1YuTEkWvqP3J4Qe3fKYTdShAm1wOBaQKFf77bN2e5AOgPYCbwu5uMt6udJVFpysFP43aPKw2ZMLEdQso1NNtvznAiqJ9hfVAAJP8QgXN4RYG84_E72Z14r45_PyXUXaEQGXgxWs0PvnpeJuxPoCEUx4fkxXPuP7GY1V3a"/>
+</div>
+<div class="flex-1">
+<h2 class="font-title-md text-title-md text-on-surface">City Health Pharmacy</h2>
+<p class="font-body-md text-body-md text-on-surface-variant flex items-center gap-xs mt-1">
+<span class="material-symbols-outlined text-sm">location_on</span> Dhanmondi, Dhaka
+                </p>
+</div>
+<div class="bg-primary-container text-on-primary-container font-label-md text-label-md px-2 py-1 rounded">
+                Verified
+            </div>
+</section>
+<!-- Prescription Preview -->
+<section>
+<h3 class="font-title-md text-title-md text-on-surface mb-md">Prescription Preview</h3>
+<div class="bg-surface-container-low rounded-xl p-xs border border-outline-variant relative group overflow-hidden">
+<div class="h-32 w-full bg-surface-container-high rounded-lg relative overflow-hidden">
+<img class="w-full h-full object-cover opacity-80 mix-blend-multiply" data-alt="A clear, well-lit photograph of a handwritten medical prescription on a doctor's letterhead, resting on a clean desk." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBbqiu51Ue4tk5cZv2QecQ-TIdGtI2zpR5DKD_rnNHgMOcML5xqw0NXPhZisxYQwtPncuRE41IGohG2-tKbAivoHiOZSgiTEKh6ogg7WMboBNYpjZEG7H5meWnlxkUaOATl9wOKFzQpW5xcKI1dNnZiBW9vHUt-lMz9AnBympIcfupMSicmCEmfJdCOrnpnLMPAmRUNexoLe5j8cvipTiBz8GfbhUgbeamox4NrF0Gtsk4FkB3Glypo5wegxorxumdhXFesexY_vCMq"/>
+<div class="absolute inset-0 flex items-center justify-center bg-black/10 group-hover:bg-black/20 transition-colors">
+<button class="bg-surface text-primary rounded-full px-4 py-2 font-label-lg text-label-lg flex items-center gap-xs shadow-md">
+<span class="material-symbols-outlined">visibility</span> View Full
+                         </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Available Medicines -->
+<section>
+<div class="flex justify-between items-end mb-md">
+<h3 class="font-title-md text-title-md text-on-surface">Available Medicines</h3>
+<span class="font-label-md text-label-md text-primary bg-primary-container/20 px-2 py-1 rounded">3 Items</span>
+</div>
+<div class="space-y-sm">
+<!-- Item 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-md shadow-sm border border-outline-variant flex justify-between items-center">
+<div class="flex-1">
+<h4 class="font-title-md text-title-md text-on-surface">Napa Extend</h4>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">665mg Tablet • Beximco</p>
+<p class="font-label-md text-label-md text-outline mt-1">Qty: 2 Strips (20 pcs)</p>
+</div>
+<div class="text-right ml-md">
+<p class="font-title-md text-title-md text-primary">৳40.00</p>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-md shadow-sm border border-outline-variant flex justify-between items-center">
+<div class="flex-1">
+<h4 class="font-title-md text-title-md text-on-surface">Seclo</h4>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">20mg Capsule • Square</p>
+<p class="font-label-md text-label-md text-outline mt-1">Qty: 3 Strips (30 pcs)</p>
+</div>
+<div class="text-right ml-md">
+<p class="font-title-md text-title-md text-primary">৳150.00</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Unavailable & Alternatives -->
+<section>
+<div class="flex justify-between items-end mb-md">
+<h3 class="font-title-md text-title-md text-error flex items-center gap-xs">
+<span class="material-symbols-outlined fill text-[20px]">warning</span>
+                    Unavailable Items
+                </h3>
+</div>
+<!-- Alternative Card -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm border border-error-container overflow-hidden">
+<div class="bg-error-container/30 px-md py-sm border-b border-error-container flex justify-between items-center">
+<span class="font-label-lg text-label-lg text-on-surface">Originally Prescribed:</span>
+<span class="font-title-md text-title-md text-on-surface line-through decoration-error">Maxpro 20mg</span>
+</div>
+<div class="p-md">
+<h4 class="font-label-md text-label-md text-primary uppercase tracking-wider mb-sm">Suggested Alternative</h4>
+<div class="bg-surface-container-low rounded-lg p-md border border-outline-variant mb-md">
+<div class="flex justify-between items-start">
+<div>
+<h5 class="font-title-md text-title-md text-on-surface">Sergel 20mg</h5>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Esomeprazole • Healthcare Pharma</p>
+<p class="font-label-md text-label-md text-outline mt-1">Qty: 2 Strips (20 pcs)</p>
+</div>
+<div class="text-right">
+<p class="font-title-md text-title-md text-primary">৳140.00</p>
+<p class="font-label-md text-label-md text-secondary mt-1 bg-secondary-container/50 px-2 py-0.5 rounded inline-block">-৳10.00 diff</p>
+</div>
+</div>
+</div>
+<div class="flex gap-md">
+<button class="flex-1 bg-surface border-2 border-outline-variant text-on-surface-variant rounded-lg py-2 font-label-lg text-label-lg hover:bg-surface-container-low transition-colors text-center">
+                            Reject Alternative
+                        </button>
+<button class="flex-1 bg-primary text-on-primary rounded-lg py-2 font-label-lg text-label-lg hover:bg-surface-tint transition-colors flex items-center justify-center gap-xs shadow-sm">
+<span class="material-symbols-outlined text-[20px]">check_circle</span> Accept
+                        </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Summary -->
+<section class="bg-surface-container-low rounded-xl p-md border border-outline-variant">
+<h3 class="font-title-md text-title-md text-on-surface border-b border-outline-variant pb-sm mb-sm">Order Summary</h3>
+<div class="space-y-sm font-body-md text-body-md text-on-surface-variant">
+<div class="flex justify-between">
+<span>Subtotal (Medicines)</span>
+<span class="text-on-surface">৳330.00</span>
+</div>
+<div class="flex justify-between">
+<span>Delivery Charge</span>
+<span class="text-on-surface">৳60.00</span>
+</div>
+<div class="flex justify-between pt-sm border-t border-outline-variant font-title-md text-title-md text-on-surface">
+<span>Grand Total</span>
+<span class="text-primary text-xl">৳390.00</span>
+</div>
+</div>
+</section>
+</main>
+<!-- Sticky Bottom Actions -->
+<div class="fixed bottom-0 left-0 w-full bg-surface border-t border-outline-variant px-margin-mobile py-md pb-safe z-40 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+<div class="max-w-3xl mx-auto flex gap-md">
+<button class="flex-1 bg-surface border-2 border-primary text-primary rounded-xl h-14 font-title-md text-title-md active:scale-95 transition-transform">
+                Decline
+            </button>
+<button class="flex-[2] bg-primary text-on-primary rounded-xl h-14 font-title-md text-title-md active:scale-95 transition-transform shadow-md flex justify-center items-center gap-sm">
+                Accept &amp; Proceed <span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+</body></html>
