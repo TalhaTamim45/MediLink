@@ -11,6 +11,7 @@ import {
   Modal,
   ActivityIndicator,
   Image,
+  Keyboard,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
@@ -217,7 +218,7 @@ export default function HomeScreen({
   const processedPharmacies = useMemo(() => {
     const hasLocation = customerLocation && isValidCoord(customerLocation.latitude, customerLocation.longitude);
 
-    const list = pharmacies.map((p) => {
+    let list = pharmacies.map((p) => {
       const dist = hasLocation
         ? calculateHaversineDistance(customerLocation.latitude, customerLocation.longitude, p.latitude, p.longitude)
         : null;
@@ -229,6 +230,15 @@ export default function HomeScreen({
         deliveryInfo,
       };
     });
+
+    // Local Search Filter for Pharmacies
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim();
+      list = list.filter((p) => 
+        (p.pharmacyName || p.name || '').toLowerCase().includes(q) ||
+        (p.address || '').toLowerCase().includes(q)
+      );
+    }
 
     if (hasLocation) {
       // Sort nearest first, farthest last
@@ -243,7 +253,18 @@ export default function HomeScreen({
     }
 
     return list;
-  }, [pharmacies, customerLocation]);
+  }, [pharmacies, customerLocation, searchQuery]);
+
+  // 3b. Local Search Filter for Medicines
+  const filteredMedicines = useMemo(() => {
+    if (!searchQuery.trim()) return liveMedicines;
+    const q = searchQuery.toLowerCase().trim();
+    return liveMedicines.filter((m) =>
+      (m.name || '').toLowerCase().includes(q) ||
+      (m.genericName || '').toLowerCase().includes(q) ||
+      (m.pharmacyName || '').toLowerCase().includes(q)
+    );
+  }, [liveMedicines, searchQuery]);
 
   // Extract first name for greeting
   const getFirstName = () => {
@@ -389,12 +410,8 @@ export default function HomeScreen({
               </View>
             ) : null}
 
-            {/* Search Section (Guides customer to select pharmacy) */}
-            <TouchableOpacity
-              style={styles.searchContainer}
-              onPress={handleHomeSearchSubmit}
-              activeOpacity={0.9}
-            >
+            {/* Search Section (Local filter search) */}
+            <View style={styles.searchContainer}>
               <Ionicons
                 name="search-outline"
                 size={18}
@@ -406,20 +423,21 @@ export default function HomeScreen({
                   styles.searchInput,
                   Platform.OS === 'web' && { outlineStyle: 'none' },
                 ]}
-                placeholder={
-                  selectedPharmacy
-                    ? `Search medicines in ${selectedPharmacy.pharmacyName}...`
-                    : 'Select a pharmacy to search medicines...'
-                }
+                placeholder="Search medicines or pharmacy name..."
                 placeholderTextColor="rgba(62, 73, 70, 0.55)"
                 value={searchQuery}
                 onChangeText={setSearchQuery}
-                onFocus={handleHomeSearchSubmit}
+                onSubmitEditing={() => Keyboard.dismiss()}
               />
-              <TouchableOpacity activeOpacity={0.7} onPress={handleHomeSearchSubmit}>
+              {searchQuery ? (
+                <TouchableOpacity onPress={() => setSearchQuery('')} style={{ marginRight: scale(6) }} activeOpacity={0.7}>
+                  <Ionicons name="close-circle" size={18} color={colors.onSurfaceVariant} />
+                </TouchableOpacity>
+              ) : null}
+              <TouchableOpacity activeOpacity={0.7} onPress={() => Keyboard.dismiss()}>
                 <Ionicons name="arrow-forward-circle" size={20} color={colors.primary} />
               </TouchableOpacity>
-            </TouchableOpacity>
+            </View>
 
             {/* Quick Actions Grid */}
             <View style={styles.sectionHeader}>
@@ -484,14 +502,14 @@ export default function HomeScreen({
                 <Ionicons name="alert-circle-outline" size={18} color="#991B1B" />
                 <Text style={styles.errorText}>{medicineError}</Text>
               </View>
-            ) : liveMedicines.length === 0 ? (
+            ) : filteredMedicines.length === 0 ? (
               <View style={styles.emptyBox}>
                 <Ionicons name="medkit-outline" size={32} color={colors.outline} />
                 <Text style={styles.emptyTitle}>No medicines listed yet.</Text>
               </View>
             ) : (
               <View style={styles.medicinesGrid}>
-                {liveMedicines.map((med) => {
+                {filteredMedicines.map((med) => {
                   return (
                     <TouchableOpacity
                       key={med.id}
