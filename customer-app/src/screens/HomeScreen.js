@@ -10,6 +10,7 @@ import {
   Platform,
   Modal,
   ActivityIndicator,
+  Image,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
@@ -44,6 +45,9 @@ export default function HomeScreen({
   const [searchQuery, setSearchQuery] = useState('');
   const [isProfileMenuVisible, setIsProfileMenuVisible] = useState(false);
   const [infoBanner, setInfoBanner] = useState('');
+  const [liveMedicines, setLiveMedicines] = useState([]);
+  const [isLoadingMedicines, setIsLoadingMedicines] = useState(false);
+  const [medicineError, setMedicineError] = useState('');
 
   // 1. Subscribe/Fetch approved pharmacies from Odoo API
   useEffect(() => {
@@ -88,6 +92,75 @@ export default function HomeScreen({
 
     fetchPharmacies();
   }, []);
+
+  // 1b. Fetch all medicines stocked by any pharmacy
+  useEffect(() => {
+    setIsLoadingMedicines(true);
+    setMedicineError('');
+
+    const fetchMedicines = async () => {
+      try {
+        const result = await odooApi.searchRead(
+          'product.product',
+          [['sale_ok', '=', true], ['pharmacy_id', '!=', false]],
+          ['name', 'list_price', 'generic_name', 'strength', 'prescription_required', 'pharmacy_id']
+        );
+        
+        const docs = result.records.map((m) => {
+          const price = Number(m.list_price ?? 0);
+          return {
+            id: m.id,
+            medicineId: m.id,
+            medicineName: m.name,
+            name: m.name,
+            price: price,
+            unitPrice: price,
+            genericName: m.generic_name || '',
+            generic: m.generic_name || '',
+            strength: m.strength || '',
+            prescriptionRequired: !!m.prescription_required,
+            stock: 100, // Default display stock
+            pharmacyId: m.pharmacy_id ? m.pharmacy_id[0] : null,
+            pharmacyName: m.pharmacy_id ? m.pharmacy_id[1] : ''
+          };
+        });
+
+        setLiveMedicines(docs);
+        setIsLoadingMedicines(false);
+      } catch (err) {
+        console.error('Error fetching home medicines from Odoo:', err);
+        setMedicineError('Failed to load medicines.');
+        setIsLoadingMedicines(false);
+      }
+    };
+
+    fetchMedicines();
+  }, []);
+
+  const handleMedicineClick = (med) => {
+    const matchedPharmacy = pharmacies.find(p => p.id === med.pharmacyId);
+    if (matchedPharmacy) {
+      onSelectPharmacy(matchedPharmacy);
+      setTimeout(() => {
+        onOpenMedicineDetails(med);
+      }, 100);
+    } else {
+      // Fallback: if pharmacy not fully fetched yet in local state
+      const mockPharmacy = {
+        id: med.pharmacyId,
+        pharmacyUid: med.pharmacyId,
+        pharmacyName: med.pharmacyName,
+        name: med.pharmacyName,
+        approvalStatus: 'approved',
+        isOpen: true,
+        deliveryRadius: 10.0
+      };
+      onSelectPharmacy(mockPharmacy);
+      setTimeout(() => {
+        onOpenMedicineDetails(med);
+      }, 100);
+    }
+  };
 
   // 2. Request GPS location safely
   useEffect(() => {
@@ -395,6 +468,66 @@ export default function HomeScreen({
                 <Text style={styles.actionCardTitle}>My{'\n'}Orders</Text>
               </TouchableOpacity>
             </View>
+
+            {/* MEDICINES AVAILABLE SECTION */}
+            <View style={[styles.sectionHeader, { marginTop: 22 }]}>
+              <Text style={styles.sectionTitle}>Medicines Available Nearby</Text>
+            </View>
+
+            {isLoadingMedicines ? (
+              <View style={styles.loadingBox}>
+                <ActivityIndicator size="small" color={colors.primary} />
+                <Text style={styles.loadingText}>Fetching available medicines...</Text>
+              </View>
+            ) : medicineError ? (
+              <View style={styles.errorBanner}>
+                <Ionicons name="alert-circle-outline" size={18} color="#991B1B" />
+                <Text style={styles.errorText}>{medicineError}</Text>
+              </View>
+            ) : liveMedicines.length === 0 ? (
+              <View style={styles.emptyBox}>
+                <Ionicons name="medkit-outline" size={32} color={colors.outline} />
+                <Text style={styles.emptyTitle}>No medicines listed yet.</Text>
+              </View>
+            ) : (
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.medicinesScroll}
+                style={{ width: '100%', marginBottom: 12 }}
+              >
+                {liveMedicines.map((med) => {
+                  return (
+                    <TouchableOpacity
+                      key={med.id}
+                      style={styles.medicineCardHome}
+                      onPress={() => handleMedicineClick(med)}
+                      activeOpacity={0.85}
+                    >
+                      <Image
+                        source={{ uri: `http://localhost:8069/web/image/product.product/${med.id}/image_256` }}
+                        style={styles.medicineImageHome}
+                        defaultSource={require('../../assets/favicon.png')}
+                      />
+                      <View style={styles.medicineInfoHome}>
+                        <Text style={styles.medicineNameHome} numberOfLines={1}>
+                          {med.name}
+                        </Text>
+                        <Text style={styles.medicineGenericHome} numberOfLines={1}>
+                          {med.genericName} {med.strength}
+                        </Text>
+                        <Text style={styles.medicineStoreHome} numberOfLines={1}>
+                          🏪 {med.pharmacyName}
+                        </Text>
+                        <Text style={styles.medicinePriceHome}>
+                          ৳{med.price.toFixed(2)}
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  );
+                })}
+              </ScrollView>
+            )}
 
             {/* ALL APPROVED PHARMACIES SECTION */}
             <View style={[styles.sectionHeader, { marginTop: 22 }]}>
@@ -1028,6 +1161,62 @@ StyleSheet.create({
     fontSize: moderateScale(12),
     fontWeight: '700',
     color: colors.primary,
+  },
+  medicinesScroll: {
+    paddingLeft: scale(4),
+    paddingRight: scale(16),
+    paddingVertical: verticalScale(4),
+  },
+  medicineCardHome: {
+    width: scale(142),
+    backgroundColor: '#FFFFFF',
+    borderRadius: scale(14),
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    padding: scale(10),
+    marginRight: scale(12),
+    alignItems: 'center',
+    shadowColor: '#0F172A',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 2,
+  },
+  medicineImageHome: {
+    width: scale(72),
+    height: scale(72),
+    borderRadius: scale(36),
+    backgroundColor: '#F8FAFC',
+    marginBottom: verticalScale(8),
+  },
+  medicineInfoHome: {
+    width: '100%',
+    alignItems: 'flex-start',
+  },
+  medicineNameHome: {
+    fontSize: moderateScale(13),
+    fontWeight: '700',
+    color: colors.onSurface,
+    width: '100%',
+  },
+  medicineGenericHome: {
+    fontSize: moderateScale(10),
+    color: colors.onSurfaceVariant,
+    width: '100%',
+    marginTop: verticalScale(1),
+  },
+  medicineStoreHome: {
+    fontSize: moderateScale(10),
+    color: colors.primary,
+    fontWeight: '600',
+    width: '100%',
+    marginTop: verticalScale(4),
+  },
+  medicinePriceHome: {
+    fontSize: moderateScale(13),
+    fontWeight: '700',
+    color: colors.onSurface,
+    marginTop: verticalScale(4),
   },
   bottomNavContainer: {
     position: 'absolute',
