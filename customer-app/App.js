@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { Modal, View, Text, TouchableOpacity, StyleSheet, Platform, StatusBar as RNStatusBar } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LoginScreen from './src/screens/LoginScreen';
 import RegisterScreen from './src/screens/RegisterScreen';
@@ -156,8 +156,8 @@ function AppContent() {
   };
 
   return (
-    <>
-      <StatusBar style="dark" translucent={false} backgroundColor="#FFFFFF" />
+    <View style={{ flex: 1, paddingTop: Platform.OS === 'android' ? RNStatusBar.currentHeight : 0, paddingBottom: Platform.OS === 'android' ? 20 : 0, backgroundColor: '#FFFFFF' }}>
+      <StatusBar style="dark" translucent={true} />
       {currentScreen === 'login' && (
         <LoginScreen
           onNavigateToRegister={() => setCurrentScreen('register')}
@@ -307,7 +307,7 @@ function AppContent() {
           </View>
         </View>
       ) : null}
-    </>
+    </View>
   );
 }
 

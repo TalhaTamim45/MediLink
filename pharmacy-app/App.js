@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Platform,
+  StatusBar as RNStatusBar,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from './src/theme/colors';
@@ -118,10 +119,10 @@ export default function App() {
   }
 
   return (
-    <>
-      <StatusBar style="dark" translucent={false} backgroundColor="#FFFFFF" />
+    <View style={{ flex: 1, paddingTop: Platform.OS === 'android' ? RNStatusBar.currentHeight : 0, paddingBottom: Platform.OS === 'android' ? 20 : 0, backgroundColor: '#FFFFFF' }}>
+      <StatusBar style="dark" translucent={true} />
       {screenContent}
-    </>
+    </View>
   );
 }
 

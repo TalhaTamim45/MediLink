@@ -967,6 +967,7 @@ StyleSheet.create({
     borderTopWidth: scale(1),
     borderTopColor: '#E2E8F0',
     alignItems: 'center',
+    paddingBottom: Platform.OS === 'android' ? verticalScale(20) : 0,
   },
   bottomNav: {
     width: '100%',
