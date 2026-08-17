@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
-import { auth, db } from './config/firebase';
+import odooApi from './config/odooApi';
 
 import AdminLogin from './components/AdminLogin';
 import AdminSidebar from './components/AdminSidebar';
@@ -18,40 +16,21 @@ export default function App() {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      setAuthChecking(true);
-      if (user) {
-        try {
-          const userDocSnap = await getDoc(doc(db, 'users', user.uid));
-          if (userDocSnap.exists() && userDocSnap.data().role === 'admin') {
-            setCurrentUser(user);
-            setAdminProfile(userDocSnap.data());
-          } else {
-            // Non-admin user signed in: sign out
-            await signOut(auth);
-            setCurrentUser(null);
-            setAdminProfile(null);
-          }
-        } catch (err) {
-          console.log('Error verifying admin status:', err);
-          setCurrentUser(null);
-        }
-      } else {
-        setCurrentUser(null);
-        setAdminProfile(null);
-      }
-      setAuthChecking(false);
-    });
-
-    return () => unsubscribe();
+    setAuthChecking(true);
+    if (odooApi.sessionId && odooApi.userId && odooApi.userName) {
+      setCurrentUser({
+        uid: odooApi.userId,
+        email: odooApi.userName,
+        fullName: odooApi.userName,
+      });
+    } else {
+      setCurrentUser(null);
+    }
+    setAuthChecking(false);
   }, []);
 
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-    } catch (err) {
-      console.log('Logout error:', err);
-    }
+  const handleLogout = () => {
+    odooApi.logout();
     setCurrentUser(null);
     setAdminProfile(null);
   };
@@ -70,7 +49,11 @@ export default function App() {
     return (
       <AdminLogin
         onLoginSuccess={(userData) => {
-          setCurrentUser(auth.currentUser);
+          setCurrentUser({
+            uid: userData.uid,
+            email: userData.email,
+            fullName: userData.fullName,
+          });
           setAdminProfile(userData);
         }}
       />

@@ -15,7 +15,6 @@ import OrderSuccessScreen from './src/screens/OrderSuccessScreen';
 import MyOrdersScreen from './src/screens/MyOrdersScreen';
 import OrderDetailsScreen from './src/screens/OrderDetailsScreen';
 import { CartProvider, useCart } from './src/context/CartContext';
-import { app, auth, db } from './src/config/firebase';
 import { colors } from './src/theme/colors';
 
 function AppContent() {
@@ -158,7 +157,7 @@ function AppContent() {
 
   return (
     <>
-      <StatusBar style="dark" />
+      <StatusBar style="dark" translucent={false} backgroundColor="#FFFFFF" />
       {currentScreen === 'login' && (
         <LoginScreen
           onNavigateToRegister={() => setCurrentScreen('register')}

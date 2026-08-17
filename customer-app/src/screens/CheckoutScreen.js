@@ -13,10 +13,12 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../theme/colors';
 import { useCart } from '../context/CartContext';
-import { db, auth } from '../config/firebase';
-import { doc, getDoc, collection, addDoc, runTransaction, serverTimestamp } from 'firebase/firestore';
 import { calculateHaversineDistance } from '../utils/distance';
 import { isValidCoord } from '../components/BarikoiCustomerMap';
+import odooApi from '../config/odooApi';
+import { scale, verticalScale, moderateScale, wp, hp } from '../utils/responsive';
+
+
 const DELIVERY_METHODS = [
   { id: 'standard', name: 'Standard Delivery', time: 'Delivered within 1-2 hours', fee: 60 },
   { id: 'express', name: 'Express Delivery', time: 'Fastest delivery within 30-45 mins', fee: 100 },
@@ -31,13 +33,13 @@ export default function CheckoutScreen({ userProfile, selectedPharmacy, onOpenPh
   const { cartItems, subtotal, clearCart } = useCart();
 
   // Prefill Full Name and Phone from Firestore customer profile
-  const [fullName, setFullName] = useState(userProfile?.fullName || '');
-  const [phone, setPhone] = useState(userProfile?.phone || '');
+  const [fullName, setFullName] = useState(userProfile?.fullName || userProfile?.name || 'Talha Tamim');
+  const [phone, setPhone] = useState(userProfile?.phone || '01712345678');
 
   // Address Fields
-  const [address, setAddress] = useState('');
-  const [area, setArea] = useState('');
-  const [city, setCity] = useState('Dhaka');
+  const [address, setAddress] = useState(userProfile?.address || 'House 12, Road 5, Block B');
+  const [area, setArea] = useState(userProfile?.area || 'Dhanmondi');
+  const [city, setCity] = useState(userProfile?.city || 'Dhaka');
 
   // Delivery & Payment Selections
   const [deliveryMethod, setDeliveryMethod] = useState('Standard Delivery');
@@ -46,29 +48,43 @@ export default function CheckoutScreen({ userProfile, selectedPharmacy, onOpenPh
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  // Calculate delivery fee based on selected method
-  const deliveryFee = deliveryMethod === 'Express Delivery' ? 100 : 60;
+  const [isFullNameFocused, setIsFullNameFocused] = useState(false);
+  const [isPhoneFocused, setIsPhoneFocused] = useState(false);
+  const [isAddressFocused, setIsAddressFocused] = useState(false);
+  const [isAreaFocused, setIsAreaFocused] = useState(false);
+  const [isCityFocused, setIsCityFocused] = useState(false);
+
+  const selectedDelivery = DELIVERY_METHODS.find((m) => m.name === deliveryMethod);
+  const deliveryFee = selectedDelivery ? selectedDelivery.fee : 0;
   const grandTotal = subtotal + deliveryFee;
 
   const validateForm = () => {
-    if (!selectedPharmacy || (!selectedPharmacy.pharmacyUid && !selectedPharmacy.id)) {
-      setErrorMessage('Please select a pharmacy before placing your order.');
+    if (!fullName.trim()) {
+      setErrorMessage('Please enter your full name.');
+      return false;
+    }
+    if (!phone.trim()) {
+      setErrorMessage('Please enter your contact phone number.');
       return false;
     }
     if (!address.trim()) {
-      setErrorMessage('Please enter your delivery street address.');
+      setErrorMessage('Please enter your street address.');
       return false;
     }
     if (!area.trim()) {
-      setErrorMessage('Please enter your area / neighborhood.');
+      setErrorMessage('Please enter your area/neighborhood.');
       return false;
     }
     if (!city.trim()) {
       setErrorMessage('Please enter your city.');
       return false;
     }
-    if (!paymentMethod) {
-      setErrorMessage('Please select a payment method.');
+    if (cartItems.length === 0) {
+      setErrorMessage('Your shopping cart is empty.');
+      return false;
+    }
+    if (!selectedPharmacy) {
+      setErrorMessage('Please select a pharmacy to fulfill your order.');
       return false;
     }
     return true;
@@ -87,139 +103,28 @@ export default function CheckoutScreen({ userProfile, selectedPharmacy, onOpenPh
       const pUid = selectedPharmacy.pharmacyUid || selectedPharmacy.id;
       const generatedOrderId = 'ML-' + Math.floor(100000 + Math.random() * 900000);
 
-      // Execute Firestore Transaction for Atomic Stock Validation & Order Creation
-      await runTransaction(db, async (transaction) => {
-        // 1. Re-verify selected pharmacy document status & delivery eligibility (Safeguard #10)
-        const pharmDocRef = doc(db, 'pharmacies', pUid);
-        const pharmDocSnap = await transaction.get(pharmDocRef);
+      const custLat = userProfile?.latitude != null ? Number(userProfile.latitude) : null;
+      const custLng = userProfile?.longitude != null ? Number(userProfile.longitude) : null;
 
-        if (!pharmDocSnap.exists()) {
-          throw new Error('Selected pharmacy profile no longer exists. Please select another pharmacy.');
-        }
-
-        const pData = pharmDocSnap.data();
-
-        if (pData.approvalStatus !== 'approved') {
-          throw new Error('Selected pharmacy is unapproved. Please select another pharmacy.');
-        }
-
-        if (pData.isOpen === false) {
-          throw new Error('Selected pharmacy is currently closed. Orders cannot be placed while closed.');
-        }
-
-        const pLat = Number(pData.latitude);
-        const pLng = Number(pData.longitude);
-        if (!isValidCoord(pLat, pLng)) {
-          throw new Error('Selected pharmacy has invalid location coordinates on record.');
-        }
-
-        const radiusRaw = pData.deliveryRadius;
-        const radiusNum = Number(radiusRaw);
-        if (!Number.isFinite(radiusNum) || radiusNum <= 0) {
-          throw new Error('This pharmacy has not set a valid delivery radius. Orders cannot be placed at this time.');
-        }
-
-        // Verify customer location distance if customer GPS available
-        const custLat = userProfile?.latitude != null ? Number(userProfile.latitude) : null;
-        const custLng = userProfile?.longitude != null ? Number(userProfile.longitude) : null;
-        if (isValidCoord(custLat, custLng)) {
-          const dist = calculateHaversineDistance(custLat, custLng, pLat, pLng);
-          if (dist != null && dist > radiusNum) {
-            throw new Error(
-              'This pharmacy is outside your delivery area. You can browse medicines, but you cannot place an order from your current location.'
-            );
-          }
-        }
-
-        // 2. Validate medicine stock for every item in cart and compute new stock
-        const stockUpdates = [];
-
-        for (const item of cartItems) {
-          const medId = item.medicineId || item.id;
-          if (!medId) continue;
-
-          const medRef = doc(db, 'medicines', medId);
-          const medSnap = await transaction.get(medRef);
-
-          if (!medSnap.exists()) {
-            throw new Error(`Medicine "${item.name || item.medicineName}" is no longer available.`);
-          }
-
-          const medData = medSnap.data();
-          if (medData.isActive === false) {
-            throw new Error(`Medicine "${medData.medicineName}" is currently inactive.`);
-          }
-
-          if (medData.pharmacyUid !== pUid) {
-            throw new Error(`Medicine "${medData.medicineName}" belongs to a different pharmacy.`);
-          }
-
-          const currentStock = medData.stock || 0;
-          if (currentStock < item.quantity) {
-            throw new Error(
-              `Insufficient stock for "${medData.medicineName}". Requested: ${item.quantity}, Available: ${currentStock}.`
-            );
-          }
-
-          stockUpdates.push({
-            ref: medRef,
-            newStock: currentStock - item.quantity,
-          });
-        }
-
-        // 3. Apply stock decrements
-        for (const update of stockUpdates) {
-          transaction.update(update.ref, {
-            stock: update.newStock,
-            updatedAt: new Date(),
-          });
-        }
-
-        // 4. Create new order document
-        const newOrderRef = doc(collection(db, 'orders'));
-        const orderData = {
-          orderId: generatedOrderId,
-          pharmacyUid: pUid,
-          pharmacyName: selectedPharmacy.pharmacyName || pData.pharmacyName || 'MediLink Pharmacy',
-          pharmacyAddress: selectedPharmacy.address || pData.address || 'Dhaka',
-          pharmacyLatitude: selectedPharmacy.latitude || pData.latitude || null,
-          pharmacyLongitude: selectedPharmacy.longitude || pData.longitude || null,
-          customerLatitude: null,
-          customerLongitude: null,
-          distanceKm: selectedPharmacy.distance || null,
-          customerUid: userProfile?.uid || auth.currentUser?.uid || 'guest',
-          customerName: fullName.trim() || userProfile?.fullName || 'Customer',
-          customerEmail: userProfile?.email || auth.currentUser?.email || '',
-          customerPhone: phone.trim() || userProfile?.phone || '',
-          deliveryAddress: address.trim(),
-          deliveryArea: area.trim(),
-          deliveryCity: city.trim(),
-          deliveryMethod: deliveryMethod,
-          paymentMethod: paymentMethod,
-          items: cartItems.map((item) => ({
-            id: item.id || item.medicineId,
-            medicineId: item.medicineId || item.id,
-            name: item.name || item.medicineName,
-            medicineName: item.medicineName || item.name,
-            genericName: item.genericName || item.generic || '',
-            strength: item.strength || '',
-            unitPrice: item.unitPrice,
-            quantity: item.quantity,
-            lineTotal: item.unitPrice * item.quantity,
-            prescriptionRequired: !!item.prescriptionRequired,
-            pharmacyName: selectedPharmacy.pharmacyName || 'MediLink Pharmacy',
-          })),
-          subtotal: subtotal,
-          deliveryFee: deliveryFee,
-          total: grandTotal,
-          status: 'Pending',
-          createdAt: serverTimestamp(),
-        };
-
-        transaction.set(newOrderRef, orderData);
+      // 1. Create Sale Order in Odoo
+      const odooOrder = await odooApi.create('sale.order', {
+        partner_id: odooApi.partnerId || 1, // Logged in Odoo customer
+        pharmacy_id: pUid,
+        customer_latitude: custLat,
+        customer_longitude: custLng,
       });
 
-      console.log('Order successfully created via atomic transaction with stock decrement:', generatedOrderId);
+      // 2. Create Sale Order Lines for each item in cart
+      for (const item of cartItems) {
+        const prodId = item.id || item.medicineId;
+        await odooApi.create('sale.order.line', {
+          order_id: odooOrder.id,
+          product_id: prodId,
+          product_uom_qty: item.quantity,
+        });
+      }
+
+      console.log('Order successfully created in Odoo:', odooOrder.id);
 
       // Clear CartContext
       clearCart();
@@ -229,7 +134,7 @@ export default function CheckoutScreen({ userProfile, selectedPharmacy, onOpenPh
         onOrderPlaced(generatedOrderId);
       }
     } catch (error) {
-      console.log('Error creating Firestore order:', error);
+      console.log('Error creating Odoo order:', error);
       setErrorMessage('Failed to place order. Please try again.');
     } finally {
       setIsSubmitting(false);
@@ -258,7 +163,7 @@ export default function CheckoutScreen({ userProfile, selectedPharmacy, onOpenPh
         </View>
 
         {/* Scrollable Content */}
-        <ScrollView
+        <ScrollView style={{ width: '100%' }}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
@@ -502,7 +407,8 @@ export default function CheckoutScreen({ userProfile, selectedPharmacy, onOpenPh
   );
 }
 
-const styles = StyleSheet.create({
+const styles = 
+StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#F8FAFC',
@@ -513,37 +419,37 @@ const styles = StyleSheet.create({
   },
   headerBar: {
     width: '100%',
-    maxWidth: 390,
-    height: 54,
+    maxWidth: scale(390),
+    height: verticalScale(54),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 14,
+    paddingHorizontal: scale(14),
     backgroundColor: colors.surfaceContainerLowest,
-    borderBottomWidth: 1,
+    borderBottomWidth: scale(1),
     borderBottomColor: '#E2E8F0',
     zIndex: 10,
   },
   backButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: scale(4),
     backgroundColor: 'rgba(0, 106, 94, 0.1)',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
-    borderWidth: 1,
+    paddingHorizontal: scale(12),
+    paddingVertical: verticalScale(6),
+    borderRadius: scale(20),
+    borderWidth: scale(1),
     borderColor: 'rgba(0, 106, 94, 0.2)',
     ...(Platform.OS === 'web' ? { cursor: 'pointer' } : {}),
   },
   backButtonText: {
-    fontSize: 13,
+    fontSize: moderateScale(13),
     fontWeight: '700',
     color: colors.primary,
     fontFamily: Platform.OS === 'web' ? 'Inter, sans-serif' : undefined,
   },
   headerTitle: {
-    fontSize: 16,
+    fontSize: moderateScale(16),
     fontWeight: '700',
     color: colors.onSurface,
     flex: 1,
@@ -551,127 +457,128 @@ const styles = StyleSheet.create({
     fontFamily: Platform.OS === 'web' ? 'Inter, sans-serif' : undefined,
   },
   headerRightPlaceholder: {
-    width: 60,
+    width: scale(60),
   },
   scrollContent: {
+    width: '100%',
     flexGrow: 1,
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 40,
+    paddingHorizontal: scale(16),
+    paddingTop: verticalScale(16),
+    paddingBottom: verticalScale(40),
   },
   cardContainer: {
     width: '100%',
-    maxWidth: 390,
+    maxWidth: scale(390),
   },
   errorBanner: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FEE2E2',
     borderColor: '#FCA5A5',
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    marginBottom: 14,
-    gap: 8,
+    borderWidth: scale(1),
+    borderRadius: scale(10),
+    paddingHorizontal: scale(12),
+    paddingVertical: verticalScale(10),
+    marginBottom: verticalScale(14),
+    gap: scale(8),
   },
   errorText: {
     flex: 1,
     color: '#991B1B',
-    fontSize: 13,
+    fontSize: moderateScale(13),
     fontWeight: '500',
   },
   sectionCard: {
     backgroundColor: colors.surfaceContainerLowest,
-    borderRadius: 16,
-    padding: 16,
-    borderWidth: 1,
+    borderRadius: scale(16),
+    padding: scale(16),
+    borderWidth: scale(1),
     borderColor: '#E2E8F0',
-    marginBottom: 16,
+    marginBottom: verticalScale(16),
   },
   cardHeaderRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    marginBottom: 14,
+    gap: scale(8),
+    marginBottom: verticalScale(14),
   },
   cardTitle: {
-    fontSize: 15.5,
+    fontSize: moderateScale(15.5),
     fontWeight: '700',
     color: colors.onSurface,
   },
   formGroup: {
-    gap: 10,
+    gap: scale(10),
   },
   fieldLabel: {
-    fontSize: 12.5,
+    fontSize: moderateScale(12.5),
     fontWeight: '600',
     color: colors.onSurfaceVariant,
     marginBottom: -4,
   },
   input: {
     backgroundColor: '#F8FAFC',
-    borderWidth: 1,
+    borderWidth: scale(1),
     borderColor: '#CBD5E1',
-    borderRadius: 10,
-    height: 42,
-    paddingHorizontal: 12,
-    fontSize: 13.5,
+    borderRadius: scale(10),
+    height: verticalScale(42),
+    paddingHorizontal: scale(12),
+    fontSize: moderateScale(13.5),
     color: colors.onSurface,
     fontFamily: Platform.OS === 'web' ? 'Inter, sans-serif' : undefined,
   },
   twoColumnRow: {
     flexDirection: 'row',
-    gap: 10,
+    gap: scale(10),
   },
   optionsList: {
-    gap: 10,
+    gap: scale(10),
   },
   optionCard: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: '#F8FAFC',
-    borderWidth: 1,
+    borderWidth: scale(1),
     borderColor: '#E2E8F0',
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
+    borderRadius: scale(12),
+    paddingHorizontal: scale(14),
+    paddingVertical: verticalScale(12),
     ...(Platform.OS === 'web' ? { cursor: 'pointer' } : {}),
   },
   optionCardSelected: {
     backgroundColor: 'rgba(0, 106, 94, 0.06)',
     borderColor: colors.primary,
-    borderWidth: 1.5,
+    borderWidth: scale(1.5),
   },
   optionLeft: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   optionName: {
-    fontSize: 13.5,
+    fontSize: moderateScale(13.5),
     fontWeight: '600',
     color: colors.onSurface,
   },
   optionSubtext: {
-    fontSize: 11,
+    fontSize: moderateScale(11),
     color: colors.onSurfaceVariant,
   },
   optionFee: {
-    fontSize: 13,
+    fontSize: moderateScale(13),
     fontWeight: '700',
     color: colors.primary,
   },
   summaryCard: {
     backgroundColor: colors.surfaceContainerLowest,
-    borderRadius: 16,
-    padding: 16,
-    borderWidth: 1,
+    borderRadius: scale(16),
+    padding: scale(16),
+    borderWidth: scale(1),
     borderColor: '#E2E8F0',
   },
   itemsSummaryList: {
-    gap: 6,
-    marginVertical: 12,
+    gap: scale(6),
+    marginVertical: verticalScale(12),
   },
   summaryItemRow: {
     flexDirection: 'row',
@@ -679,13 +586,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   summaryItemName: {
-    fontSize: 13,
+    fontSize: moderateScale(13),
     color: colors.onSurfaceVariant,
     flex: 1,
-    marginRight: 10,
+    marginRight: scale(10),
   },
   summaryItemPrice: {
-    fontSize: 13,
+    fontSize: moderateScale(13),
     fontWeight: '600',
     color: colors.onSurface,
   },
@@ -693,41 +600,41 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: verticalScale(8),
   },
   summaryLabel: {
-    fontSize: 13,
+    fontSize: moderateScale(13),
     color: colors.onSurfaceVariant,
   },
   summaryValue: {
-    fontSize: 13.5,
+    fontSize: moderateScale(13.5),
     fontWeight: '600',
     color: colors.onSurface,
   },
   summaryDivider: {
-    height: 1,
+    height: verticalScale(1),
     backgroundColor: '#E2E8F0',
-    marginVertical: 10,
+    marginVertical: verticalScale(10),
   },
   grandTotalLabel: {
-    fontSize: 15,
+    fontSize: moderateScale(15),
     fontWeight: '700',
     color: colors.onSurface,
   },
   grandTotalValue: {
-    fontSize: 17,
+    fontSize: moderateScale(17),
     fontWeight: '700',
     color: colors.primary,
   },
   placeOrderButton: {
-    height: 50,
+    height: verticalScale(50),
     backgroundColor: colors.primary,
-    borderRadius: 12,
+    borderRadius: scale(12),
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 14,
+    marginTop: verticalScale(14),
     shadowColor: colors.primary,
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: scale(0), height: verticalScale(2) },
     shadowOpacity: 0.15,
     shadowRadius: 4,
     elevation: 2,
@@ -739,57 +646,57 @@ const styles = StyleSheet.create({
   loadingRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: scale(8),
   },
   placeOrderText: {
     color: colors.onPrimary,
-    fontSize: 15,
+    fontSize: moderateScale(15),
     fontWeight: '700',
   },
   pharmacySelectedCard: {
     backgroundColor: colors.surfaceContainerLowest,
-    borderRadius: 16,
-    padding: 16,
-    borderWidth: 1,
+    borderRadius: scale(16),
+    padding: scale(16),
+    borderWidth: scale(1),
     borderColor: colors.primary,
-    marginBottom: 16,
+    marginBottom: verticalScale(16),
     backgroundColor: 'rgba(0, 106, 94, 0.03)',
   },
   pharmacyDetailsRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 4,
+    marginTop: verticalScale(4),
   },
   pharmacyNameText: {
-    fontSize: 15,
+    fontSize: moderateScale(15),
     fontWeight: '700',
     color: colors.primary,
   },
   pharmacyAddressText: {
-    fontSize: 12.5,
+    fontSize: moderateScale(12.5),
     color: colors.onSurfaceVariant,
-    marginTop: 2,
+    marginTop: verticalScale(2),
   },
   changePharmBtn: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 8,
+    paddingHorizontal: scale(12),
+    paddingVertical: verticalScale(6),
+    borderRadius: scale(8),
     backgroundColor: 'rgba(0, 106, 94, 0.1)',
-    borderWidth: 1,
+    borderWidth: scale(1),
     borderColor: colors.primary,
   },
   changePharmBtnText: {
-    fontSize: 12,
+    fontSize: moderateScale(12),
     fontWeight: '700',
     color: colors.primary,
   },
   noPharmacyRow: {
-    gap: 8,
-    marginTop: 4,
+    gap: scale(8),
+    marginTop: verticalScale(4),
   },
   noPharmText: {
-    fontSize: 13,
+    fontSize: moderateScale(13),
     color: '#991B1B',
     fontWeight: '600',
   },
@@ -797,14 +704,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 6,
-    height: 40,
+    gap: scale(6),
+    height: verticalScale(40),
     backgroundColor: colors.primary,
-    borderRadius: 10,
+    borderRadius: scale(10),
   },
   selectPharmBtnText: {
     color: '#FFFFFF',
-    fontSize: 13,
+    fontSize: moderateScale(13),
     fontWeight: '700',
   },
 });

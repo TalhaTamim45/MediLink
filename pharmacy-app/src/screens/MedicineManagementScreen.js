@@ -13,8 +13,9 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../theme/colors';
-import { db } from '../config/firebase';
-import { collection, onSnapshot, doc, updateDoc, deleteDoc, query, where } from 'firebase/firestore';
+import odooApi from '../config/odooApi';
+import { scale, verticalScale, moderateScale, wp, hp } from '../utils/responsive';
+
 
 export default function MedicineManagementScreen({ pharmacy, onBack, onOpenAdd, onOpenEdit }) {
   const [medicines, setMedicines] = useState([]);
@@ -28,54 +29,53 @@ export default function MedicineManagementScreen({ pharmacy, onBack, onOpenAdd, 
   const [isDeleting, setIsDeleting] = useState(false);
   const [successToast, setSuccessToast] = useState('');
 
+  const fetchMedicines = async () => {
+    if (!pharmacy?.id) return;
+    try {
+      const result = await odooApi.searchRead(
+        'product.template',
+        [['pharmacy_id', '=', pharmacy.id], '|', ['active', '=', true], ['active', '=', false]],
+        ['name', 'generic_name', 'strength', 'list_price', 'stock', 'prescription_required', 'active']
+      );
+
+      if (result.records) {
+        const docs = result.records.map((rec) => ({
+          id: rec.id,
+          medicineName: rec.name,
+          genericName: rec.generic_name || '',
+          strength: rec.strength || '',
+          price: rec.list_price || 0,
+          stock: rec.stock || 0,
+          prescriptionRequired: rec.prescription_required || false,
+          isActive: rec.active,
+          brand: 'Generic Brand',
+        }));
+
+        docs.sort((a, b) => (a.medicineName || '').localeCompare(b.medicineName || ''));
+        setMedicines(docs);
+      }
+    } catch (err) {
+      console.log('Error fetching medicines:', err);
+      setErrorMsg('Failed to load medicine catalog from Odoo.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     setIsLoading(true);
     setErrorMsg('');
-
-    if (!pharmacy?.uid) {
-      setIsLoading(false);
-      return;
-    }
-
-    // Real-time listener for pharmacy's medicines
-    const medQuery = query(
-      collection(db, 'medicines'),
-      where('pharmacyUid', '==', pharmacy.uid)
-    );
-
-    const unsubscribe = onSnapshot(
-      medQuery,
-      (snapshot) => {
-        const docs = snapshot.docs.map((docSnap) => ({
-          id: docSnap.id,
-          ...docSnap.data(),
-        }));
-
-        // Sort by medicineName ascending
-        docs.sort((a, b) => (a.medicineName || '').localeCompare(b.medicineName || ''));
-
-        setMedicines(docs);
-        setIsLoading(false);
-      },
-      (err) => {
-        console.log('Error fetching medicines:', err);
-        setErrorMsg('Failed to load medicine catalog from Firestore.');
-        setIsLoading(false);
-      }
-    );
-
-    return () => unsubscribe();
-  }, [pharmacy?.uid]);
+    fetchMedicines();
+  }, [pharmacy?.id]);
 
   const handleToggleActive = async (medicine) => {
     try {
-      const medRef = doc(db, 'medicines', medicine.id);
-      await updateDoc(medRef, {
-        isActive: !medicine.isActive,
-        updatedAt: new Date(),
+      await odooApi.write('product.template', medicine.id, {
+        active: !medicine.isActive,
       });
       setSuccessToast(`"${medicine.medicineName}" status updated.`);
       setTimeout(() => setSuccessToast(''), 3000);
+      fetchMedicines();
     } catch (err) {
       console.log('Error toggling active status:', err);
       alert('Failed to update medicine status.');
@@ -87,10 +87,11 @@ export default function MedicineManagementScreen({ pharmacy, onBack, onOpenAdd, 
     setIsDeleting(true);
 
     try {
-      await deleteDoc(doc(db, 'medicines', deleteTarget.id));
+      await odooApi.unlink('product.template', deleteTarget.id);
       setSuccessToast(`Deleted "${deleteTarget.medicineName}" from catalog.`);
       setTimeout(() => setSuccessToast(''), 3000);
       setDeleteTarget(null);
+      fetchMedicines();
     } catch (err) {
       console.log('Error deleting medicine:', err);
       alert('Failed to delete medicine document.');
@@ -135,7 +136,7 @@ export default function MedicineManagementScreen({ pharmacy, onBack, onOpenAdd, 
           </TouchableOpacity>
         </View>
 
-        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <ScrollView style={{ width: '100%' }} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
           <View style={styles.mainContainer}>
             {/* Success Toast */}
             {successToast ? (
@@ -371,7 +372,8 @@ export default function MedicineManagementScreen({ pharmacy, onBack, onOpenAdd, 
   );
 }
 
-const styles = StyleSheet.create({
+const styles = 
+StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: colors.background,
@@ -382,73 +384,74 @@ const styles = StyleSheet.create({
   },
   headerBar: {
     width: '100%',
-    maxWidth: 800,
-    height: 54,
+    maxWidth: scale(800),
+    height: verticalScale(54),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
+    paddingHorizontal: scale(16),
     backgroundColor: colors.surfaceContainerLowest,
-    borderBottomWidth: 1,
+    borderBottomWidth: scale(1),
     borderBottomColor: '#E2E8F0',
   },
   backBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: scale(4),
     backgroundColor: 'rgba(0, 106, 94, 0.1)',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
+    paddingHorizontal: scale(12),
+    paddingVertical: verticalScale(6),
+    borderRadius: scale(20),
   },
   backBtnText: {
-    fontSize: 13,
+    fontSize: moderateScale(13),
     fontWeight: '700',
     color: colors.primary,
   },
   headerTitle: {
-    fontSize: 16,
+    fontSize: moderateScale(16),
     fontWeight: '700',
     color: colors.onSurface,
   },
   addBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: scale(4),
     backgroundColor: colors.primary,
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: 20,
+    paddingHorizontal: scale(14),
+    paddingVertical: verticalScale(6),
+    borderRadius: scale(20),
   },
   addBtnText: {
     color: '#FFFFFF',
-    fontSize: 13,
+    fontSize: moderateScale(13),
     fontWeight: '700',
   },
   scrollContent: {
+    width: '100%',
     flexGrow: 1,
-    paddingHorizontal: 16,
-    paddingVertical: 20,
+    paddingHorizontal: scale(16),
+    paddingVertical: verticalScale(20),
     alignItems: 'center',
   },
   mainContainer: {
     width: '100%',
-    maxWidth: 800,
+    maxWidth: scale(800),
   },
   toastBanner: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#D1FAE5',
     borderColor: '#A7F3D0',
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 10,
-    marginBottom: 14,
-    gap: 8,
+    borderWidth: scale(1),
+    borderRadius: scale(10),
+    padding: scale(10),
+    marginBottom: verticalScale(14),
+    gap: scale(8),
   },
   toastText: {
     color: '#065F46',
-    fontSize: 13,
+    fontSize: moderateScale(13),
     fontWeight: '600',
   },
   errorBanner: {
@@ -456,58 +459,58 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#FEE2E2',
     borderColor: '#FCA5A5',
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 10,
-    marginBottom: 14,
-    gap: 8,
+    borderWidth: scale(1),
+    borderRadius: scale(10),
+    padding: scale(10),
+    marginBottom: verticalScale(14),
+    gap: scale(8),
   },
   errorText: {
     color: '#991B1B',
-    fontSize: 13,
+    fontSize: moderateScale(13),
     fontWeight: '500',
   },
   searchRow: {
-    marginBottom: 12,
+    marginBottom: verticalScale(12),
   },
   searchBox: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    borderWidth: 1,
+    borderWidth: scale(1),
     borderColor: '#CBD5E1',
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    height: 44,
-    gap: 8,
+    borderRadius: scale(12),
+    paddingHorizontal: scale(12),
+    height: verticalScale(44),
+    gap: scale(8),
   },
   searchInput: {
     flex: 1,
-    fontSize: 13.5,
+    fontSize: moderateScale(13.5),
     color: colors.onSurface,
   },
   tabsRow: {
     flexDirection: 'row',
-    gap: 8,
-    paddingBottom: 14,
+    gap: scale(8),
+    paddingBottom: verticalScale(14),
   },
   tabChip: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#F1F5F9',
-    paddingHorizontal: 12,
-    paddingVertical: 7,
-    borderRadius: 20,
-    borderWidth: 1,
+    paddingHorizontal: scale(12),
+    paddingVertical: verticalScale(7),
+    borderRadius: scale(20),
+    borderWidth: scale(1),
     borderColor: '#E2E8F0',
-    gap: 6,
+    gap: scale(6),
   },
   tabChipActive: {
     backgroundColor: colors.primary,
     borderColor: colors.primary,
   },
   tabChipText: {
-    fontSize: 12.5,
+    fontSize: moderateScale(12.5),
     fontWeight: '600',
     color: colors.onSurfaceVariant,
   },
@@ -516,15 +519,15 @@ const styles = StyleSheet.create({
   },
   badgeCircle: {
     backgroundColor: '#CBD5E1',
-    borderRadius: 10,
-    paddingHorizontal: 6,
-    paddingVertical: 1,
+    borderRadius: scale(10),
+    paddingHorizontal: scale(6),
+    paddingVertical: verticalScale(1),
   },
   badgeCircleActive: {
     backgroundColor: 'rgba(255, 255, 255, 0.25)',
   },
   badgeText: {
-    fontSize: 11,
+    fontSize: moderateScale(11),
     fontWeight: '700',
     color: colors.onSurface,
   },
@@ -532,45 +535,45 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   loadingBox: {
-    paddingVertical: 40,
+    paddingVertical: verticalScale(40),
     alignItems: 'center',
-    gap: 8,
+    gap: scale(8),
   },
   loadingText: {
-    fontSize: 13,
+    fontSize: moderateScale(13),
     color: colors.onSurfaceVariant,
   },
   emptyBox: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 32,
+    borderRadius: scale(16),
+    padding: scale(32),
     alignItems: 'center',
-    borderWidth: 1,
+    borderWidth: scale(1),
     borderColor: '#E2E8F0',
   },
   emptyTitle: {
-    fontSize: 16,
+    fontSize: moderateScale(16),
     fontWeight: '700',
     color: colors.onSurface,
-    marginTop: 8,
+    marginTop: verticalScale(8),
   },
   emptySubtext: {
-    fontSize: 12.5,
+    fontSize: moderateScale(12.5),
     color: colors.onSurfaceVariant,
     textAlign: 'center',
-    marginTop: 4,
+    marginTop: verticalScale(4),
   },
   medicinesList: {
-    gap: 12,
+    gap: scale(12),
   },
   medicineCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 16,
-    borderWidth: 1,
+    borderRadius: scale(16),
+    padding: scale(16),
+    borderWidth: scale(1),
     borderColor: '#E2E8F0',
     shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: scale(0), height: verticalScale(2) },
     shadowOpacity: 0.04,
     shadowRadius: 6,
     elevation: 2,
@@ -579,52 +582,52 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    gap: 10,
+    gap: scale(10),
   },
   titleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: scale(8),
     flexWrap: 'wrap',
   },
   medNameText: {
-    fontSize: 16,
+    fontSize: moderateScale(16),
     fontWeight: '800',
     color: colors.onSurface,
   },
   strengthTag: {
     backgroundColor: 'rgba(0, 106, 94, 0.1)',
-    borderWidth: 1,
+    borderWidth: scale(1),
     borderColor: colors.primary,
-    borderRadius: 6,
-    paddingHorizontal: 6,
-    paddingVertical: 1,
+    borderRadius: scale(6),
+    paddingHorizontal: scale(6),
+    paddingVertical: verticalScale(1),
   },
   strengthTagText: {
-    fontSize: 11,
+    fontSize: moderateScale(11),
     fontWeight: '700',
     color: colors.primary,
   },
   genericText: {
-    fontSize: 12.5,
+    fontSize: moderateScale(12.5),
     fontWeight: '600',
     color: colors.onSurfaceVariant,
-    marginTop: 2,
+    marginTop: verticalScale(2),
   },
   brandText: {
-    fontSize: 12,
+    fontSize: moderateScale(12),
     color: '#64748B',
-    marginTop: 1,
+    marginTop: verticalScale(1),
   },
   badgeColumn: {
     alignItems: 'flex-end',
-    gap: 4,
+    gap: scale(4),
   },
   statusBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 10,
-    borderWidth: 1,
+    paddingHorizontal: scale(8),
+    paddingVertical: verticalScale(3),
+    borderRadius: scale(10),
+    borderWidth: scale(1),
   },
   badgeActive: {
     backgroundColor: '#D1FAE5',
@@ -632,7 +635,7 @@ const styles = StyleSheet.create({
   },
   badgeActiveText: {
     color: '#065F46',
-    fontSize: 11,
+    fontSize: moderateScale(11),
     fontWeight: '700',
   },
   badgeInactive: {
@@ -641,38 +644,38 @@ const styles = StyleSheet.create({
   },
   badgeInactiveText: {
     color: '#64748B',
-    fontSize: 11,
+    fontSize: moderateScale(11),
     fontWeight: '700',
   },
   rxBadge: {
     backgroundColor: '#FEF3C7',
     borderColor: '#FCD34D',
-    borderWidth: 1,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 6,
+    borderWidth: scale(1),
+    paddingHorizontal: scale(6),
+    paddingVertical: verticalScale(2),
+    borderRadius: scale(6),
   },
   rxBadgeText: {
-    fontSize: 10.5,
+    fontSize: moderateScale(10.5),
     fontWeight: '700',
     color: '#92400E',
   },
   detailsRow: {
     flexDirection: 'row',
-    gap: 10,
-    marginVertical: 12,
+    gap: scale(10),
+    marginVertical: verticalScale(12),
     flexWrap: 'wrap',
   },
   detailPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: scale(4),
     backgroundColor: '#F8FAFC',
-    borderWidth: 1,
+    borderWidth: scale(1),
     borderColor: '#E2E8F0',
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
+    borderRadius: scale(8),
+    paddingHorizontal: scale(10),
+    paddingVertical: verticalScale(4),
   },
   pillSuccess: {
     backgroundColor: '#D1FAE5',
@@ -683,7 +686,7 @@ const styles = StyleSheet.create({
     borderColor: '#FCA5A5',
   },
   detailPillText: {
-    fontSize: 12.5,
+    fontSize: moderateScale(12.5),
     fontWeight: '700',
     color: colors.onSurface,
   },
@@ -691,117 +694,117 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: 10,
-    borderTopWidth: 1,
+    paddingTop: verticalScale(10),
+    borderTopWidth: scale(1),
     borderTopColor: '#F1F5F9',
-    marginTop: 4,
+    marginTop: verticalScale(4),
   },
   activeToggleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: scale(6),
   },
   toggleLabel: {
-    fontSize: 12,
+    fontSize: moderateScale(12),
     fontWeight: '600',
     color: colors.onSurfaceVariant,
   },
   actionBtnsGroup: {
     flexDirection: 'row',
-    gap: 8,
+    gap: scale(8),
   },
   editBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: scale(4),
     backgroundColor: 'rgba(0, 106, 94, 0.08)',
-    borderWidth: 1,
+    borderWidth: scale(1),
     borderColor: colors.primary,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 8,
+    paddingHorizontal: scale(10),
+    paddingVertical: verticalScale(5),
+    borderRadius: scale(8),
   },
   editBtnText: {
-    fontSize: 12,
+    fontSize: moderateScale(12),
     fontWeight: '700',
     color: colors.primary,
   },
   deleteBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: scale(4),
     backgroundColor: '#FEE2E2',
-    borderWidth: 1,
+    borderWidth: scale(1),
     borderColor: '#FCA5A5',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 8,
+    paddingHorizontal: scale(10),
+    paddingVertical: verticalScale(5),
+    borderRadius: scale(8),
   },
   deleteBtnText: {
-    fontSize: 12,
+    fontSize: moderateScale(12),
     fontWeight: '700',
     color: '#991B1B',
   },
   modalOverlay: {
     position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
+    top: verticalScale(0),
+    left: scale(0),
+    right: scale(0),
+    bottom: verticalScale(0),
     backgroundColor: 'rgba(15, 23, 42, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 16,
+    padding: scale(16),
     zIndex: 50,
   },
   modalCard: {
     width: '100%',
-    maxWidth: 400,
+    maxWidth: scale(400),
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 20,
+    borderRadius: scale(16),
+    padding: scale(20),
     alignItems: 'center',
-    gap: 10,
+    gap: scale(10),
   },
   modalTitle: {
-    fontSize: 17,
+    fontSize: moderateScale(17),
     fontWeight: '800',
     color: colors.onSurface,
   },
   modalSub: {
-    fontSize: 13,
+    fontSize: moderateScale(13),
     color: colors.onSurfaceVariant,
     textAlign: 'center',
   },
   modalBtnRow: {
     flexDirection: 'row',
-    gap: 10,
-    marginTop: 10,
+    gap: scale(10),
+    marginTop: verticalScale(10),
     width: '100%',
   },
   modalCancelBtn: {
     flex: 1,
-    height: 42,
-    borderRadius: 10,
+    height: verticalScale(42),
+    borderRadius: scale(10),
     backgroundColor: '#F1F5F9',
     justifyContent: 'center',
     alignItems: 'center',
   },
   modalCancelBtnText: {
-    fontSize: 13.5,
+    fontSize: moderateScale(13.5),
     fontWeight: '700',
     color: colors.onSurface,
   },
   modalConfirmBtn: {
     flex: 1,
-    height: 42,
-    borderRadius: 10,
+    height: verticalScale(42),
+    borderRadius: scale(10),
     backgroundColor: '#DC2626',
     justifyContent: 'center',
     alignItems: 'center',
   },
   modalConfirmBtnText: {
-    fontSize: 13.5,
+    fontSize: moderateScale(13.5),
     fontWeight: '700',
     color: '#FFFFFF',
   },

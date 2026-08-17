@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { collection, onSnapshot } from 'firebase/firestore';
-import { db } from '../config/firebase';
+import odooApi from '../config/odooApi';
 import {
   Building2,
   Clock,
@@ -23,59 +22,56 @@ export default function DashboardOverview({ onNavigateToApprovals }) {
   });
   const [isLoading, setIsLoading] = useState(true);
 
+  const fetchStats = async () => {
+    try {
+      // 1. Fetch pharmacies stats
+      const pharmaciesResult = await odooApi.searchRead(
+        'res.partner',
+        [['is_pharmacy', '=', true], '|', ['active', '=', true], ['active', '=', false]],
+        ['active']
+      );
+
+      const totalPh = pharmaciesResult.records ? pharmaciesResult.records.length : 0;
+      const pendingPh = pharmaciesResult.records ? pharmaciesResult.records.filter((p) => !p.active).length : 0;
+      const approvedPh = pharmaciesResult.records ? pharmaciesResult.records.filter((p) => p.active).length : 0;
+
+      // 2. Fetch customers stats
+      const customersResult = await odooApi.searchRead(
+        'res.partner',
+        [['is_pharmacy', '=', false], ['name', '!=', 'Talha Tamim'], ['name', '!=', 'Administrator']],
+        ['id']
+      );
+      const totalCust = customersResult.records ? customersResult.records.length : 0;
+
+      // 3. Fetch orders count
+      const ordersResult = await odooApi.searchRead(
+        'sale.order',
+        [],
+        ['id']
+      );
+      const totalOrd = ordersResult.records ? ordersResult.records.length : 0;
+
+      setStats({
+        totalPharmacies: totalPh,
+        pendingPharmacies: pendingPh,
+        approvedPharmacies: approvedPh,
+        rejectedPharmacies: 0,
+        totalCustomers: totalCust,
+        totalOrders: totalOrd,
+      });
+    } catch (err) {
+      console.log('Error fetching stats:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     setIsLoading(true);
+    fetchStats();
 
-    // 1. Listen to 'pharmacies' collection
-    const unsubscribePharmacies = onSnapshot(
-      collection(db, 'pharmacies'),
-      (snapshot) => {
-        const docs = snapshot.docs.map((d) => d.data());
-        const total = docs.length;
-        const pending = docs.filter((p) => (p.approvalStatus || 'pending') === 'pending').length;
-        const approved = docs.filter((p) => p.approvalStatus === 'approved').length;
-        const rejected = docs.filter((p) => p.approvalStatus === 'rejected').length;
-
-        setStats((prev) => ({
-          ...prev,
-          totalPharmacies: total,
-          pendingPharmacies: pending,
-          approvedPharmacies: approved,
-          rejectedPharmacies: rejected,
-        }));
-      },
-      (err) => console.log('Error listening to pharmacies stats:', err)
-    );
-
-    // 2. Listen to 'users' collection for customer count
-    const unsubscribeUsers = onSnapshot(
-      collection(db, 'users'),
-      (snapshot) => {
-        const docs = snapshot.docs.map((d) => d.data());
-        const customerCount = docs.filter((u) => u.role === 'customer').length;
-        setStats((prev) => ({ ...prev, totalCustomers: customerCount }));
-      },
-      (err) => console.log('Error listening to users stats:', err)
-    );
-
-    // 3. Listen to 'orders' collection for order count
-    const unsubscribeOrders = onSnapshot(
-      collection(db, 'orders'),
-      (snapshot) => {
-        setStats((prev) => ({ ...prev, totalOrders: snapshot.docs.length }));
-        setIsLoading(false);
-      },
-      (err) => {
-        console.log('Error listening to orders stats:', err);
-        setIsLoading(false);
-      }
-    );
-
-    return () => {
-      unsubscribePharmacies();
-      unsubscribeUsers();
-      unsubscribeOrders();
-    };
+    const interval = setInterval(fetchStats, 4000);
+    return () => clearInterval(interval);
   }, []);
 
   const cards = [

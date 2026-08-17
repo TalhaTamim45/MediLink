@@ -14,8 +14,6 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { colors } from '../theme/colors';
-import { db } from '../config/firebase';
-import { collection, onSnapshot } from 'firebase/firestore';
 import { calculateHaversineDistance } from '../utils/distance';
 import BarikoiCustomerMap, { isValidCoord } from '../components/BarikoiCustomerMap';
 import {
@@ -23,6 +21,9 @@ import {
   getDeliveryStatus,
   formatDistanceText,
 } from '../utils/pharmacyValidation';
+import odooApi from '../config/odooApi';
+import { scale, verticalScale, moderateScale, wp, hp } from '../utils/responsive';
+
 
 export default function PharmacyMapScreen({
   userProfile,
@@ -39,54 +40,48 @@ export default function PharmacyMapScreen({
   const [customerLocation, setCustomerLocation] = useState(null);
   const [isGettingGps, setIsGettingGps] = useState(false);
 
-  // 1. Subscribe to Firestore approved pharmacies collection with cleanup (Safeguard #1)
+  // 1. Fetch approved pharmacies from Odoo API instead of Firestore
   useEffect(() => {
     setIsLoading(true);
     setErrorMsg('');
 
-    const unsubscribe = onSnapshot(
-      collection(db, 'pharmacies'),
-      (snapshot) => {
-        let totalDocs = snapshot.docs.length;
-        let approvedCount = 0;
-        let validCoordCount = 0;
-
-        const docs = snapshot.docs
-          .map((d) => {
-            const data = d.data() || {};
-            const numLat = data.latitude != null ? Number(data.latitude) : NaN;
-            const numLng = data.longitude != null ? Number(data.longitude) : NaN;
-
-            if (data.approvalStatus === 'approved') approvedCount++;
-            if (isValidCoord(numLat, numLng)) validCoordCount++;
-
-            return {
-              id: d.id,
-              pharmacyUid: d.id,
-              ...data,
-              latitude: numLat,
-              longitude: numLng,
-            };
-          })
-          .filter(isApprovedPharmacy);
-
-        if (__DEV__) {
-          console.log(
-            `[PharmacyMapScreen Dev Log] Total pharmacy docs: ${totalDocs}, Approved: ${approvedCount}, Valid coords: ${validCoordCount}, Visible: ${docs.length}`
-          );
-        }
+    const fetchPharmacies = async () => {
+      try {
+        const result = await odooApi.searchRead(
+          'res.partner',
+          [['is_pharmacy', '=', true]],
+          ['name', 'pharmacy_license', 'latitude', 'longitude', 'opening_hours']
+        );
+        
+        const docs = result.records.map((p) => {
+          const numLat = p.latitude != null ? Number(p.latitude) : NaN;
+          const numLng = p.longitude != null ? Number(p.longitude) : NaN;
+          
+          return {
+            id: p.id,
+            pharmacyUid: p.id,
+            pharmacyName: p.name,
+            name: p.name,
+            approvalStatus: 'approved',
+            latitude: numLat,
+            longitude: numLng,
+            pharmacyLicense: p.pharmacy_license,
+            openingHours: p.opening_hours,
+            deliveryRadius: 10.0, // Default 10km
+            isOpen: true
+          };
+        });
 
         setPharmacies(docs);
         setIsLoading(false);
-      },
-      (err) => {
-        console.error('Error fetching pharmacies for map:', err);
-        setErrorMsg('Failed to load approved pharmacies from Firestore.');
+      } catch (err) {
+        console.error('Error loading pharmacies for map from Odoo:', err);
+        setErrorMsg('Failed to load approved pharmacies.');
         setIsLoading(false);
       }
-    );
+    };
 
-    return () => unsubscribe();
+    fetchPharmacies();
   }, []);
 
   const handleRequestGPS = async () => {
@@ -195,7 +190,7 @@ export default function PharmacyMapScreen({
           <View style={{ width: 60 }} />
         </View>
 
-        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <ScrollView style={{ width: '100%' }} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
           <View style={styles.mainContainer}>
             {/* Search Bar & GPS Button */}
             <View style={styles.searchRow}>
@@ -371,7 +366,8 @@ export default function PharmacyMapScreen({
   );
 }
 
-const styles = StyleSheet.create({
+const styles = 
+StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#F8FAFC',
@@ -382,43 +378,43 @@ const styles = StyleSheet.create({
   },
   headerBar: {
     width: '100%',
-    maxWidth: 600,
-    height: 54,
+    maxWidth: scale(600),
+    height: verticalScale(54),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
+    paddingHorizontal: scale(16),
     backgroundColor: colors.surfaceContainerLowest,
-    borderBottomWidth: 1,
+    borderBottomWidth: scale(1),
     borderBottomColor: '#E2E8F0',
   },
   backBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: scale(4),
   },
   backBtnText: {
-    fontSize: 14,
+    fontSize: moderateScale(14),
     fontWeight: '700',
     color: colors.primary,
   },
   headerTitle: {
-    fontSize: 16,
+    fontSize: moderateScale(16),
     fontWeight: '700',
     color: colors.onSurface,
   },
   scrollContent: {
     width: '100%',
-    maxWidth: 600,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    maxWidth: scale(600),
+    paddingHorizontal: scale(16),
+    paddingVertical: verticalScale(14),
   },
   mainContainer: {
-    gap: 12,
+    gap: scale(12),
   },
   searchRow: {
     flexDirection: 'row',
-    gap: 10,
+    gap: scale(10),
     alignItems: 'center',
   },
   searchInputBox: {
@@ -426,27 +422,27 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.surfaceContainerLowest,
-    borderWidth: 1,
+    borderWidth: scale(1),
     borderColor: '#CBD5E1',
-    borderRadius: 12,
-    height: 44,
-    paddingHorizontal: 12,
-    gap: 8,
+    borderRadius: scale(12),
+    height: verticalScale(44),
+    paddingHorizontal: scale(12),
+    gap: scale(8),
   },
   searchInput: {
     flex: 1,
     height: '100%',
-    fontSize: 13.5,
+    fontSize: moderateScale(13.5),
     color: colors.onSurface,
   },
   gpsBtn: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
+    width: scale(44),
+    height: verticalScale(44),
+    borderRadius: scale(12),
     backgroundColor: 'rgba(0, 106, 94, 0.1)',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
+    borderWidth: scale(1),
     borderColor: 'rgba(0, 106, 94, 0.2)',
   },
   infoBanner: {
@@ -454,13 +450,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#E0F2FE',
     borderColor: '#BAE6FD',
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 10,
-    gap: 8,
+    borderWidth: scale(1),
+    borderRadius: scale(10),
+    padding: scale(10),
+    gap: scale(8),
   },
   infoText: {
-    fontSize: 12.5,
+    fontSize: moderateScale(12.5),
     color: '#0369A1',
     flex: 1,
   },
@@ -469,74 +465,74 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#FEE2E2',
     borderColor: '#FCA5A5',
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 10,
-    gap: 8,
+    borderWidth: scale(1),
+    borderRadius: scale(10),
+    padding: scale(10),
+    gap: scale(8),
   },
   errorText: {
-    fontSize: 12.5,
+    fontSize: moderateScale(12.5),
     color: '#991B1B',
     flex: 1,
   },
   mapBox: {
-    height: 220,
-    borderRadius: 14,
+    height: verticalScale(220),
+    borderRadius: scale(14),
     overflow: 'hidden',
-    borderWidth: 1,
+    borderWidth: scale(1),
     borderColor: '#E2E8F0',
   },
   listHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    marginTop: 6,
+    gap: scale(8),
+    marginTop: verticalScale(6),
   },
   listTitle: {
-    fontSize: 15,
+    fontSize: moderateScale(15),
     fontWeight: '700',
     color: colors.onSurface,
   },
   loadingBox: {
-    paddingVertical: 30,
+    paddingVertical: verticalScale(30),
     alignItems: 'center',
-    gap: 8,
+    gap: scale(8),
   },
   loadingText: {
-    fontSize: 13,
+    fontSize: moderateScale(13),
     color: colors.onSurfaceVariant,
   },
   emptyBox: {
     alignItems: 'center',
-    paddingVertical: 32,
+    paddingVertical: verticalScale(32),
     backgroundColor: colors.surfaceContainerLowest,
-    borderRadius: 14,
-    borderWidth: 1,
+    borderRadius: scale(14),
+    borderWidth: scale(1),
     borderColor: '#E2E8F0',
-    paddingHorizontal: 20,
-    gap: 8,
+    paddingHorizontal: scale(20),
+    gap: scale(8),
   },
   emptyTitle: {
-    fontSize: 14.5,
+    fontSize: moderateScale(14.5),
     fontWeight: '700',
     color: colors.onSurface,
     textAlign: 'center',
   },
   emptySubtext: {
-    fontSize: 12,
+    fontSize: moderateScale(12),
     color: colors.onSurfaceVariant,
     textAlign: 'center',
   },
   cardsList: {
-    gap: 12,
+    gap: scale(12),
   },
   pharmacyCard: {
     backgroundColor: colors.surfaceContainerLowest,
-    borderRadius: 14,
-    borderWidth: 1,
+    borderRadius: scale(14),
+    borderWidth: scale(1),
     borderColor: '#E2E8F0',
-    padding: 12,
-    gap: 10,
+    padding: scale(12),
+    gap: scale(10),
   },
   pharmacyCardSelected: {
     borderColor: colors.primary,
@@ -548,47 +544,47 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   pharmacyName: {
-    fontSize: 14.5,
+    fontSize: moderateScale(14.5),
     fontWeight: '700',
     color: colors.onSurface,
   },
   pharmacyAddress: {
-    fontSize: 12,
+    fontSize: moderateScale(12),
     color: colors.onSurfaceVariant,
-    marginTop: 2,
+    marginTop: verticalScale(2),
   },
   selectedBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#D1FAE5',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 12,
-    gap: 4,
+    paddingHorizontal: scale(8),
+    paddingVertical: verticalScale(3),
+    borderRadius: scale(12),
+    gap: scale(4),
   },
   selectedBadgeText: {
-    fontSize: 11,
+    fontSize: moderateScale(11),
     fontWeight: '700',
     color: '#065F46',
   },
   metricsRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 6,
+    gap: scale(6),
   },
   metricPill: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#F8FAFC',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 6,
-    borderWidth: 1,
+    paddingHorizontal: scale(8),
+    paddingVertical: verticalScale(3),
+    borderRadius: scale(6),
+    borderWidth: scale(1),
     borderColor: '#E2E8F0',
-    gap: 4,
+    gap: scale(4),
   },
   metricText: {
-    fontSize: 11,
+    fontSize: moderateScale(11),
     color: colors.onSurfaceVariant,
   },
   bgOpen: {
@@ -610,15 +606,15 @@ const styles = StyleSheet.create({
   deliveryBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 6,
+    paddingHorizontal: scale(8),
+    paddingVertical: verticalScale(3),
+    borderRadius: scale(6),
   },
   badge_success: {
     backgroundColor: '#D1FAE5',
   },
   badgeText_success: {
-    fontSize: 11,
+    fontSize: moderateScale(11),
     color: '#065F46',
     fontWeight: '600',
   },
@@ -626,7 +622,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FEE2E2',
   },
   badgeText_danger: {
-    fontSize: 11,
+    fontSize: moderateScale(11),
     color: '#991B1B',
     fontWeight: '600',
   },
@@ -634,7 +630,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FEF3C7',
   },
   badgeText_warning: {
-    fontSize: 11,
+    fontSize: moderateScale(11),
     color: '#92400E',
     fontWeight: '600',
   },
@@ -642,32 +638,32 @@ const styles = StyleSheet.create({
     backgroundColor: '#E0F2FE',
   },
   badgeText_info: {
-    fontSize: 11,
+    fontSize: moderateScale(11),
     color: '#0369A1',
     fontWeight: '600',
   },
   cardActions: {
     flexDirection: 'row',
-    gap: 10,
-    marginTop: 2,
+    gap: scale(10),
+    marginTop: verticalScale(2),
   },
   viewBtn: {
     flex: 1,
-    height: 36,
-    borderRadius: 8,
+    height: verticalScale(36),
+    borderRadius: scale(8),
     backgroundColor: '#F1F5F9',
     justifyContent: 'center',
     alignItems: 'center',
   },
   viewBtnText: {
-    fontSize: 12.5,
+    fontSize: moderateScale(12.5),
     fontWeight: '700',
     color: colors.onSurface,
   },
   selectBtn: {
     flex: 1.2,
-    height: 36,
-    borderRadius: 8,
+    height: verticalScale(36),
+    borderRadius: scale(8),
     backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
@@ -676,7 +672,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#059669',
   },
   selectBtnText: {
-    fontSize: 12.5,
+    fontSize: moderateScale(12.5),
     fontWeight: '700',
     color: '#FFFFFF',
   },

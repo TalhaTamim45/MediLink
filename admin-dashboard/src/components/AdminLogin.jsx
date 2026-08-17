@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
-import { auth, db } from '../config/firebase';
+import odooApi from '../config/odooApi';
 import { Shield, Lock, Mail, AlertCircle, Loader2 } from 'lucide-react';
 
 export default function AdminLogin({ onLoginSuccess }) {
@@ -24,49 +22,28 @@ export default function AdminLogin({ onLoginSuccess }) {
     setIsLoading(true);
 
     try {
-      // 1. Authenticate via Firebase Auth
-      const userCredential = await signInWithEmailAndPassword(auth, email.trim(), password);
-      const uid = userCredential.user.uid;
+      // 1. Authenticate via Odoo API
+      const result = await odooApi.login(email.trim(), password);
 
-      // 2. Fetch User Profile from Firestore `users/{uid}`
-      const userDocRef = doc(db, 'users', uid);
-      const userDocSnap = await getDoc(userDocRef);
-
-      let isAdmin = false;
-      let userData = null;
-
-      if (userDocSnap.exists()) {
-        userData = userDocSnap.data();
-        if (userData.role === 'admin') {
-          isAdmin = true;
-        }
-      }
-
-      // 3. Security Guard Enforcement
-      if (!isAdmin) {
-        // Sign out unauthorized user immediately
-        await signOut(auth);
+      // Verify the user is the administrator
+      if (result.login !== 'talhatamim45@gmail.com' && result.login !== 'admin') {
+        odooApi.logout();
         setErrorMsg('You do not have permission to access the Admin Dashboard.');
         return;
       }
 
       // Admin access granted!
       if (onLoginSuccess) {
-        onLoginSuccess(userData || { uid, email: userCredential.user.email, role: 'admin' });
+        onLoginSuccess({
+          uid: result.uid,
+          email: result.login,
+          role: 'admin',
+          fullName: result.name,
+        });
       }
     } catch (err) {
       console.log('Admin Login Error:', err);
-      if (
-        err.code === 'auth/user-not-found' ||
-        err.code === 'auth/wrong-password' ||
-        err.code === 'auth/invalid-credential'
-      ) {
-        setErrorMsg('Invalid email or password.');
-      } else if (err.code === 'auth/invalid-email') {
-        setErrorMsg('Invalid email format.');
-      } else {
-        setErrorMsg(err.message || 'Login failed. Please try again.');
-      }
+      setErrorMsg(err.message || 'Login failed. Please try again.');
     } finally {
       setIsLoading(false);
     }

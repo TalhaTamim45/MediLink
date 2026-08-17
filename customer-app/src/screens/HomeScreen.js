@@ -14,9 +14,6 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { colors } from '../theme/colors';
-import { db, auth } from '../config/firebase';
-import { signOut } from 'firebase/auth';
-import { collection, onSnapshot } from 'firebase/firestore';
 import { calculateHaversineDistance } from '../utils/distance';
 import { isValidCoord } from '../components/BarikoiCustomerMap';
 import {
@@ -24,6 +21,9 @@ import {
   getDeliveryStatus,
   formatDistanceText,
 } from '../utils/pharmacyValidation';
+import odooApi from '../config/odooApi';
+import { scale, verticalScale, moderateScale, wp, hp } from '../utils/responsive';
+
 
 export default function HomeScreen({
   userProfile,
@@ -45,48 +45,48 @@ export default function HomeScreen({
   const [isProfileMenuVisible, setIsProfileMenuVisible] = useState(false);
   const [infoBanner, setInfoBanner] = useState('');
 
-  // 1. Subscribe to Firestore pharmacies collection with cleanup
+  // 1. Subscribe/Fetch approved pharmacies from Odoo API
   useEffect(() => {
     setIsLoadingPharmacies(true);
     setPharmacyError('');
 
-    const unsubscribe = onSnapshot(
-      collection(db, 'pharmacies'),
-      (snapshot) => {
-        let totalDocs = snapshot.docs.length;
-        let approvedCount = 0;
-        let validCoordCount = 0;
-
-        const docs = snapshot.docs
-          .map((d) => {
-            const data = d.data() || {};
-            const numLat = data.latitude != null ? Number(data.latitude) : NaN;
-            const numLng = data.longitude != null ? Number(data.longitude) : NaN;
-
-            if (data.approvalStatus === 'approved') approvedCount++;
-            if (isValidCoord(numLat, numLng)) validCoordCount++;
-
-            return {
-              id: d.id,
-              pharmacyUid: d.id,
-              ...data,
-              latitude: numLat,
-              longitude: numLng,
-            };
-          })
-          .filter(isApprovedPharmacy);
+    const fetchPharmacies = async () => {
+      try {
+        const result = await odooApi.searchRead(
+          'res.partner',
+          [['is_pharmacy', '=', true]],
+          ['name', 'pharmacy_license', 'latitude', 'longitude', 'opening_hours']
+        );
+        
+        const docs = result.records.map((p) => {
+          const numLat = p.latitude != null ? Number(p.latitude) : NaN;
+          const numLng = p.longitude != null ? Number(p.longitude) : NaN;
+          
+          return {
+            id: p.id,
+            pharmacyUid: p.id,
+            pharmacyName: p.name,
+            name: p.name,
+            approvalStatus: 'approved',
+            latitude: numLat,
+            longitude: numLng,
+            pharmacyLicense: p.pharmacy_license,
+            openingHours: p.opening_hours,
+            deliveryRadius: 10.0, // Default 10km
+            isOpen: true
+          };
+        });
 
         setPharmacies(docs);
         setIsLoadingPharmacies(false);
-      },
-      (err) => {
-        console.error('Error listening to pharmacies in HomeScreen:', err);
+      } catch (err) {
+        console.error('Error loading pharmacies from Odoo:', err);
         setPharmacyError('Failed to load approved pharmacies.');
         setIsLoadingPharmacies(false);
       }
-    );
+    };
 
-    return () => unsubscribe();
+    fetchPharmacies();
   }, []);
 
   // 2. Request GPS location safely
@@ -181,7 +181,7 @@ export default function HomeScreen({
   };
 
   const handleTabPress = (tabKey) => {
-    if (tabKey === 'home' || tabKey === 'search') {
+    if (tabKey === 'home' || tabKey === 'search' || tabKey === 'orders' || tabKey === 'myOrders') {
       setInfoBanner('');
       if (onNavigateTab) {
         onNavigateTab(tabKey);
@@ -201,7 +201,7 @@ export default function HomeScreen({
   const handleLogout = async () => {
     try {
       setIsProfileMenuVisible(false);
-      await signOut(auth);
+      await odooApi.logout();
     } catch (error) {
       console.log('Logout error:', error);
     } finally {
@@ -226,7 +226,7 @@ export default function HomeScreen({
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.outerContainer}>
         {/* Main Content Scroll View */}
-        <ScrollView
+        <ScrollView style={{ width: '100%' }}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
@@ -595,7 +595,7 @@ export default function HomeScreen({
                     {userProfile?.fullName || 'Customer User'}
                   </Text>
                   <Text style={styles.modalUserEmail}>
-                    {userProfile?.email || auth.currentUser?.email || ''}
+                    {userProfile?.email || ''}
                   </Text>
                 </View>
               </View>
@@ -618,7 +618,8 @@ export default function HomeScreen({
   );
 }
 
-const styles = StyleSheet.create({
+const styles = 
+StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#F8FAFC',
@@ -628,30 +629,31 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   scrollContent: {
+    width: '100%',
     flexGrow: 1,
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 80,
+    paddingHorizontal: scale(16),
+    paddingTop: verticalScale(16),
+    paddingBottom: verticalScale(80),
   },
   cardContainer: {
     width: '100%',
-    maxWidth: 390,
+    maxWidth: scale(390),
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 16,
+    marginBottom: verticalScale(16),
   },
   headerLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: scale(10),
   },
   avatarCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: scale(40),
+    height: verticalScale(40),
+    borderRadius: scale(20),
     backgroundColor: 'rgba(0, 106, 94, 0.1)',
     justifyContent: 'center',
     alignItems: 'center',
@@ -660,89 +662,89 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   greetingText: {
-    fontSize: 16,
+    fontSize: moderateScale(16),
     fontWeight: '700',
     color: colors.onSurface,
   },
   locationRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 3,
-    marginTop: 1,
+    gap: scale(3),
+    marginTop: verticalScale(1),
   },
   locationText: {
-    fontSize: 11.5,
+    fontSize: moderateScale(11.5),
     color: colors.primary,
     fontWeight: '500',
   },
   profileMenuButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: scale(36),
+    height: verticalScale(36),
+    borderRadius: scale(18),
     backgroundColor: colors.surfaceContainerLowest,
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
+    borderWidth: scale(1),
     borderColor: '#E2E8F0',
   },
   pharmacyBannerCard: {
     backgroundColor: 'rgba(0, 106, 94, 0.05)',
-    borderWidth: 1,
+    borderWidth: scale(1),
     borderColor: colors.primary,
-    borderRadius: 14,
-    padding: 12,
-    marginBottom: 14,
-    gap: 10,
+    borderRadius: scale(14),
+    padding: scale(12),
+    marginBottom: verticalScale(14),
+    gap: scale(10),
   },
   pharmacyBannerLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: scale(10),
   },
   pharmacyBannerTitle: {
-    fontSize: 14.5,
+    fontSize: moderateScale(14.5),
     fontWeight: '700',
     color: colors.primary,
   },
   pharmacyBannerSub: {
-    fontSize: 11.5,
+    fontSize: moderateScale(11.5),
     color: colors.onSurfaceVariant,
-    marginTop: 2,
+    marginTop: verticalScale(2),
   },
   bannerActionsCol: {
     flexDirection: 'row',
-    gap: 8,
+    gap: scale(8),
     width: '100%',
   },
   bannerViewBtn: {
     flex: 1.2,
-    height: 34,
+    height: verticalScale(34),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.primary,
-    borderRadius: 8,
-    gap: 4,
+    borderRadius: scale(8),
+    gap: scale(4),
   },
   bannerBtnText: {
-    fontSize: 12,
+    fontSize: moderateScale(12),
     fontWeight: '700',
     color: '#FFFFFF',
   },
   bannerChangeBtn: {
     flex: 1,
-    height: 34,
+    height: verticalScale(34),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#FFFFFF',
-    borderWidth: 1,
+    borderWidth: scale(1),
     borderColor: colors.primary,
-    borderRadius: 8,
-    gap: 4,
+    borderRadius: scale(8),
+    gap: scale(4),
   },
   bannerChangeBtnText: {
-    fontSize: 12,
+    fontSize: moderateScale(12),
     fontWeight: '700',
     color: colors.primary,
   },
@@ -751,151 +753,151 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#E0F2FE',
     borderColor: '#BAE6FD',
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    marginBottom: 14,
-    gap: 8,
+    borderWidth: scale(1),
+    borderRadius: scale(10),
+    paddingHorizontal: scale(12),
+    paddingVertical: verticalScale(10),
+    marginBottom: verticalScale(14),
+    gap: scale(8),
   },
   infoText: {
     flex: 1,
     color: '#0369A1',
-    fontSize: 12.5,
+    fontSize: moderateScale(12.5),
     fontWeight: '500',
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.surfaceContainerLowest,
-    borderWidth: 1,
+    borderWidth: scale(1),
     borderColor: '#CBD5E1',
-    borderRadius: 12,
-    height: 46,
-    paddingHorizontal: 12,
-    marginBottom: 18,
+    borderRadius: scale(12),
+    height: verticalScale(46),
+    paddingHorizontal: scale(12),
+    marginBottom: verticalScale(18),
   },
   searchIcon: {
-    marginRight: 8,
+    marginRight: scale(8),
   },
   searchInput: {
     flex: 1,
     height: '100%',
-    fontSize: 13.5,
+    fontSize: moderateScale(13.5),
     color: colors.onSurface,
-    paddingVertical: 0,
+    paddingVertical: verticalScale(0),
   },
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: verticalScale(12),
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: moderateScale(16),
     fontWeight: '700',
     color: colors.onSurface,
   },
   seeAllText: {
-    fontSize: 12.5,
+    fontSize: moderateScale(12.5),
     fontWeight: '600',
     color: colors.primary,
   },
   quickActionsGrid: {
     flexDirection: 'row',
-    gap: 10,
-    marginBottom: 10,
+    gap: scale(10),
+    marginBottom: verticalScale(10),
   },
   actionCardPrimary: {
     flex: 1,
     backgroundColor: 'rgba(0, 106, 94, 0.08)',
-    borderRadius: 12,
-    padding: 10,
+    borderRadius: scale(12),
+    padding: scale(10),
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
+    borderWidth: scale(1),
     borderColor: 'rgba(0, 106, 94, 0.2)',
   },
   actionCardTitlePrimary: {
-    fontSize: 11,
+    fontSize: moderateScale(11),
     fontWeight: '700',
     color: colors.primary,
     textAlign: 'center',
-    marginTop: 4,
+    marginTop: verticalScale(4),
   },
   actionCard: {
     flex: 1,
     backgroundColor: colors.surfaceContainerLowest,
-    borderRadius: 12,
-    padding: 10,
+    borderRadius: scale(12),
+    padding: scale(10),
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
+    borderWidth: scale(1),
     borderColor: '#E2E8F0',
   },
   actionCardTitle: {
-    fontSize: 11,
+    fontSize: moderateScale(11),
     fontWeight: '600',
     color: colors.onSurface,
     textAlign: 'center',
-    marginTop: 4,
+    marginTop: verticalScale(4),
   },
   errorBanner: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FEE2E2',
     borderColor: '#FCA5A5',
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 10,
-    marginBottom: 12,
-    gap: 8,
+    borderWidth: scale(1),
+    borderRadius: scale(10),
+    padding: scale(10),
+    marginBottom: verticalScale(12),
+    gap: scale(8),
   },
   errorText: {
-    fontSize: 12.5,
+    fontSize: moderateScale(12.5),
     color: '#991B1B',
     flex: 1,
   },
   loadingBox: {
-    paddingVertical: 32,
+    paddingVertical: verticalScale(32),
     alignItems: 'center',
-    gap: 8,
+    gap: scale(8),
   },
   loadingText: {
-    fontSize: 13,
+    fontSize: moderateScale(13),
     color: colors.onSurfaceVariant,
   },
   emptyBox: {
     alignItems: 'center',
-    paddingVertical: 36,
+    paddingVertical: verticalScale(36),
     backgroundColor: colors.surfaceContainerLowest,
-    borderRadius: 14,
-    borderWidth: 1,
+    borderRadius: scale(14),
+    borderWidth: scale(1),
     borderColor: '#E2E8F0',
-    paddingHorizontal: 20,
-    gap: 8,
+    paddingHorizontal: scale(20),
+    gap: scale(8),
   },
   emptyTitle: {
-    fontSize: 14.5,
+    fontSize: moderateScale(14.5),
     fontWeight: '700',
     color: colors.onSurface,
     textAlign: 'center',
   },
   emptySubtext: {
-    fontSize: 12,
+    fontSize: moderateScale(12),
     color: colors.onSurfaceVariant,
     textAlign: 'center',
   },
   pharmaciesList: {
-    gap: 12,
+    gap: scale(12),
   },
   pharmacyCard: {
     backgroundColor: colors.surfaceContainerLowest,
-    borderRadius: 14,
-    borderWidth: 1,
+    borderRadius: scale(14),
+    borderWidth: scale(1),
     borderColor: '#E2E8F0',
-    padding: 12,
-    gap: 8,
+    padding: scale(12),
+    gap: scale(8),
   },
   pharmacyCardSelected: {
     borderColor: colors.primary,
@@ -904,12 +906,12 @@ const styles = StyleSheet.create({
   pharmacyHeaderRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: 10,
+    gap: scale(10),
   },
   pharmacyIconBox: {
-    width: 40,
-    height: 40,
-    borderRadius: 10,
+    width: scale(40),
+    height: verticalScale(40),
+    borderRadius: scale(10),
     backgroundColor: '#F1F5F9',
     justifyContent: 'center',
     alignItems: 'center',
@@ -920,35 +922,35 @@ const styles = StyleSheet.create({
   pharmacyTitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: scale(4),
   },
   pharmacyName: {
-    fontSize: 14.5,
+    fontSize: moderateScale(14.5),
     fontWeight: '700',
     color: colors.onSurface,
   },
   addressText: {
-    fontSize: 12,
+    fontSize: moderateScale(12),
     color: colors.onSurfaceVariant,
-    marginTop: 2,
+    marginTop: verticalScale(2),
   },
   pharmacyMetaRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    marginTop: 4,
+    gap: scale(6),
+    marginTop: verticalScale(4),
   },
   statusTag: {
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4,
+    paddingHorizontal: scale(6),
+    paddingVertical: verticalScale(2),
+    borderRadius: scale(4),
   },
   statusOpen: {
     backgroundColor: '#D1FAE5',
   },
   statusOpenText: {
     color: '#065F46',
-    fontSize: 10.5,
+    fontSize: moderateScale(10.5),
     fontWeight: '700',
   },
   statusClosed: {
@@ -956,15 +958,15 @@ const styles = StyleSheet.create({
   },
   statusClosedText: {
     color: '#991B1B',
-    fontSize: 10.5,
+    fontSize: moderateScale(10.5),
     fontWeight: '700',
   },
   dotSeparator: {
-    fontSize: 10,
+    fontSize: moderateScale(10),
     color: colors.onSurfaceVariant,
   },
   distanceText: {
-    fontSize: 11.5,
+    fontSize: moderateScale(11.5),
     color: colors.primary,
     fontWeight: '600',
   },
@@ -972,24 +974,24 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: 8,
-    borderTopWidth: 1,
+    paddingTop: verticalScale(8),
+    borderTopWidth: scale(1),
     borderTopColor: '#F1F5F9',
-    marginTop: 4,
+    marginTop: verticalScale(4),
   },
   deliveryBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 6,
-    gap: 4,
+    paddingHorizontal: scale(8),
+    paddingVertical: verticalScale(3),
+    borderRadius: scale(6),
+    gap: scale(4),
   },
   badge_success: {
     backgroundColor: '#D1FAE5',
   },
   badgeText_success: {
-    fontSize: 11,
+    fontSize: moderateScale(11),
     color: '#065F46',
     fontWeight: '600',
   },
@@ -997,7 +999,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FEE2E2',
   },
   badgeText_danger: {
-    fontSize: 11,
+    fontSize: moderateScale(11),
     color: '#991B1B',
     fontWeight: '600',
   },
@@ -1005,7 +1007,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FEF3C7',
   },
   badgeText_warning: {
-    fontSize: 11,
+    fontSize: moderateScale(11),
     color: '#92400E',
     fontWeight: '600',
   },
@@ -1013,34 +1015,34 @@ const styles = StyleSheet.create({
     backgroundColor: '#E0F2FE',
   },
   badgeText_info: {
-    fontSize: 11,
+    fontSize: moderateScale(11),
     color: '#0369A1',
     fontWeight: '600',
   },
   viewPharmacyButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 2,
+    gap: scale(2),
   },
   viewPharmacyText: {
-    fontSize: 12,
+    fontSize: moderateScale(12),
     fontWeight: '700',
     color: colors.primary,
   },
   bottomNavContainer: {
     position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
+    bottom: verticalScale(0),
+    left: scale(0),
+    right: scale(0),
     backgroundColor: colors.surfaceContainerLowest,
-    borderTopWidth: 1,
+    borderTopWidth: scale(1),
     borderTopColor: '#E2E8F0',
     alignItems: 'center',
   },
   bottomNav: {
     width: '100%',
-    maxWidth: 390,
-    height: 58,
+    maxWidth: scale(390),
+    height: verticalScale(58),
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
@@ -1048,12 +1050,12 @@ const styles = StyleSheet.create({
   navItem: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 4,
+    paddingVertical: verticalScale(4),
   },
   navLabel: {
-    fontSize: 11,
+    fontSize: moderateScale(11),
     color: colors.onSurfaceVariant,
-    marginTop: 2,
+    marginTop: verticalScale(2),
   },
   navLabelActive: {
     color: colors.primary,
@@ -1064,24 +1066,24 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(15, 23, 42, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 16,
+    padding: scale(16),
   },
   modalContent: {
     width: '100%',
-    maxWidth: 320,
+    maxWidth: scale(320),
     backgroundColor: colors.surfaceContainerLowest,
-    borderRadius: 16,
-    padding: 18,
+    borderRadius: scale(16),
+    padding: scale(18),
   },
   modalHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: scale(12),
   },
   modalAvatar: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: scale(44),
+    height: verticalScale(44),
+    borderRadius: scale(22),
     backgroundColor: 'rgba(0, 106, 94, 0.1)',
     justifyContent: 'center',
     alignItems: 'center',
@@ -1090,30 +1092,30 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   modalUserName: {
-    fontSize: 15,
+    fontSize: moderateScale(15),
     fontWeight: '700',
     color: colors.onSurface,
   },
   modalUserEmail: {
-    fontSize: 12,
+    fontSize: moderateScale(12),
     color: colors.onSurfaceVariant,
-    marginTop: 1,
+    marginTop: verticalScale(1),
   },
   modalDivider: {
-    height: 1,
+    height: verticalScale(1),
     backgroundColor: '#E2E8F0',
-    marginVertical: 14,
+    marginVertical: verticalScale(14),
   },
   modalLogoutButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 10,
+    paddingVertical: verticalScale(10),
     backgroundColor: '#FEF2F2',
-    borderRadius: 10,
+    borderRadius: scale(10),
   },
   modalLogoutText: {
-    fontSize: 13,
+    fontSize: moderateScale(13),
     fontWeight: '700',
     color: '#DC2626',
   },

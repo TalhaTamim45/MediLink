@@ -12,9 +12,10 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { colors } from '../theme/colors';
-import { db } from '../config/firebase';
-import { doc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import odooApi from '../config/odooApi';
 import BarikoiMapPicker from '../components/BarikoiMapPicker';
+import { scale, verticalScale, moderateScale, wp, hp } from '../utils/responsive';
+
 
 export default function PharmacyLocationScreen({ pharmacy, onBack }) {
   const [selectedLat, setSelectedLat] = useState(
@@ -88,17 +89,21 @@ export default function PharmacyLocationScreen({ pharmacy, onBack }) {
     setSuccessMsg('');
 
     try {
-      if (!pharmacy?.uid) {
-        throw new Error('Pharmacy UID missing');
+      if (!pharmacy?.id) {
+        throw new Error('Pharmacy partner ID missing');
       }
 
-      const pharmacyRef = doc(db, 'pharmacies', pharmacy.uid);
-      await updateDoc(pharmacyRef, {
+      // Write location to Odoo res.partner record
+      await odooApi.write('res.partner', pharmacy.id, {
         latitude: Number(selectedLat),
         longitude: Number(selectedLng),
-        locationAddress: selectedAddress.trim() || pharmacy.address || 'Dhaka, Bangladesh',
-        locationUpdatedAt: serverTimestamp(),
+        street: selectedAddress.trim() || pharmacy.address || 'Dhaka, Bangladesh',
       });
+
+      // Mutate local object to update view state
+      pharmacy.latitude = Number(selectedLat);
+      pharmacy.longitude = Number(selectedLng);
+      pharmacy.address = selectedAddress.trim();
 
       setSuccessMsg('Store location saved successfully!');
       setTimeout(() => setSuccessMsg(''), 4000);
@@ -123,7 +128,7 @@ export default function PharmacyLocationScreen({ pharmacy, onBack }) {
           <View style={{ width: 40 }} />
         </View>
 
-        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <ScrollView style={{ width: '100%' }} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
           <View style={styles.cardContainer}>
             {/* Banner Notifications */}
             {successMsg ? (
@@ -231,7 +236,8 @@ export default function PharmacyLocationScreen({ pharmacy, onBack }) {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = 
+StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: colors.background,
@@ -242,59 +248,60 @@ const styles = StyleSheet.create({
   },
   headerBar: {
     width: '100%',
-    maxWidth: 800,
-    height: 54,
+    maxWidth: scale(800),
+    height: verticalScale(54),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
+    paddingHorizontal: scale(16),
     backgroundColor: colors.surfaceContainerLowest,
-    borderBottomWidth: 1,
+    borderBottomWidth: scale(1),
     borderBottomColor: '#E2E8F0',
   },
   backBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: scale(4),
     backgroundColor: 'rgba(0, 106, 94, 0.1)',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
+    paddingHorizontal: scale(12),
+    paddingVertical: verticalScale(6),
+    borderRadius: scale(20),
   },
   backBtnText: {
-    fontSize: 13,
+    fontSize: moderateScale(13),
     fontWeight: '700',
     color: colors.primary,
   },
   headerTitle: {
-    fontSize: 16,
+    fontSize: moderateScale(16),
     fontWeight: '700',
     color: colors.onSurface,
   },
   scrollContent: {
+    width: '100%',
     flexGrow: 1,
-    paddingHorizontal: 16,
-    paddingVertical: 20,
+    paddingHorizontal: scale(16),
+    paddingVertical: verticalScale(20),
     alignItems: 'center',
   },
   cardContainer: {
     width: '100%',
-    maxWidth: 800,
+    maxWidth: scale(800),
   },
   successBanner: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#D1FAE5',
     borderColor: '#A7F3D0',
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 14,
-    gap: 8,
+    borderWidth: scale(1),
+    borderRadius: scale(10),
+    padding: scale(12),
+    marginBottom: verticalScale(14),
+    gap: scale(8),
   },
   successText: {
     color: '#065F46',
-    fontSize: 13,
+    fontSize: moderateScale(13),
     fontWeight: '600',
   },
   errorBanner: {
@@ -302,15 +309,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#FEE2E2',
     borderColor: '#FCA5A5',
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 14,
-    gap: 8,
+    borderWidth: scale(1),
+    borderRadius: scale(10),
+    padding: scale(12),
+    marginBottom: verticalScale(14),
+    gap: scale(8),
   },
   errorText: {
     color: '#991B1B',
-    fontSize: 13,
+    fontSize: moderateScale(13),
     fontWeight: '500',
   },
   warningBanner: {
@@ -318,64 +325,64 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#FEF3C7',
     borderColor: '#FCD34D',
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 14,
-    gap: 8,
+    borderWidth: scale(1),
+    borderRadius: scale(10),
+    padding: scale(12),
+    marginBottom: verticalScale(14),
+    gap: scale(8),
   },
   warningText: {
     color: '#92400E',
-    fontSize: 13,
+    fontSize: moderateScale(13),
     fontWeight: '600',
     flex: 1,
   },
   infoCard: {
     backgroundColor: colors.surfaceContainerLowest,
-    borderRadius: 16,
-    padding: 20,
-    borderWidth: 1,
+    borderRadius: scale(16),
+    padding: scale(20),
+    borderWidth: scale(1),
     borderColor: '#E2E8F0',
   },
   cardTitle: {
-    fontSize: 16,
+    fontSize: moderateScale(16),
     fontWeight: '700',
     color: colors.onSurface,
   },
   pharmacyNameText: {
-    fontSize: 13.5,
+    fontSize: moderateScale(13.5),
     color: colors.primary,
     fontWeight: '600',
-    marginBottom: 14,
+    marginBottom: verticalScale(14),
   },
   mapBox: {
-    marginBottom: 14,
+    marginBottom: verticalScale(14),
   },
   gpsBtn: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 6,
+    gap: scale(6),
     backgroundColor: 'rgba(0, 106, 94, 0.08)',
-    borderWidth: 1,
+    borderWidth: scale(1),
     borderColor: colors.primary,
-    borderRadius: 10,
-    height: 44,
-    marginBottom: 14,
+    borderRadius: scale(10),
+    height: verticalScale(44),
+    marginBottom: verticalScale(14),
   },
   gpsBtnText: {
     color: colors.primary,
-    fontSize: 13.5,
+    fontSize: moderateScale(13.5),
     fontWeight: '700',
   },
   detailsBox: {
     backgroundColor: '#F8FAFC',
-    borderRadius: 12,
-    padding: 14,
-    borderWidth: 1,
+    borderRadius: scale(12),
+    padding: scale(14),
+    borderWidth: scale(1),
     borderColor: '#E2E8F0',
-    gap: 8,
-    marginBottom: 16,
+    gap: scale(8),
+    marginBottom: verticalScale(16),
   },
   detailRow: {
     flexDirection: 'row',
@@ -383,32 +390,32 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   detailLabel: {
-    fontSize: 13,
+    fontSize: moderateScale(13),
     color: colors.onSurfaceVariant,
     fontWeight: '600',
   },
   detailVal: {
-    fontSize: 13.5,
+    fontSize: moderateScale(13.5),
     color: colors.onSurface,
     fontWeight: '700',
     flex: 1,
     textAlign: 'right',
   },
   saveBtn: {
-    height: 48,
+    height: verticalScale(48),
     backgroundColor: colors.primary,
-    borderRadius: 12,
+    borderRadius: scale(12),
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 8,
+    gap: scale(8),
   },
   saveBtnDisabled: {
     opacity: 0.6,
   },
   saveBtnText: {
     color: '#FFFFFF',
-    fontSize: 15,
+    fontSize: moderateScale(15),
     fontWeight: '700',
   },
 });

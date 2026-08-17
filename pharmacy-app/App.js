@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { StatusBar } from 'expo-status-bar';
 import {
   StyleSheet,
   Text,
@@ -9,8 +10,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from './src/theme/colors';
-import { auth } from './src/config/firebase';
-import { signOut } from 'firebase/auth';
+import odooApi from './src/config/odooApi';
 import PharmacyLoginScreen from './src/screens/PharmacyLoginScreen';
 import PharmacyRegisterScreen from './src/screens/PharmacyRegisterScreen';
 
@@ -42,9 +42,9 @@ export default function App() {
     setCurrentScreen('approved');
   };
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
     try {
-      await signOut(auth);
+      odooApi.logout();
     } catch (e) {
       console.log('Logout error:', e);
     }
@@ -54,27 +54,24 @@ export default function App() {
     setCurrentScreen('login');
   };
 
+  let screenContent;
   if (currentScreen === 'register') {
-    return (
+    screenContent = (
       <PharmacyRegisterScreen
         onNavigateToLogin={handleNavigateToLogin}
         onRegisterSuccess={(msg) => handleNavigateToLogin(msg)}
       />
     );
-  }
-
-  if (currentScreen === 'approved' && approvedPharmacy) {
+  } else if (currentScreen === 'approved' && approvedPharmacy) {
     if (activeTab === 'location') {
-      return (
+      screenContent = (
         <PharmacyLocationScreen
           pharmacy={approvedPharmacy}
           onBack={() => setActiveTab('dashboard')}
         />
       );
-    }
-
-    if (activeTab === 'medicines') {
-      return (
+    } else if (activeTab === 'medicines') {
+      screenContent = (
         <MedicineManagementScreen
           pharmacy={approvedPharmacy}
           onBack={() => setActiveTab('dashboard')}
@@ -88,10 +85,8 @@ export default function App() {
           }}
         />
       );
-    }
-
-    if (activeTab === 'addEditMedicine') {
-      return (
+    } else if (activeTab === 'addEditMedicine') {
+      screenContent = (
         <AddEditMedicineScreen
           pharmacy={approvedPharmacy}
           medicineToEdit={medicineToEdit}
@@ -102,24 +97,31 @@ export default function App() {
           }}
         />
       );
+    } else {
+      screenContent = (
+        <PharmacyDashboardScreen
+          pharmacy={approvedPharmacy}
+          onLogout={handleLogout}
+          onOpenLocation={() => setActiveTab('location')}
+          onOpenMedicines={() => setActiveTab('medicines')}
+        />
+      );
     }
-
-    return (
-      <PharmacyDashboardScreen
-        pharmacy={approvedPharmacy}
-        onLogout={handleLogout}
-        onOpenLocation={() => setActiveTab('location')}
-        onOpenMedicines={() => setActiveTab('medicines')}
+  } else {
+    screenContent = (
+      <PharmacyLoginScreen
+        onNavigateToRegister={handleNavigateToRegister}
+        onLoginSuccess={handleLoginSuccess}
+        initialNotice={initialNotice}
       />
     );
   }
 
   return (
-    <PharmacyLoginScreen
-      onNavigateToRegister={handleNavigateToRegister}
-      onLoginSuccess={handleLoginSuccess}
-      initialNotice={initialNotice}
-    />
+    <>
+      <StatusBar style="dark" translucent={false} backgroundColor="#FFFFFF" />
+      {screenContent}
+    </>
   );
 }
 

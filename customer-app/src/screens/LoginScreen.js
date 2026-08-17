@@ -13,9 +13,8 @@ import {
 } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { colors } from '../theme/colors';
-import { auth, db } from '../config/firebase';
-import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
+import odooApi from '../config/odooApi';
+import { scale, verticalScale, moderateScale, wp, hp } from '../utils/responsive';
 
 export default function LoginScreen({ onNavigateToRegister, onLoginSuccess }) {
   const [email, setEmail] = useState('');
@@ -55,57 +54,26 @@ export default function LoginScreen({ onNavigateToRegister, onLoginSuccess }) {
     setIsLoading(true);
 
     try {
-      // 1. Firebase Authentication with Email & Password
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email.trim(),
-        password
-      );
-      const user = userCredential.user;
+      // 1. Call Odoo API Login
+      const result = await odooApi.login(email.trim(), password);
+      
+      const fullProfile = {
+        uid: result.uid,
+        fullName: result.name,
+        name: result.name,
+        email: result.login,
+        role: 'customer',
+        latitude: null,
+        longitude: null,
+      };
 
-      // 2. Fetch Customer User Profile from Firestore
-      const userDocRef = doc(db, 'users', user.uid);
-      const userDocSnap = await getDoc(userDocRef);
-
-      if (!userDocSnap.exists()) {
-        await signOut(auth);
-        setErrorMessage('Customer profile not found.');
-        return;
-      }
-
-      const userData = userDocSnap.data() || {};
-
-      // 3. Confirm user role is customer
-      if (userData.role !== 'customer') {
-        await signOut(auth);
-        setErrorMessage('This account is not registered as a customer.');
-        return;
-      }
-
-      const fullProfile = { uid: user.uid, ...userData };
-
-      // 4. Login successful -> Notify parent component
+      // 2. Login successful -> Notify parent component
       if (onLoginSuccess) {
         onLoginSuccess(fullProfile);
       }
     } catch (error) {
-      console.log('Firebase Login Error:', error.code, error.message);
-
-      let msg = 'Failed to sign in. Please try again.';
-      if (
-        error.code === 'auth/invalid-credential' ||
-        error.code === 'auth/user-not-found' ||
-        error.code === 'auth/wrong-password'
-      ) {
-        msg = 'Invalid email or password. Please try again.';
-      } else if (error.code === 'auth/invalid-email') {
-        msg = 'Invalid email address format.';
-      } else if (error.code === 'auth/network-request-failed') {
-        msg = 'Network connection failed. Please check your internet.';
-      } else if (error.code === 'auth/too-many-requests') {
-        msg = 'Too many failed login attempts. Please try again later.';
-      }
-      setErrorMessage(msg);
+      console.log('Odoo Login Error:', error.message);
+      setErrorMessage(error.message || 'Invalid email or password. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -124,7 +92,7 @@ export default function LoginScreen({ onNavigateToRegister, onLoginSuccess }) {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}
       >
-        <ScrollView
+        <ScrollView style={{ width: '100%' }}
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
@@ -298,49 +266,50 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
+    width: '100%',
     flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 24,
+    paddingHorizontal: scale(16),
+    paddingVertical: verticalScale(24),
   },
   cardContainer: {
     width: '100%',
-    maxWidth: 360,
+    maxWidth: scale(360),
     backgroundColor: colors.surfaceContainerLowest,
-    borderRadius: 16,
-    paddingHorizontal: 22,
-    paddingVertical: 26,
+    borderRadius: scale(16),
+    paddingHorizontal: scale(22),
+    paddingVertical: verticalScale(26),
     shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: scale(0), height: verticalScale(4) },
     shadowOpacity: 0.05,
     shadowRadius: 10,
     elevation: 2,
-    borderWidth: 1,
+    borderWidth: scale(1),
     borderColor: '#E2E8F0',
   },
   header: {
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: verticalScale(20),
   },
   logoCircle: {
-    width: 68,
-    height: 68,
-    borderRadius: 34,
+    width: scale(68),
+    height: scale(68),
+    borderRadius: scale(34),
     backgroundColor: 'rgba(0, 106, 94, 0.08)',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: verticalScale(12),
   },
   title: {
-    fontSize: 24,
+    fontSize: moderateScale(24),
     fontWeight: '700',
     color: colors.primary,
     marginBottom: 4,
     fontFamily: Platform.OS === 'web' ? 'Inter, sans-serif' : undefined,
   },
   subtitle: {
-    fontSize: 13.5,
+    fontSize: moderateScale(13.5),
     color: colors.onSurfaceVariant,
     textAlign: 'center',
     fontFamily: Platform.OS === 'web' ? 'Inter, sans-serif' : undefined,
@@ -350,78 +319,78 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#FEE2E2',
     borderColor: '#FCA5A5',
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    marginBottom: 14,
-    gap: 8,
+    borderWidth: scale(1),
+    borderRadius: scale(10),
+    paddingHorizontal: scale(12),
+    paddingVertical: verticalScale(10),
+    marginBottom: verticalScale(14),
+    gap: scale(8),
   },
   errorText: {
     flex: 1,
     color: '#991B1B',
-    fontSize: 13,
+    fontSize: moderateScale(13),
     fontWeight: '500',
   },
   form: {
     width: '100%',
-    gap: 14,
+    gap: verticalScale(14),
   },
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.surfaceContainerLowest,
-    borderWidth: 1,
+    borderWidth: scale(1),
     borderColor: '#CBD5E1',
-    borderRadius: 12,
-    height: 48,
-    paddingHorizontal: 12,
+    borderRadius: scale(12),
+    height: verticalScale(48),
+    paddingHorizontal: scale(12),
   },
   inputWrapperFocused: {
     borderColor: colors.primary,
     borderWidth: 1.5,
   },
   inputIcon: {
-    marginRight: 8,
+    marginRight: scale(8),
   },
   input: {
     flex: 1,
     height: '100%',
-    fontSize: 14.5,
+    fontSize: moderateScale(14.5),
     color: colors.onSurface,
     paddingVertical: 0,
     fontFamily: Platform.OS === 'web' ? 'Inter, sans-serif' : undefined,
   },
   passwordInput: {
-    paddingRight: 36,
+    paddingRight: scale(36),
   },
   eyeIconContainer: {
     position: 'absolute',
-    right: 12,
+    right: scale(12),
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
   },
   forgotPasswordContainer: {
     alignItems: 'flex-end',
-    marginTop: 2,
-    marginBottom: 2,
+    marginTop: verticalScale(2),
+    marginBottom: verticalScale(2),
   },
   forgotPasswordText: {
-    fontSize: 13,
+    fontSize: moderateScale(13),
     fontWeight: '500',
     color: colors.primary,
     fontFamily: Platform.OS === 'web' ? 'Inter, sans-serif' : undefined,
   },
   loginButton: {
-    height: 48,
+    height: verticalScale(48),
     backgroundColor: colors.primary,
-    borderRadius: 12,
+    borderRadius: scale(12),
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 4,
+    marginTop: verticalScale(4),
     shadowColor: colors.primary,
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: scale(0), height: verticalScale(2) },
     shadowOpacity: 0.15,
     shadowRadius: 4,
     elevation: 2,
@@ -432,46 +401,46 @@ const styles = StyleSheet.create({
   loadingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: scale(8),
   },
   loginButtonText: {
     color: colors.onPrimary,
-    fontSize: 15,
+    fontSize: moderateScale(15),
     fontWeight: '600',
     fontFamily: Platform.OS === 'web' ? 'Inter, sans-serif' : undefined,
   },
   dividerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 16,
+    marginVertical: verticalScale(16),
   },
   dividerLine: {
     flex: 1,
-    height: 1,
+    height: verticalScale(1),
     backgroundColor: '#E2E8F0',
   },
   dividerText: {
-    marginHorizontal: 10,
-    fontSize: 11,
+    marginHorizontal: scale(10),
+    fontSize: moderateScale(11),
     fontWeight: '600',
     color: '#94A3B8',
     fontFamily: Platform.OS === 'web' ? 'Inter, sans-serif' : undefined,
   },
   googleButton: {
-    height: 48,
+    height: verticalScale(48),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.surfaceContainerLowest,
-    borderWidth: 1,
+    borderWidth: scale(1),
     borderColor: '#CBD5E1',
-    borderRadius: 12,
+    borderRadius: scale(12),
   },
   googleIcon: {
-    marginRight: 8,
+    marginRight: scale(8),
   },
   googleButtonText: {
-    fontSize: 14,
+    fontSize: moderateScale(14),
     fontWeight: '500',
     color: colors.onSurface,
     fontFamily: Platform.OS === 'web' ? 'Inter, sans-serif' : undefined,
@@ -479,16 +448,16 @@ const styles = StyleSheet.create({
   footer: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 18,
+    marginTop: verticalScale(18),
   },
   footerText: {
-    fontSize: 13.5,
+    fontSize: moderateScale(13.5),
     color: colors.onSurfaceVariant,
     fontFamily: Platform.OS === 'web' ? 'Inter, sans-serif' : undefined,
     textAlign: 'center',
   },
   createAccountText: {
-    fontSize: 13.5,
+    fontSize: moderateScale(13.5),
     fontWeight: '700',
     color: colors.primary,
     fontFamily: Platform.OS === 'web' ? 'Inter, sans-serif' : undefined,

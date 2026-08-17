@@ -11,22 +11,14 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../theme/colors';
-import { db } from '../config/firebase';
-import {
-  collection,
-  onSnapshot,
-  doc,
-  updateDoc,
-  query,
-  where,
-  runTransaction,
-  serverTimestamp,
-} from 'firebase/firestore';
+import odooApi from '../config/odooApi';
 import {
   ORDER_STATUS,
   TERMINAL_STATUSES,
   isValidStatusTransition,
 } from '../utils/orderStatuses';
+import { scale, verticalScale, moderateScale, wp, hp } from '../utils/responsive';
+
 
 export default function PharmacyOrdersScreen({ pharmacy, onOrdersChange }) {
   const [orders, setOrders] = useState([]);
@@ -35,171 +27,82 @@ export default function PharmacyOrdersScreen({ pharmacy, onOrdersChange }) {
   const [activeTab, setActiveTab] = useState('All'); // 'All' | 'Pending' | 'Preparing' | 'Ready' | 'Completed' | 'Rejected'
   const [updatingOrderId, setUpdatingOrderId] = useState(null);
 
-  useEffect(() => {
-    setIsLoading(true);
-    setErrorMsg('');
-
-    if (!pharmacy?.uid) {
-      setIsLoading(false);
-      return;
-    }
-
-    // Real-time listener for orders collection filtered by logged-in pharmacy UID
-    const ordersQuery = query(
-      collection(db, 'orders'),
-      where('pharmacyUid', '==', pharmacy.uid)
-    );
-
-    const unsubscribe = onSnapshot(
-      ordersQuery,
-      (snapshot) => {
-        const fetchedOrders = snapshot.docs.map((docSnap) => ({
-          id: docSnap.id,
-          ...docSnap.data(),
-        }));
-
-        // Sort by createdAt descending locally
-        fetchedOrders.sort((a, b) => {
-          const timeA = a.createdAt?.seconds ? a.createdAt.seconds * 1000 : (a.createdAt?.toMillis?.() || 0);
-          const timeB = b.createdAt?.seconds ? b.createdAt.seconds * 1000 : (b.createdAt?.toMillis?.() || 0);
-          return timeB - timeA;
-        });
-
+  const fetchOrders = async () => {
+    if (!pharmacy?.id) return;
+    try {
+      const result = await odooApi.getPharmacyOrders(pharmacy.id);
+      if (result && result.success) {
+        const fetchedOrders = result.orders || [];
         setOrders(fetchedOrders);
         if (onOrdersChange) {
           onOrdersChange(fetchedOrders);
         }
-        setIsLoading(false);
-      },
-      (err) => {
-        console.error('Error listening to orders in pharmacy app:', err);
-        setErrorMsg('Failed to load real-time orders from Firestore.');
-        setIsLoading(false);
+      } else {
+        setErrorMsg(result.error || 'Failed to fetch orders.');
       }
-    );
+    } catch (err) {
+      console.error('Error fetching orders:', err);
+      setErrorMsg('Failed to connect to Odoo backend.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    return () => unsubscribe();
-  }, [pharmacy?.uid]);
+  useEffect(() => {
+    setIsLoading(true);
+    setErrorMsg('');
+    fetchOrders();
+
+    const interval = setInterval(fetchOrders, 4000);
+    return () => clearInterval(interval);
+  }, [pharmacy?.id]);
 
   // Handle status updates & atomic stock restoration on Rejection
   const handleUpdateStatus = async (orderId, newStatus) => {
-    if (updatingOrderId || !pharmacy?.uid) return;
+    if (updatingOrderId || !pharmacy?.id) return;
     setUpdatingOrderId(orderId);
     setErrorMsg('');
 
     try {
-      if (newStatus === ORDER_STATUS.REJECTED) {
-        // Atomic transaction for rejection with stock restoration & ownership validation
-        await runTransaction(db, async (transaction) => {
-          const orderRef = doc(db, 'orders', orderId);
-          const latestOrderSnap = await transaction.get(orderRef);
-
-          if (!latestOrderSnap.exists()) {
-            throw new Error('Order document does not exist.');
-          }
-
-          const latestOrder = latestOrderSnap.data();
-
-          // Safeguard #2: Confirm pharmacy ownership
-          if (latestOrder.pharmacyUid !== pharmacy.uid) {
-            throw new Error('Unauthorized. This order does not belong to your pharmacy.');
-          }
-
-          // Safeguard #1: Confirm status is strictly Pending
-          if (latestOrder.status !== ORDER_STATUS.PENDING) {
-            throw new Error(
-              `Cannot reject order because current status is "${latestOrder.status}". Stock will not be restored.`
-            );
-          }
-
-          // Validate items and prepare stock restoration
-          const items = latestOrder.items || [];
-          const stockUpdates = [];
-
-          for (const item of items) {
-            // Safeguard #4: Medicine ID fallback
-            const medId = item.medicineId || item.id;
-            if (!medId) {
-              throw new Error('Invalid item metadata in order. Missing medicine ID.');
-            }
-
-            // Safeguard #5: Quantity validation
-            const qty = Number(item.quantity);
-            if (!Number.isInteger(qty) || qty <= 0) {
-              throw new Error(`Invalid item quantity (${item.quantity}) for "${item.medicineName || item.name}".`);
-            }
-
-            // Safeguard #3: Missing medicine document check
-            const medRef = doc(db, 'medicines', medId);
-            const medSnap = await transaction.get(medRef);
-
-            if (!medSnap.exists()) {
-              throw new Error(
-                `Medicine "${item.medicineName || item.name || 'Unknown'}" no longer exists in catalog. Rejection aborted.`
-              );
-            }
-
-            const currentStock = Number(medSnap.data().stock || 0);
-            stockUpdates.push({
-              ref: medRef,
-              newStock: currentStock + qty,
-            });
-          }
-
-          // Apply stock restorations
-          for (const update of stockUpdates) {
-            transaction.update(update.ref, {
-              stock: update.newStock,
-              updatedAt: serverTimestamp(),
-            });
-          }
-
-          // Update order status with serverTimestamp (Safeguard #11)
-          transaction.update(orderRef, {
-            status: ORDER_STATUS.REJECTED,
-            rejectedAt: serverTimestamp(),
-            rejectedBy: 'pharmacy',
-            updatedAt: serverTimestamp(),
-          });
-        });
-      } else {
-        // Standard status transitions (Accepted, Preparing, Ready for Delivery, Delivered)
-        const orderRef = doc(db, 'orders', orderId);
-
-        // Fetch current status to validate transition (Safeguard #9)
-        const targetOrder = orders.find((o) => o.id === orderId);
-        const currentStatus = targetOrder?.status || ORDER_STATUS.PENDING;
-
-        // Safeguard #2: Confirm pharmacy ownership
-        if (targetOrder?.pharmacyUid && targetOrder.pharmacyUid !== pharmacy.uid) {
-          throw new Error('Unauthorized order update.');
-        }
-
-        // Safeguard #9: Enforce valid status transition logic
-        if (!isValidStatusTransition(currentStatus, newStatus)) {
-          throw new Error(`Invalid transition from "${currentStatus}" to "${newStatus}".`);
-        }
-
-        // Safeguard #11: Map timestamp field by status
-        const updatePayload = {
-          status: newStatus,
-          updatedAt: serverTimestamp(),
-        };
-
-        if (newStatus === ORDER_STATUS.ACCEPTED) {
-          updatePayload.acceptedAt = serverTimestamp();
-        } else if (newStatus === ORDER_STATUS.PREPARING) {
-          updatePayload.preparingAt = serverTimestamp();
-        } else if (newStatus === ORDER_STATUS.READY_FOR_DELIVERY) {
-          updatePayload.readyAt = serverTimestamp();
-        } else if (newStatus === ORDER_STATUS.DELIVERED) {
-          updatePayload.deliveredAt = serverTimestamp();
-        }
-
-        await updateDoc(orderRef, updatePayload);
+      const orderResult = await odooApi.searchRead('sale.order', [['id', '=', orderId]], ['id', 'status', 'pharmacy_id', 'order_line']);
+      if (!orderResult.records || orderResult.records.length === 0) {
+        throw new Error('Order does not exist in Odoo.');
       }
+      const latestOrder = orderResult.records[0];
+
+      if (latestOrder.pharmacy_id[0] !== pharmacy.id) {
+        throw new Error('Unauthorized. This order does not belong to your pharmacy.');
+      }
+
+      // If Rejecting, restore stock
+      if (newStatus === ORDER_STATUS.REJECTED) {
+        if (latestOrder.status !== ORDER_STATUS.PENDING) {
+          throw new Error(`Cannot reject order because current status is "${latestOrder.status}".`);
+        }
+
+        const linesResult = await odooApi.searchRead('sale.order.line', [['id', 'in', latestOrder.order_line]], ['product_id', 'product_uom_qty']);
+        
+        for (const line of linesResult.records || []) {
+          const productId = line.product_id[0];
+          const qty = line.product_uom_qty;
+
+          const productResult = await odooApi.searchRead('product.product', [['id', '=', productId]], ['product_tmpl_id']);
+          if (productResult.records && productResult.records.length > 0) {
+            const tmplId = productResult.records[0].product_tmpl_id[0];
+            const tmplResult = await odooApi.searchRead('product.template', [['id', '=', tmplId]], ['stock']);
+            if (tmplResult.records && tmplResult.records.length > 0) {
+              const currentStock = tmplResult.records[0].stock || 0;
+              await odooApi.write('product.template', tmplId, { stock: currentStock + qty });
+            }
+          }
+        }
+      }
+
+      // Update Odoo sale.order status
+      await odooApi.write('sale.order', orderId, { status: newStatus });
+      await fetchOrders();
     } catch (err) {
-      console.error('Error updating order status in pharmacy app:', err);
+      console.error('Error updating order status:', err);
       alert(err.message || 'Failed to update order status. Please try again.');
     } finally {
       setUpdatingOrderId(null);
@@ -349,7 +252,7 @@ export default function PharmacyOrdersScreen({ pharmacy, onOrdersChange }) {
                 <View style={styles.orderCardHeader}>
                   <View>
                     <Text style={styles.orderIdText}>
-                      Order #{order.orderId || order.id.slice(0, 8)}
+                      Order #{order.orderId || String(order.id).slice(0, 8)}
                     </Text>
                     <Text style={styles.timeText}>{formatTimestamp(order.createdAt)}</Text>
                   </View>
@@ -535,29 +438,30 @@ export default function PharmacyOrdersScreen({ pharmacy, onOrdersChange }) {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = 
+StyleSheet.create({
   container: {
     width: '100%',
   },
   tabsContainer: {
     flexDirection: 'row',
-    gap: 8,
-    paddingBottom: 12,
+    gap: scale(8),
+    paddingBottom: verticalScale(12),
   },
   tabButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 8,
+    paddingHorizontal: scale(12),
+    paddingVertical: verticalScale(8),
+    borderRadius: scale(8),
     backgroundColor: '#F1F5F9',
-    gap: 6,
+    gap: scale(6),
   },
   tabButtonActive: {
     backgroundColor: colors.primary,
   },
   tabText: {
-    fontSize: 13,
+    fontSize: moderateScale(13),
     fontWeight: '600',
     color: colors.onSurfaceVariant,
   },
@@ -565,19 +469,19 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   badgeCircle: {
-    minWidth: 18,
-    height: 18,
-    borderRadius: 9,
+    minWidth: scale(18),
+    height: verticalScale(18),
+    borderRadius: scale(9),
     backgroundColor: '#CBD5E1',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 4,
+    paddingHorizontal: scale(4),
   },
   badgeCircleActive: {
     backgroundColor: 'rgba(255, 255, 255, 0.3)',
   },
   badgeText: {
-    fontSize: 11,
+    fontSize: moderateScale(11),
     fontWeight: '700',
     color: colors.onSurface,
   },
@@ -589,58 +493,58 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#FEE2E2',
     borderColor: '#FCA5A5',
-    borderWidth: 1,
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 12,
-    gap: 8,
+    borderWidth: scale(1),
+    borderRadius: scale(8),
+    padding: scale(10),
+    marginBottom: verticalScale(12),
+    gap: scale(8),
   },
   errorText: {
-    fontSize: 13,
+    fontSize: moderateScale(13),
     color: '#991B1B',
     flex: 1,
   },
   loadingContainer: {
-    paddingVertical: 36,
+    paddingVertical: verticalScale(36),
     alignItems: 'center',
-    gap: 10,
+    gap: scale(10),
   },
   loadingText: {
-    fontSize: 13.5,
+    fontSize: moderateScale(13.5),
     color: colors.onSurfaceVariant,
   },
   emptyContainer: {
     alignItems: 'center',
-    paddingVertical: 40,
-    gap: 8,
+    paddingVertical: verticalScale(40),
+    gap: scale(8),
   },
   emptyIconCircle: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
+    width: scale(64),
+    height: verticalScale(64),
+    borderRadius: scale(32),
     backgroundColor: '#F1F5F9',
     justifyContent: 'center',
     alignItems: 'center',
   },
   emptyTitle: {
-    fontSize: 15,
+    fontSize: moderateScale(15),
     fontWeight: '700',
     color: colors.onSurface,
   },
   emptySubtext: {
-    fontSize: 12.5,
+    fontSize: moderateScale(12.5),
     color: colors.onSurfaceVariant,
   },
   ordersList: {
-    gap: 14,
+    gap: scale(14),
   },
   orderCard: {
     backgroundColor: colors.surfaceContainerLowest,
-    borderRadius: 12,
-    borderWidth: 1,
+    borderRadius: scale(12),
+    borderWidth: scale(1),
     borderColor: '#E2E8F0',
-    padding: 14,
-    gap: 10,
+    padding: scale(14),
+    gap: scale(10),
   },
   orderCardHeader: {
     flexDirection: 'row',
@@ -648,108 +552,108 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   orderIdText: {
-    fontSize: 14.5,
+    fontSize: moderateScale(14.5),
     fontWeight: '700',
     color: colors.onSurface,
   },
   timeText: {
-    fontSize: 11,
+    fontSize: moderateScale(11),
     color: colors.onSurfaceVariant,
-    marginTop: 2,
+    marginTop: verticalScale(2),
   },
   statusBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 8,
-    borderWidth: 1,
+    paddingHorizontal: scale(8),
+    paddingVertical: verticalScale(3),
+    borderRadius: scale(8),
+    borderWidth: scale(1),
   },
   statusBadgeText: {
-    fontSize: 11,
+    fontSize: moderateScale(11),
     fontWeight: '700',
   },
   divider: {
-    height: 1,
+    height: verticalScale(1),
     backgroundColor: '#F1F5F9',
   },
   customerSection: {
-    gap: 6,
+    gap: scale(6),
   },
   infoRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: scale(6),
   },
   infoTextBold: {
-    fontSize: 13,
+    fontSize: moderateScale(13),
     fontWeight: '700',
     color: colors.onSurface,
   },
   phoneText: {
-    fontSize: 12,
+    fontSize: moderateScale(12),
     color: colors.onSurfaceVariant,
   },
   infoText: {
-    fontSize: 12,
+    fontSize: moderateScale(12),
     color: colors.onSurfaceVariant,
     flex: 1,
   },
   tagRow: {
     flexDirection: 'row',
-    gap: 8,
-    marginTop: 4,
+    gap: scale(8),
+    marginTop: verticalScale(4),
   },
   tagBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#F8FAFC',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 6,
-    borderWidth: 1,
+    paddingHorizontal: scale(8),
+    paddingVertical: verticalScale(3),
+    borderRadius: scale(6),
+    borderWidth: scale(1),
     borderColor: '#E2E8F0',
-    gap: 4,
+    gap: scale(4),
   },
   tagText: {
-    fontSize: 11,
+    fontSize: moderateScale(11),
     color: colors.onSurfaceVariant,
   },
   itemsBox: {
     backgroundColor: '#F8FAFC',
-    borderRadius: 8,
-    padding: 10,
-    gap: 6,
+    borderRadius: scale(8),
+    padding: scale(10),
+    gap: scale(6),
   },
   itemsBoxTitle: {
-    fontSize: 12,
+    fontSize: moderateScale(12),
     fontWeight: '700',
     color: colors.onSurface,
   },
   itemRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: scale(8),
   },
   itemNameText: {
-    fontSize: 12,
+    fontSize: moderateScale(12),
     fontWeight: '600',
     color: colors.onSurface,
   },
   itemGenericText: {
-    fontSize: 10.5,
+    fontSize: moderateScale(10.5),
     color: colors.onSurfaceVariant,
   },
   itemQtyText: {
-    fontSize: 12,
+    fontSize: moderateScale(12),
     fontWeight: '700',
     color: colors.onSurfaceVariant,
   },
   itemPriceText: {
-    fontSize: 11.5,
+    fontSize: moderateScale(11.5),
     fontWeight: '600',
     color: colors.primary,
   },
   noItemsText: {
-    fontSize: 11,
+    fontSize: moderateScale(11),
     color: colors.onSurfaceVariant,
     fontStyle: 'italic',
   },
@@ -757,38 +661,38 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: 4,
+    paddingTop: verticalScale(4),
   },
   priceLabel: {
-    fontSize: 11.5,
+    fontSize: moderateScale(11.5),
     color: colors.onSurfaceVariant,
   },
   totalPriceText: {
-    fontSize: 14,
+    fontSize: moderateScale(14),
     fontWeight: '800',
     color: colors.primary,
   },
   actionRow: {
     flexDirection: 'row',
-    gap: 10,
-    marginTop: 4,
+    gap: scale(10),
+    marginTop: verticalScale(4),
   },
   btn: {
     flex: 1,
-    height: 38,
-    borderRadius: 8,
+    height: verticalScale(38),
+    borderRadius: scale(8),
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 6,
+    gap: scale(6),
   },
   btnReject: {
     backgroundColor: '#FEE2E2',
-    borderWidth: 1,
+    borderWidth: scale(1),
     borderColor: '#FCA5A5',
   },
   btnRejectText: {
-    fontSize: 12.5,
+    fontSize: moderateScale(12.5),
     fontWeight: '700',
     color: '#991B1B',
   },
@@ -796,7 +700,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
   },
   btnAcceptText: {
-    fontSize: 12.5,
+    fontSize: moderateScale(12.5),
     fontWeight: '700',
     color: '#FFFFFF',
   },
@@ -804,7 +708,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primary,
   },
   btnPrimaryBlockText: {
-    fontSize: 12.5,
+    fontSize: moderateScale(12.5),
     fontWeight: '700',
     color: '#FFFFFF',
   },
@@ -812,7 +716,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#059669',
   },
   btnSuccessBlockText: {
-    fontSize: 12.5,
+    fontSize: moderateScale(12.5),
     fontWeight: '700',
     color: '#FFFFFF',
   },
@@ -820,14 +724,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 6,
+    gap: scale(6),
     width: '100%',
-    paddingVertical: 8,
+    paddingVertical: verticalScale(8),
     backgroundColor: '#D1FAE5',
-    borderRadius: 8,
+    borderRadius: scale(8),
   },
   completedTagText: {
-    fontSize: 12.5,
+    fontSize: moderateScale(12.5),
     fontWeight: '700',
     color: '#065F46',
   },
@@ -835,14 +739,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 6,
+    gap: scale(6),
     width: '100%',
-    paddingVertical: 8,
+    paddingVertical: verticalScale(8),
     backgroundColor: '#FEE2E2',
-    borderRadius: 8,
+    borderRadius: scale(8),
   },
   rejectedTagText: {
-    fontSize: 12.5,
+    fontSize: moderateScale(12.5),
     fontWeight: '700',
     color: '#991B1B',
   },
@@ -850,16 +754,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 6,
+    gap: scale(6),
     width: '100%',
-    paddingVertical: 8,
+    paddingVertical: verticalScale(8),
     backgroundColor: '#FEF2F2',
-    borderRadius: 8,
-    borderWidth: 1,
+    borderRadius: scale(8),
+    borderWidth: scale(1),
     borderColor: '#FCA5A5',
   },
   cancelledTagText: {
-    fontSize: 12.5,
+    fontSize: moderateScale(12.5),
     fontWeight: '700',
     color: '#B91C1C',
   },

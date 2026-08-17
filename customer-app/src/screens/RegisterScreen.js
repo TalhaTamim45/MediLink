@@ -14,9 +14,10 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../theme/colors';
-import { auth, db } from '../config/firebase';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import odooApi from '../config/odooApi';
+import { scale, verticalScale, moderateScale, wp, hp } from '../utils/responsive';
+
+
 
 export default function RegisterScreen({ onNavigateToLogin }) {
   const [fullName, setFullName] = useState('');
@@ -73,47 +74,26 @@ export default function RegisterScreen({ onNavigateToLogin }) {
     setIsLoading(true);
 
     try {
-      // 1. Create account with Firebase Auth
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
+      // Create user account on Odoo
+      await odooApi.register(
         email.trim(),
-        password
+        password,
+        fullName.trim(),
+        phone.trim(),
+        'customer'
       );
-      const user = userCredential.user;
-
-      // 2. Save user document in Firestore 'users' collection
-      await setDoc(doc(db, 'users', user.uid), {
-        uid: user.uid,
-        fullName: fullName.trim(),
-        email: email.trim(),
-        phone: phone.trim(),
-        role: 'customer',
-        approvalStatus: 'not_required',
-        createdAt: serverTimestamp(),
-      });
 
       setSuccessMessage('Account created successfully! Redirecting to login...');
 
-      // 3. Return to Login screen after a short delay
+      // Return to Login screen after a short delay
       setTimeout(() => {
         if (onNavigateToLogin) {
           onNavigateToLogin();
         }
       }, 1500);
     } catch (error) {
-      console.log('Firebase Registration Error:', error.code, error.message);
-
-      let msg = 'Failed to create account. Please try again.';
-      if (error.code === 'auth/email-already-in-use') {
-        msg = 'This email is already registered. Please login or use a different email.';
-      } else if (error.code === 'auth/invalid-email') {
-        msg = 'The email address is invalid.';
-      } else if (error.code === 'auth/weak-password') {
-        msg = 'Password should be at least 6 characters.';
-      } else if (error.code === 'auth/network-request-failed') {
-        msg = 'Network connection failed. Please check your internet connection.';
-      }
-      setErrorMessage(msg);
+      console.log('Odoo Registration Error:', error.message);
+      setErrorMessage(error.message || 'Failed to create account. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -125,7 +105,7 @@ export default function RegisterScreen({ onNavigateToLogin }) {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}
       >
-        <ScrollView
+        <ScrollView style={{ width: '100%' }}
           contentContainerStyle={styles.scrollContent}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
@@ -371,7 +351,8 @@ export default function RegisterScreen({ onNavigateToLogin }) {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = 
+StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#F8FAFC',
@@ -380,49 +361,50 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
+    width: '100%',
     flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 24,
+    paddingHorizontal: scale(16),
+    paddingVertical: verticalScale(24),
   },
   cardContainer: {
     width: '100%',
-    maxWidth: 360,
+    maxWidth: scale(360),
     backgroundColor: colors.surfaceContainerLowest,
-    borderRadius: 16,
-    paddingHorizontal: 22,
-    paddingVertical: 26,
+    borderRadius: scale(16),
+    paddingHorizontal: scale(22),
+    paddingVertical: verticalScale(26),
     shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: scale(0), height: verticalScale(4) },
     shadowOpacity: 0.05,
     shadowRadius: 10,
     elevation: 2,
-    borderWidth: 1,
+    borderWidth: scale(1),
     borderColor: '#E2E8F0',
   },
   header: {
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: verticalScale(20),
   },
   logoCircle: {
-    width: 68,
-    height: 68,
-    borderRadius: 34,
+    width: scale(68),
+    height: verticalScale(68),
+    borderRadius: scale(34),
     backgroundColor: 'rgba(0, 106, 94, 0.08)',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: verticalScale(12),
   },
   title: {
-    fontSize: 24,
+    fontSize: moderateScale(24),
     fontWeight: '700',
     color: colors.primary,
-    marginBottom: 4,
+    marginBottom: verticalScale(4),
     fontFamily: Platform.OS === 'web' ? 'Inter, sans-serif' : undefined,
   },
   subtitle: {
-    fontSize: 13.5,
+    fontSize: moderateScale(13.5),
     color: colors.onSurfaceVariant,
     textAlign: 'center',
     fontFamily: Platform.OS === 'web' ? 'Inter, sans-serif' : undefined,
@@ -432,17 +414,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#FEE2E2',
     borderColor: '#FCA5A5',
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    marginBottom: 14,
-    gap: 8,
+    borderWidth: scale(1),
+    borderRadius: scale(10),
+    paddingHorizontal: scale(12),
+    paddingVertical: verticalScale(10),
+    marginBottom: verticalScale(14),
+    gap: scale(8),
   },
   errorText: {
     flex: 1,
     color: '#991B1B',
-    fontSize: 13,
+    fontSize: moderateScale(13),
     fontWeight: '500',
   },
   successBanner: {
@@ -450,17 +432,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#D1FAE5',
     borderColor: '#6EE7B7',
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    marginBottom: 14,
-    gap: 8,
+    borderWidth: scale(1),
+    borderRadius: scale(10),
+    paddingHorizontal: scale(12),
+    paddingVertical: verticalScale(10),
+    marginBottom: verticalScale(14),
+    gap: scale(8),
   },
   successText: {
     flex: 1,
     color: '#065F46',
-    fontSize: 13,
+    fontSize: moderateScale(13),
     fontWeight: '600',
   },
   form: {
@@ -470,48 +452,48 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.surfaceContainerLowest,
-    borderWidth: 1,
+    borderWidth: scale(1),
     borderColor: '#CBD5E1',
-    borderRadius: 12,
-    height: 48,
-    paddingHorizontal: 12,
-    marginBottom: 14,
+    borderRadius: scale(12),
+    height: verticalScale(48),
+    paddingHorizontal: scale(12),
+    marginBottom: verticalScale(14),
   },
   inputWrapperFocused: {
     borderColor: colors.primary,
-    borderWidth: 1.5,
+    borderWidth: scale(1.5),
   },
   inputIcon: {
-    marginRight: 8,
+    marginRight: scale(8),
   },
   input: {
     flex: 1,
     height: '100%',
-    fontSize: 14.5,
+    fontSize: moderateScale(14.5),
     color: colors.onSurface,
-    paddingVertical: 0,
+    paddingVertical: verticalScale(0),
     fontFamily: Platform.OS === 'web' ? 'Inter, sans-serif' : undefined,
   },
   passwordInput: {
-    paddingRight: 36,
+    paddingRight: scale(36),
   },
   eyeIconContainer: {
     position: 'absolute',
-    right: 12,
+    right: scale(12),
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
   },
   createButton: {
-    height: 48,
+    height: verticalScale(48),
     width: '100%',
     backgroundColor: colors.primary, // Restored original green primary color
-    borderRadius: 12,
+    borderRadius: scale(12),
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 6,
+    marginTop: verticalScale(6),
     shadowColor: colors.primary,
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: scale(0), height: verticalScale(2) },
     shadowOpacity: 0.15,
     shadowRadius: 4,
     elevation: 2,
@@ -527,7 +509,7 @@ const styles = StyleSheet.create({
   },
   createButtonText: {
     color: colors.onPrimary,
-    fontSize: 15,
+    fontSize: moderateScale(15),
     fontWeight: '600',
     fontFamily: Platform.OS === 'web' ? 'Inter, sans-serif' : undefined,
   },
@@ -535,19 +517,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 18,
+    marginTop: verticalScale(18),
     flexWrap: 'wrap',
     zIndex: 10,
   },
   footerText: {
-    fontSize: 13.5,
+    fontSize: moderateScale(13.5),
     color: colors.onSurfaceVariant,
     fontFamily: Platform.OS === 'web' ? 'Inter, sans-serif' : undefined,
   },
   loginLinkPressable: {
-    paddingVertical: 6,
-    paddingHorizontal: 8,
-    borderRadius: 6,
+    paddingVertical: verticalScale(6),
+    paddingHorizontal: scale(8),
+    borderRadius: scale(6),
     ...(Platform.OS === 'web' ? { cursor: 'pointer', userSelect: 'none' } : {}),
   },
   loginLinkPressed: {
@@ -555,7 +537,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 106, 94, 0.08)',
   },
   loginLinkText: {
-    fontSize: 13.5,
+    fontSize: moderateScale(13.5),
     fontWeight: '700',
     color: colors.primary,
     fontFamily: Platform.OS === 'web' ? 'Inter, sans-serif' : undefined,

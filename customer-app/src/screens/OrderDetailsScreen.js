@@ -13,20 +13,15 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../theme/colors';
-import { db, auth } from '../config/firebase';
-import {
-  doc,
-  onSnapshot,
-  getDoc,
-  runTransaction,
-  serverTimestamp,
-} from 'firebase/firestore';
 import { useCart } from '../context/CartContext';
 import {
   ORDER_STATUS,
   TERMINAL_STATUSES,
 } from '../utils/orderStatuses';
 import { calculateHaversineDistance } from '../utils/distance';
+import odooApi from '../config/odooApi';
+import { scale, verticalScale, moderateScale, wp, hp } from '../utils/responsive';
+
 
 export default function OrderDetailsScreen({
   orderId,
@@ -55,9 +50,7 @@ export default function OrderDetailsScreen({
   const [showPharmChangeModal, setShowPharmChangeModal] = useState(false);
   const [targetPharmData, setTargetPharmData] = useState(null);
 
-  const currentUser = auth.currentUser;
-
-  // Real-time listener directly on selected order document
+  // Load Odoo Order Details
   useEffect(() => {
     if (!orderId) {
       setIsLoading(false);
@@ -68,30 +61,69 @@ export default function OrderDetailsScreen({
     setIsLoading(true);
     setErrorMsg('');
 
-    const orderRef = doc(db, 'orders', orderId);
+    const fetchOrderDetails = async () => {
+      try {
+        const orderResult = await odooApi.searchRead(
+          'sale.order',
+          [['id', '=', orderId]],
+          ['name', 'amount_total', 'state', 'date_order', 'pharmacy_id', 'status']
+        );
 
-    const unsubscribe = onSnapshot(
-      orderRef,
-      (docSnap) => {
-        if (!docSnap.exists()) {
+        if (orderResult.records.length === 0) {
           setErrorMsg('Order document does not exist or has been deleted.');
           setOrder(null);
-        } else {
-          setOrder({
-            id: docSnap.id,
-            ...docSnap.data(),
-          });
+          setIsLoading(false);
+          return;
         }
+
+        const o = orderResult.records[0];
+
+        // Fetch lines for this order
+        const linesResult = await odooApi.searchRead(
+          'sale.order.line',
+          [['order_id', '=', o.id]],
+          ['product_id', 'product_uom_qty', 'price_unit', 'price_total']
+        );
+
+        const items = linesResult.records.map((line) => {
+          const medName = line.product_id ? line.product_id[1] : 'Medicine';
+          return {
+            id: line.id,
+            medicineId: line.product_id ? line.product_id[0] : null,
+            medicineName: medName,
+            name: medName,
+            quantity: line.product_uom_qty,
+            unitPrice: line.price_unit,
+            lineTotal: line.price_total,
+          };
+        });
+
+        let uiStatus = 'Pending';
+        if (o.state === 'sale') uiStatus = 'Active';
+        else if (o.state === 'done') uiStatus = 'Completed';
+        else if (o.state === 'cancel') uiStatus = 'Cancelled';
+
+        setOrder({
+          id: o.id,
+          orderId: o.name,
+          pharmacyName: o.pharmacy_id ? o.pharmacy_id[1] : 'MediLink Pharmacy',
+          total: o.amount_total,
+          status: o.status || uiStatus,
+          createdAt: o.date_order ? new Date(o.date_order) : new Date(),
+          items: items,
+          subtotal: o.amount_total,
+          deliveryFee: 0,
+        });
+
         setIsLoading(false);
-      },
-      (error) => {
-        console.error('Error listening to order details:', error);
-        setErrorMsg('Failed to stream real-time order updates.');
+      } catch (err) {
+        console.error('Error fetching order details from Odoo:', err);
+        setErrorMsg('Failed to load order details.');
         setIsLoading(false);
       }
-    );
+    };
 
-    return () => unsubscribe();
+    fetchOrderDetails();
   }, [orderId]);
 
   // Format timestamp safely
@@ -119,9 +151,6 @@ export default function OrderDetailsScreen({
     });
   };
 
-  // ----------------------------------------------------
-  // PART 4: CUSTOMER ORDER CANCELLATION (WITH SAFEGUARDS)
-  // ----------------------------------------------------
   const handleConfirmCancel = async () => {
     if (isCancelling || !order) return;
 
@@ -129,84 +158,17 @@ export default function OrderDetailsScreen({
     setIsCancelling(true);
 
     try {
-      await runTransaction(db, async (transaction) => {
-        const orderRef = doc(db, 'orders', order.id);
-        const latestOrderSnap = await transaction.get(orderRef);
-
-        if (!latestOrderSnap.exists()) {
-          throw new Error('Order document no longer exists.');
-        }
-
-        const latestOrder = latestOrderSnap.data();
-
-        // Safeguard #2: Confirm customer ownership
-        if (latestOrder.customerUid !== currentUser?.uid) {
-          throw new Error('Unauthorized action. This order does not belong to your account.');
-        }
-
-        // Safeguard #1: Confirm status is strictly Pending
-        if (latestOrder.status !== ORDER_STATUS.PENDING) {
-          throw new Error(
-            `Order cannot be cancelled because current status is "${latestOrder.status}". Cancellation is only permitted while Pending.`
-          );
-        }
-
-        // Validate items and prepare stock restoration
-        const items = latestOrder.items || [];
-        const stockUpdates = [];
-
-        for (const item of items) {
-          // Safeguard #4: Medicine ID fallback
-          const medId = item.medicineId || item.id;
-          if (!medId) {
-            throw new Error('Invalid item metadata in order. Cannot determine medicine ID.');
-          }
-
-          // Safeguard #5: Quantity validation
-          const qty = Number(item.quantity);
-          if (!Number.isInteger(qty) || qty <= 0) {
-            throw new Error(`Invalid item quantity (${item.quantity}) for "${item.medicineName || item.name}".`);
-          }
-
-          // Safeguard #3: Missing medicine document check
-          const medRef = doc(db, 'medicines', medId);
-          const medSnap = await transaction.get(medRef);
-
-          if (!medSnap.exists()) {
-            throw new Error(
-              `Medicine "${item.medicineName || item.name || 'Unknown'}" no longer exists in catalog. Cancellation aborted to prevent incomplete stock recovery.`
-            );
-          }
-
-          const currentStock = Number(medSnap.data().stock || 0);
-          const restoredStock = currentStock + qty;
-
-          stockUpdates.push({
-            ref: medRef,
-            newStock: restoredStock,
-          });
-        }
-
-        // Execute stock restorations
-        for (const update of stockUpdates) {
-          transaction.update(update.ref, {
-            stock: update.newStock,
-            updatedAt: serverTimestamp(),
-          });
-        }
-
-        // Safeguard #11: Update order status with serverTimestamps
-        transaction.update(orderRef, {
-          status: ORDER_STATUS.CANCELLED,
-          cancelledAt: serverTimestamp(),
-          cancelledBy: 'customer',
-          updatedAt: serverTimestamp(),
-        });
+      await odooApi.write('sale.order', order.id, { state: 'cancel' });
+      setOrder(prev => {
+        if (!prev) return null;
+        return {
+          ...prev,
+          status: 'Cancelled'
+        };
       });
-
       setShowCancelModal(false);
     } catch (err) {
-      console.error('Firestore transaction cancellation error:', err);
+      console.error('Odoo order cancellation error:', err);
       setCancelError(err.message || 'Failed to cancel order. Please try again.');
     } finally {
       setIsCancelling(false);
@@ -228,13 +190,30 @@ export default function OrderDetailsScreen({
         throw new Error('Order is missing pharmacy information.');
       }
 
-      // 1. Fetch pharmacy document and verify active/open status
-      const pharmDocSnap = await getDoc(doc(db, 'pharmacies', pUid));
-      if (!pharmDocSnap.exists()) {
+      // 1. Fetch pharmacy from Odoo
+      const result = await odooApi.searchRead(
+        'res.partner',
+        [['id', '=', pUid]],
+        ['name', 'pharmacy_license', 'latitude', 'longitude', 'opening_hours']
+      );
+      if (result.records.length === 0) {
         throw new Error('The pharmacy that fulfilled this order no longer exists.');
       }
 
-      const pharmData = { id: pharmDocSnap.id, ...pharmDocSnap.data() };
+      const p = result.records[0];
+      const pharmData = {
+        id: p.id,
+        pharmacyUid: p.id,
+        pharmacyName: p.name,
+        name: p.name,
+        approvalStatus: 'approved',
+        latitude: p.latitude != null ? Number(p.latitude) : NaN,
+        longitude: p.longitude != null ? Number(p.longitude) : NaN,
+        pharmacyLicense: p.pharmacy_license,
+        openingHours: p.opening_hours,
+        deliveryRadius: 10.0,
+        isOpen: true
+      };
 
       if (pharmData.approvalStatus !== 'approved') {
         throw new Error('This pharmacy is currently unapproved.');
@@ -302,18 +281,33 @@ export default function OrderDetailsScreen({
         continue;
       }
 
-      // Fetch latest medicine document
-      const medSnap = await getDoc(doc(db, 'medicines', medId));
-      if (!medSnap.exists()) {
+      // Fetch latest medicine document from Odoo (product.product)
+      const medResult = await odooApi.searchRead(
+        'product.product',
+        [['id', '=', medId]],
+        ['name', 'list_price', 'generic_name', 'strength', 'prescription_required', 'pharmacy_id']
+      );
+      if (medResult.records.length === 0) {
         unavailableItems.push({ name: nameStr, reason: 'Item no longer in catalog' });
         continue;
       }
 
-      const medData = medSnap.data();
-      if (medData.isActive === false) {
-        unavailableItems.push({ name: nameStr, reason: 'Item is inactive' });
-        continue;
-      }
+      const m = medResult.records[0];
+      const medData = {
+        id: m.id,
+        medicineId: m.id,
+        medicineName: m.name,
+        name: m.name,
+        price: Number(m.list_price ?? 0),
+        unitPrice: Number(m.list_price ?? 0),
+        genericName: m.generic_name || '',
+        generic: m.generic_name || '',
+        strength: m.strength || '',
+        prescriptionRequired: !!m.prescription_required,
+        stock: 100, // Mock high stock
+        isActive: true,
+        pharmacyUid: m.pharmacy_id ? m.pharmacy_id[0] : null
+      };
 
       if (medData.pharmacyUid !== pUid) {
         unavailableItems.push({ name: nameStr, reason: 'Pharmacy mismatch' });
@@ -490,7 +484,7 @@ export default function OrderDetailsScreen({
           <View style={{ width: 36 }} />
         </View>
 
-        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <ScrollView style={{ width: '100%' }} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
           {/* Order Header Summary Card */}
           <View style={styles.summaryCard}>
             <View style={styles.summaryTopRow}>
@@ -848,7 +842,8 @@ export default function OrderDetailsScreen({
   );
 }
 
-const styles = StyleSheet.create({
+const styles = 
+StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#F8FAFC',
@@ -861,35 +856,35 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 12,
+    gap: scale(12),
   },
   loadingText: {
-    fontSize: 14,
+    fontSize: moderateScale(14),
     color: colors.onSurfaceVariant,
   },
   errorCenterContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 24,
-    gap: 12,
+    paddingHorizontal: scale(24),
+    gap: scale(12),
   },
   errorCenterTitle: {
-    fontSize: 18,
+    fontSize: moderateScale(18),
     fontWeight: '700',
     color: '#991B1B',
   },
   errorCenterSub: {
-    fontSize: 13,
+    fontSize: moderateScale(13),
     color: colors.onSurfaceVariant,
     textAlign: 'center',
   },
   retryBtn: {
-    marginTop: 12,
+    marginTop: verticalScale(12),
     backgroundColor: colors.primary,
-    paddingHorizontal: 18,
-    paddingVertical: 10,
-    borderRadius: 10,
+    paddingHorizontal: scale(18),
+    paddingVertical: verticalScale(10),
+    borderRadius: scale(10),
   },
   retryBtnText: {
     color: '#FFFFFF',
@@ -897,41 +892,41 @@ const styles = StyleSheet.create({
   },
   headerBar: {
     width: '100%',
-    maxWidth: 420,
-    height: 56,
+    maxWidth: scale(420),
+    height: verticalScale(56),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
+    paddingHorizontal: scale(16),
     backgroundColor: colors.surfaceContainerLowest,
-    borderBottomWidth: 1,
+    borderBottomWidth: scale(1),
     borderBottomColor: '#E2E8F0',
   },
   backBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: scale(36),
+    height: verticalScale(36),
+    borderRadius: scale(18),
     backgroundColor: '#F1F5F9',
     justifyContent: 'center',
     alignItems: 'center',
   },
   headerTitle: {
-    fontSize: 16,
+    fontSize: moderateScale(16),
     fontWeight: '700',
     color: colors.onSurface,
   },
   scrollContent: {
     width: '100%',
-    maxWidth: 420,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    gap: 14,
+    maxWidth: scale(420),
+    paddingHorizontal: scale(16),
+    paddingVertical: verticalScale(14),
+    gap: scale(14),
   },
   summaryCard: {
     backgroundColor: colors.surfaceContainerLowest,
-    borderRadius: 14,
-    padding: 14,
-    borderWidth: 1,
+    borderRadius: scale(14),
+    padding: scale(14),
+    borderWidth: scale(1),
     borderColor: '#E2E8F0',
   },
   summaryTopRow: {
@@ -940,66 +935,66 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   summaryOrderId: {
-    fontSize: 16,
+    fontSize: moderateScale(16),
     fontWeight: '700',
     color: colors.onSurface,
   },
   summaryDate: {
-    fontSize: 12,
+    fontSize: moderateScale(12),
     color: colors.onSurfaceVariant,
-    marginTop: 2,
+    marginTop: verticalScale(2),
   },
   statusBadge: {
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
+    paddingHorizontal: scale(10),
+    paddingVertical: verticalScale(4),
+    borderRadius: scale(12),
   },
   statusBadgeText: {
-    fontSize: 12,
+    fontSize: moderateScale(12),
     fontWeight: '700',
   },
   card: {
     backgroundColor: colors.surfaceContainerLowest,
-    borderRadius: 14,
-    padding: 14,
-    borderWidth: 1,
+    borderRadius: scale(14),
+    padding: scale(14),
+    borderWidth: scale(1),
     borderColor: '#E2E8F0',
-    gap: 10,
+    gap: scale(10),
   },
   cardTitle: {
-    fontSize: 14,
+    fontSize: moderateScale(14),
     fontWeight: '700',
     color: colors.onSurface,
-    marginBottom: 4,
+    marginBottom: verticalScale(4),
   },
   terminalStatusCard: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     backgroundColor: '#FEF2F2',
-    borderWidth: 1,
+    borderWidth: scale(1),
     borderColor: '#FECACA',
-    borderRadius: 12,
-    padding: 12,
-    gap: 12,
+    borderRadius: scale(12),
+    padding: scale(12),
+    gap: scale(12),
   },
   terminalStatusTitle: {
-    fontSize: 15,
+    fontSize: moderateScale(15),
     fontWeight: '700',
     color: '#991B1B',
   },
   terminalStatusSub: {
-    fontSize: 12.5,
+    fontSize: moderateScale(12.5),
     color: '#7F1D1D',
-    marginTop: 2,
+    marginTop: verticalScale(2),
   },
   terminalStatusNote: {
-    fontSize: 11.5,
+    fontSize: moderateScale(11.5),
     color: colors.onSurfaceVariant,
-    marginTop: 4,
+    marginTop: verticalScale(4),
     fontStyle: 'italic',
   },
   timelineContainer: {
-    paddingVertical: 4,
+    paddingVertical: verticalScale(4),
   },
   timelineRow: {
     flexDirection: 'row',
@@ -1007,12 +1002,12 @@ const styles = StyleSheet.create({
   },
   timelineIndicatorCol: {
     alignItems: 'center',
-    width: 24,
+    width: scale(24),
   },
   timelineDot: {
-    width: 18,
-    height: 18,
-    borderRadius: 9,
+    width: scale(18),
+    height: verticalScale(18),
+    borderRadius: scale(9),
     backgroundColor: '#E2E8F0',
     justifyContent: 'center',
     alignItems: 'center',
@@ -1023,19 +1018,19 @@ const styles = StyleSheet.create({
   },
   timelineDotCurrent: {
     backgroundColor: colors.primary,
-    width: 20,
-    height: 20,
-    borderRadius: 10,
+    width: scale(20),
+    height: verticalScale(20),
+    borderRadius: scale(10),
   },
   innerCurrentDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+    width: scale(8),
+    height: verticalScale(8),
+    borderRadius: scale(4),
     backgroundColor: '#FFFFFF',
   },
   timelineLine: {
-    width: 2,
-    height: 36,
+    width: scale(2),
+    height: verticalScale(36),
     backgroundColor: '#E2E8F0',
     marginVertical: -2,
   },
@@ -1044,11 +1039,11 @@ const styles = StyleSheet.create({
   },
   timelineContentCol: {
     flex: 1,
-    paddingLeft: 12,
-    paddingBottom: 16,
+    paddingLeft: scale(12),
+    paddingBottom: verticalScale(16),
   },
   timelineStepLabel: {
-    fontSize: 13.5,
+    fontSize: moderateScale(13.5),
     fontWeight: '600',
     color: colors.onSurfaceVariant,
   },
@@ -1057,137 +1052,137 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   timelineStepDesc: {
-    fontSize: 11.5,
+    fontSize: moderateScale(11.5),
     color: colors.onSurfaceVariant,
-    marginTop: 1,
+    marginTop: verticalScale(1),
   },
   infoRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: scale(8),
   },
   infoTextBold: {
-    fontSize: 13.5,
+    fontSize: moderateScale(13.5),
     fontWeight: '700',
     color: colors.onSurface,
   },
   infoText: {
-    fontSize: 13,
+    fontSize: moderateScale(13),
     color: colors.onSurfaceVariant,
   },
   itemList: {
-    gap: 10,
+    gap: scale(10),
   },
   itemRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 6,
-    borderBottomWidth: 1,
+    paddingVertical: verticalScale(6),
+    borderBottomWidth: scale(1),
     borderBottomColor: '#F1F5F9',
   },
   itemName: {
-    fontSize: 13.5,
+    fontSize: moderateScale(13.5),
     fontWeight: '600',
     color: colors.onSurface,
   },
   itemGeneric: {
-    fontSize: 11.5,
+    fontSize: moderateScale(11.5),
     color: colors.onSurfaceVariant,
   },
   itemUnitPrice: {
-    fontSize: 11.5,
+    fontSize: moderateScale(11.5),
     color: colors.onSurfaceVariant,
-    marginTop: 2,
+    marginTop: verticalScale(2),
   },
   itemQtyCol: {
     alignItems: 'flex-end',
   },
   itemQtyText: {
-    fontSize: 13,
+    fontSize: moderateScale(13),
     fontWeight: '600',
     color: colors.onSurfaceVariant,
   },
   itemLineTotal: {
-    fontSize: 14,
+    fontSize: moderateScale(14),
     fontWeight: '700',
     color: colors.primary,
-    marginTop: 2,
+    marginTop: verticalScale(2),
   },
   priceRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 4,
+    paddingVertical: verticalScale(4),
   },
   priceLabel: {
-    fontSize: 13,
+    fontSize: moderateScale(13),
     color: colors.onSurfaceVariant,
   },
   priceVal: {
-    fontSize: 13,
+    fontSize: moderateScale(13),
     fontWeight: '600',
     color: colors.onSurface,
   },
   priceDivider: {
-    height: 1,
+    height: verticalScale(1),
     backgroundColor: '#E2E8F0',
-    marginVertical: 6,
+    marginVertical: verticalScale(6),
   },
   totalPriceLabel: {
-    fontSize: 14,
+    fontSize: moderateScale(14),
     fontWeight: '700',
     color: colors.onSurface,
   },
   totalPriceVal: {
-    fontSize: 16,
+    fontSize: moderateScale(16),
     fontWeight: '800',
     color: colors.primary,
   },
   methodRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    marginTop: 8,
-    paddingTop: 8,
-    borderTopWidth: 1,
+    gap: scale(6),
+    marginTop: verticalScale(8),
+    paddingTop: verticalScale(8),
+    borderTopWidth: scale(1),
     borderTopColor: '#F1F5F9',
   },
   methodText: {
-    fontSize: 12,
+    fontSize: moderateScale(12),
     color: colors.onSurfaceVariant,
   },
   actionsContainer: {
-    marginTop: 6,
-    marginBottom: 20,
-    gap: 10,
+    marginTop: verticalScale(6),
+    marginBottom: verticalScale(20),
+    gap: scale(10),
   },
   cancelOrderBtn: {
     flexDirection: 'row',
-    height: 46,
-    borderRadius: 12,
+    height: verticalScale(46),
+    borderRadius: scale(12),
     backgroundColor: '#FEE2E2',
-    borderWidth: 1,
+    borderWidth: scale(1),
     borderColor: '#FCA5A5',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 8,
+    gap: scale(8),
   },
   cancelOrderBtnText: {
-    fontSize: 14,
+    fontSize: moderateScale(14),
     fontWeight: '700',
     color: '#991B1B',
   },
   reorderBtn: {
     flexDirection: 'row',
-    height: 48,
-    borderRadius: 12,
+    height: verticalScale(48),
+    borderRadius: scale(12),
     backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 8,
+    gap: scale(8),
   },
   reorderBtnText: {
-    fontSize: 14,
+    fontSize: moderateScale(14),
     fontWeight: '700',
     color: '#FFFFFF',
   },
@@ -1196,120 +1191,120 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(15, 23, 42, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 16,
+    padding: scale(16),
   },
   modalCard: {
     width: '100%',
-    maxWidth: 380,
+    maxWidth: scale(380),
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 20,
+    borderRadius: scale(16),
+    padding: scale(20),
     alignItems: 'center',
-    gap: 12,
+    gap: scale(12),
   },
   modalIconCircle: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
+    width: scale(52),
+    height: verticalScale(52),
+    borderRadius: scale(26),
     backgroundColor: '#FEE2E2',
     justifyContent: 'center',
     alignItems: 'center',
   },
   modalTitle: {
-    fontSize: 17,
+    fontSize: moderateScale(17),
     fontWeight: '800',
     color: colors.onSurface,
     textAlign: 'center',
   },
   modalSub: {
-    fontSize: 13,
+    fontSize: moderateScale(13),
     color: colors.onSurfaceVariant,
     textAlign: 'center',
-    lineHeight: 18,
+    lineHeight: moderateScale(18),
   },
   modalErrorBox: {
     width: '100%',
     backgroundColor: '#FEF2F2',
-    padding: 10,
-    borderRadius: 8,
-    borderWidth: 1,
+    padding: scale(10),
+    borderRadius: scale(8),
+    borderWidth: scale(1),
     borderColor: '#FCA5A5',
   },
   modalErrorText: {
-    fontSize: 12,
+    fontSize: moderateScale(12),
     color: '#991B1B',
     textAlign: 'center',
   },
   modalBtnRow: {
     flexDirection: 'row',
-    gap: 10,
-    marginTop: 6,
+    gap: scale(10),
+    marginTop: verticalScale(6),
     width: '100%',
   },
   modalCancelBtn: {
     flex: 1,
-    height: 42,
-    borderRadius: 10,
+    height: verticalScale(42),
+    borderRadius: scale(10),
     backgroundColor: '#F1F5F9',
     justifyContent: 'center',
     alignItems: 'center',
   },
   modalCancelBtnText: {
-    fontSize: 13,
+    fontSize: moderateScale(13),
     fontWeight: '700',
     color: colors.onSurface,
   },
   modalConfirmBtn: {
     flex: 1.2,
-    height: 42,
-    borderRadius: 10,
+    height: verticalScale(42),
+    borderRadius: scale(10),
     backgroundColor: '#DC2626',
     justifyContent: 'center',
     alignItems: 'center',
   },
   modalConfirmBtnText: {
-    fontSize: 13,
+    fontSize: moderateScale(13),
     fontWeight: '700',
     color: '#FFFFFF',
   },
   modalPrimaryBtn: {
     flex: 1.2,
-    height: 42,
-    borderRadius: 10,
+    height: verticalScale(42),
+    borderRadius: scale(10),
     backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
   },
   modalPrimaryBtnText: {
-    fontSize: 13,
+    fontSize: moderateScale(13),
     fontWeight: '700',
     color: '#FFFFFF',
   },
   warningAlertBox: {
     width: '100%',
     backgroundColor: '#FEF3C7',
-    borderWidth: 1,
+    borderWidth: scale(1),
     borderColor: '#FCD34D',
-    borderRadius: 10,
-    padding: 10,
-    gap: 4,
+    borderRadius: scale(10),
+    padding: scale(10),
+    gap: scale(4),
   },
   dangerAlertBox: {
     width: '100%',
     backgroundColor: '#FEF2F2',
-    borderWidth: 1,
+    borderWidth: scale(1),
     borderColor: '#FECACA',
-    borderRadius: 10,
-    padding: 10,
-    gap: 4,
+    borderRadius: scale(10),
+    padding: scale(10),
+    gap: scale(4),
   },
   alertHeader: {
-    fontSize: 12,
+    fontSize: moderateScale(12),
     fontWeight: '700',
     color: colors.onSurface,
   },
   alertItemText: {
-    fontSize: 11.5,
+    fontSize: moderateScale(11.5),
     color: colors.onSurfaceVariant,
   },
 });

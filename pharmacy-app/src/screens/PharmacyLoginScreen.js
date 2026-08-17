@@ -13,9 +13,9 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../theme/colors';
-import { auth, db } from '../config/firebase';
-import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
+import odooApi from '../config/odooApi';
+import { scale, verticalScale, moderateScale, wp, hp } from '../utils/responsive';
+
 
 export default function PharmacyLoginScreen({ onNavigateToRegister, onLoginSuccess, initialNotice = '' }) {
   const [email, setEmail] = useState('');
@@ -56,66 +56,50 @@ export default function PharmacyLoginScreen({ onNavigateToRegister, onLoginSucce
     setIsLoading(true);
 
     try {
-      // 1. Firebase Authentication login
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email.trim(),
-        password
+      // 1. Odoo API login
+      const result = await odooApi.login(email.trim(), password);
+      
+      // 2. Fetch Odoo Partner details to verify they are a pharmacy
+      const partnerResult = await odooApi.searchRead(
+        'res.partner',
+        [['id', '=', result.partner_id || result.uid]],
+        ['name', 'is_pharmacy', 'pharmacy_license', 'latitude', 'longitude', 'opening_hours']
       );
-      const uid = userCredential.user.uid;
 
-      // 2. Read pharmacy document from Firestore pharmacies/{uid}
-      const pharmacyDocRef = doc(db, 'pharmacies', uid);
-      const pharmacyDocSnap = await getDoc(pharmacyDocRef);
-
-      if (!pharmacyDocSnap.exists()) {
-        await signOut(auth);
-        setErrorMessage('Pharmacy profile not found. Please register your pharmacy.');
+      if (!partnerResult.records || partnerResult.records.length === 0) {
+        await odooApi.logout();
+        setErrorMessage('Pharmacy profile not found.');
         return;
       }
 
-      const pharmacyData = pharmacyDocSnap.data() || {};
+      const partner = partnerResult.records[0];
 
-      // Confirm role is 'pharmacy'
-      if (pharmacyData.role !== 'pharmacy') {
-        await signOut(auth);
+      if (!partner.is_pharmacy) {
+        await odooApi.logout();
         setErrorMessage('Access denied. This portal is for pharmacy accounts only.');
         return;
       }
 
-      // Check approval status
-      const status = pharmacyData.approvalStatus;
+      const fullPharmacy = {
+        uid: result.uid,
+        pharmacyUid: result.uid,
+        id: partner.id,
+        name: partner.name,
+        pharmacyName: partner.name,
+        role: 'pharmacy',
+        approvalStatus: 'approved',
+        pharmacyLicense: partner.pharmacy_license,
+        latitude: partner.latitude,
+        longitude: partner.longitude,
+        openingHours: partner.opening_hours,
+      };
 
-      if (status === 'pending') {
-        await signOut(auth);
-        setNoticeMessage('Your pharmacy is awaiting admin approval.');
-        return;
-      }
-
-      if (status === 'rejected') {
-        await signOut(auth);
-        setErrorMessage('Your pharmacy registration was rejected. Please contact support.');
-        return;
-      }
-
-      if (status === 'approved') {
-        const fullPharmacy = { uid, ...pharmacyData };
-        if (onLoginSuccess) {
-          onLoginSuccess(fullPharmacy);
-        }
-      } else {
-        await signOut(auth);
-        setErrorMessage('Unknown account approval status.');
+      if (onLoginSuccess) {
+        onLoginSuccess(fullPharmacy);
       }
     } catch (error) {
       console.log('Pharmacy Login Error:', error);
-      if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
-        setErrorMessage('Invalid email or password.');
-      } else if (error.code === 'auth/invalid-email') {
-        setErrorMessage('Invalid email format.');
-      } else {
-        setErrorMessage(error.message || 'Login failed. Please try again.');
-      }
+      setErrorMessage(error.message || 'Invalid email or password.');
     } finally {
       setIsLoading(false);
     }
@@ -124,7 +108,7 @@ export default function PharmacyLoginScreen({ onNavigateToRegister, onLoginSucce
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.outerContainer}>
-        <ScrollView
+        <ScrollView style={{ width: '100%' }}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
@@ -216,7 +200,8 @@ export default function PharmacyLoginScreen({ onNavigateToRegister, onLoginSucce
   );
 }
 
-const styles = StyleSheet.create({
+const styles = 
+StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: colors.background,
@@ -226,56 +211,57 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   scrollContent: {
+    width: '100%',
     flexGrow: 1,
-    paddingHorizontal: 16,
-    paddingVertical: 32,
+    paddingHorizontal: scale(16),
+    paddingVertical: verticalScale(32),
     alignItems: 'center',
     justifyContent: 'center',
   },
   cardContainer: {
     width: '100%',
-    maxWidth: 390,
+    maxWidth: scale(390),
   },
   brandHeader: {
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: verticalScale(24),
   },
   logoBadge: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
+    width: scale(64),
+    height: verticalScale(64),
+    borderRadius: scale(32),
     backgroundColor: 'rgba(0, 106, 94, 0.1)',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: verticalScale(12),
   },
   brandTitle: {
-    fontSize: 24,
+    fontSize: moderateScale(24),
     fontWeight: '700',
     color: colors.primary,
     fontFamily: Platform.OS === 'web' ? 'Inter, sans-serif' : undefined,
   },
   brandSubtitle: {
-    fontSize: 13.5,
+    fontSize: moderateScale(13.5),
     color: colors.onSurfaceVariant,
-    marginTop: 4,
+    marginTop: verticalScale(4),
   },
   noticeBanner: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#E0F2FE',
     borderColor: '#BAE6FD',
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 12,
-    marginBottom: 16,
-    gap: 8,
+    borderWidth: scale(1),
+    borderRadius: scale(10),
+    paddingHorizontal: scale(12),
+    paddingVertical: verticalScale(12),
+    marginBottom: verticalScale(16),
+    gap: scale(8),
   },
   noticeText: {
     flex: 1,
     color: '#0369A1',
-    fontSize: 13,
+    fontSize: moderateScale(13),
     fontWeight: '600',
   },
   errorBanner: {
@@ -283,67 +269,67 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#FEE2E2',
     borderColor: '#FCA5A5',
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 12,
-    marginBottom: 16,
-    gap: 8,
+    borderWidth: scale(1),
+    borderRadius: scale(10),
+    paddingHorizontal: scale(12),
+    paddingVertical: verticalScale(12),
+    marginBottom: verticalScale(16),
+    gap: scale(8),
   },
   errorText: {
     flex: 1,
     color: '#991B1B',
-    fontSize: 13,
+    fontSize: moderateScale(13),
     fontWeight: '500',
   },
   formCard: {
     backgroundColor: colors.surfaceContainerLowest,
-    borderRadius: 16,
-    padding: 20,
-    borderWidth: 1,
+    borderRadius: scale(16),
+    padding: scale(20),
+    borderWidth: scale(1),
     borderColor: '#E2E8F0',
     shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: { width: scale(0), height: verticalScale(4) },
     shadowOpacity: 0.05,
     shadowRadius: 10,
     elevation: 2,
   },
   formTitle: {
-    fontSize: 17,
+    fontSize: moderateScale(17),
     fontWeight: '700',
     color: colors.onSurface,
-    marginBottom: 16,
+    marginBottom: verticalScale(16),
     fontFamily: Platform.OS === 'web' ? 'Inter, sans-serif' : undefined,
   },
   formGroup: {
-    gap: 12,
-    marginBottom: 20,
+    gap: scale(12),
+    marginBottom: verticalScale(20),
   },
   fieldLabel: {
-    fontSize: 12.5,
+    fontSize: moderateScale(12.5),
     fontWeight: '600',
     color: colors.onSurfaceVariant,
     marginBottom: -4,
   },
   input: {
     backgroundColor: '#F8FAFC',
-    borderWidth: 1,
+    borderWidth: scale(1),
     borderColor: '#CBD5E1',
-    borderRadius: 10,
-    height: 44,
-    paddingHorizontal: 12,
-    fontSize: 13.5,
+    borderRadius: scale(10),
+    height: verticalScale(44),
+    paddingHorizontal: scale(12),
+    fontSize: moderateScale(13.5),
     color: colors.onSurface,
     fontFamily: Platform.OS === 'web' ? 'Inter, sans-serif' : undefined,
   },
   loginButton: {
-    height: 48,
+    height: verticalScale(48),
     backgroundColor: colors.primary,
-    borderRadius: 12,
+    borderRadius: scale(12),
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: colors.primary,
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: scale(0), height: verticalScale(2) },
     shadowOpacity: 0.15,
     shadowRadius: 4,
     elevation: 2,
@@ -358,25 +344,25 @@ const styles = StyleSheet.create({
   loadingRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: scale(8),
   },
   loginButtonText: {
     color: colors.onPrimary,
-    fontSize: 15,
+    fontSize: moderateScale(15),
     fontWeight: '700',
   },
   footerRow: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 18,
+    marginTop: verticalScale(18),
   },
   footerText: {
-    fontSize: 13,
+    fontSize: moderateScale(13),
     color: colors.onSurfaceVariant,
   },
   registerLinkText: {
-    fontSize: 13,
+    fontSize: moderateScale(13),
     fontWeight: '700',
     color: colors.primary,
   },

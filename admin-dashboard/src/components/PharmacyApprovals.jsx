@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { collection, onSnapshot, doc, updateDoc } from 'firebase/firestore';
-import { db } from '../config/firebase';
+import odooApi from '../config/odooApi';
 import {
   Building2,
   CheckCircle2,
@@ -32,37 +31,43 @@ export default function PharmacyApprovals() {
   // Success Notification Toast
   const [successToast, setSuccessToast] = useState('');
 
+  const fetchPharmacies = async () => {
+    try {
+      const result = await odooApi.searchRead(
+        'res.partner',
+        [['is_pharmacy', '=', true], '|', ['active', '=', true], ['active', '=', false]],
+        ['name', 'phone', 'street', 'pharmacy_license', 'active', 'user_ids', 'email']
+      );
+
+      if (result.records) {
+        const list = result.records.map((partner) => ({
+          id: partner.id,
+          pharmacyName: partner.name,
+          ownerName: 'Pharmacy Owner',
+          phone: partner.phone || 'N/A',
+          email: partner.email || 'N/A',
+          tradeLicense: partner.pharmacy_license || 'N/A',
+          address: partner.street || 'N/A',
+          approvalStatus: partner.active ? 'approved' : 'pending',
+          user_ids: partner.user_ids,
+        }));
+        setPharmacies(list);
+      }
+    } catch (err) {
+      console.log('Error fetching pharmacies:', err);
+      setErrorMsg('Failed to load pharmacy approvals from Odoo.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     setIsLoading(true);
     setErrorMsg('');
+    fetchPharmacies();
 
-    // Real-time listener for pharmacies collection
-    const unsubscribe = onSnapshot(
-      collection(db, 'pharmacies'),
-      (snapshot) => {
-        const list = snapshot.docs.map((docSnap) => ({
-          id: docSnap.id,
-          ...docSnap.data(),
-        }));
-
-        // Sort by registration date / createdAt descending
-        list.sort((a, b) => {
-          const timeA = a.createdAt?.seconds || a.createdAt?.toMillis?.() || 0;
-          const timeB = b.createdAt?.seconds || b.createdAt?.toMillis?.() || 0;
-          return timeB - timeA;
-        });
-
-        setPharmacies(list);
-        setIsLoading(false);
-      },
-      (err) => {
-        console.log('Error fetching pharmacies:', err);
-        setErrorMsg('Failed to load pharmacy approvals from Firestore.');
-        setIsLoading(false);
-      }
-    );
-
-    return () => unsubscribe();
+    const interval = setInterval(fetchPharmacies, 4000);
+    return () => clearInterval(interval);
   }, []);
 
   const openConfirmation = (pharmacy, targetStatus, title, actionText, actionColor) => {
@@ -82,15 +87,28 @@ export default function PharmacyApprovals() {
     const { pharmacy, targetStatus, actionText } = confirmTarget;
 
     try {
-      const pharmacyRef = doc(db, 'pharmacies', pharmacy.id);
-      await updateDoc(pharmacyRef, {
-        approvalStatus: targetStatus,
-        updatedAt: new Date(),
-      });
+      const isActive = targetStatus === 'approved';
+
+      // 1. Update partner status
+      await odooApi.write('res.partner', pharmacy.id, { active: isActive });
+
+      // 2. Query and update all associated users (including archived ones)
+      const userResult = await odooApi.searchRead(
+        'res.users',
+        [['partner_id', '=', pharmacy.id], '|', ['active', '=', true], ['active', '=', false]],
+        ['id']
+      );
+
+      if (userResult.records && userResult.records.length > 0) {
+        for (const userRec of userResult.records) {
+          await odooApi.write('res.users', userRec.id, { active: isActive });
+        }
+      }
 
       setSuccessToast(`Successfully performed: ${actionText} for "${pharmacy.pharmacyName}"`);
       setTimeout(() => setSuccessToast(''), 4000);
       setConfirmTarget(null);
+      fetchPharmacies();
     } catch (err) {
       console.log('Error updating pharmacy status:', err);
       alert('Failed to update pharmacy approval status. Please try again.');

@@ -13,14 +13,15 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../theme/colors';
-import { db, auth } from '../config/firebase';
-import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import {
   ORDER_STATUS,
   ACTIVE_STATUSES,
   COMPLETED_STATUSES,
   CANCELLED_STATUSES,
 } from '../utils/orderStatuses';
+import odooApi from '../config/odooApi';
+import { scale, verticalScale, moderateScale, wp, hp } from '../utils/responsive';
+
 
 export default function MyOrdersScreen({ onBack, onSelectOrder, onOpenPharmacyMap }) {
   const [orders, setOrders] = useState([]);
@@ -30,65 +31,54 @@ export default function MyOrdersScreen({ onBack, onSelectOrder, onOpenPharmacyMa
   const [activeTab, setActiveTab] = useState('All'); // 'All' | 'Active' | 'Completed' | 'Cancelled'
   const [searchQuery, setSearchQuery] = useState('');
 
-  const currentUser = auth.currentUser;
-
-  useEffect(() => {
-    if (!currentUser?.uid) {
-      setIsLoading(false);
-      setErrorMessage('User authentication required.');
-      return;
-    }
-
+  const fetchOdooOrders = async () => {
     setIsLoading(true);
     setErrorMessage('');
+    try {
+      const result = await odooApi.searchRead(
+        'sale.order',
+        [['partner_id', '=', odooApi.partnerId || 1]],
+        ['name', 'amount_total', 'state', 'date_order', 'pharmacy_id', 'status']
+      );
 
-    // Real-time listener for current user's orders
-    const ordersQuery = query(
-      collection(db, 'orders'),
-      where('customerUid', '==', currentUser.uid)
-    );
+      const fetchedOrders = result.records.map((o) => {
+        // Map Odoo status to React Native UI status
+        let uiStatus = 'Pending';
+        if (o.state === 'sale') uiStatus = 'Active';
+        else if (o.state === 'done') uiStatus = 'Completed';
+        else if (o.state === 'cancel') uiStatus = 'Cancelled';
 
-    const unsubscribe = onSnapshot(
-      ordersQuery,
-      (snapshot) => {
-        const fetchedOrders = snapshot.docs.map((docSnap) => ({
-          id: docSnap.id,
-          ...docSnap.data(),
-        }));
+        return {
+          id: o.id,
+          orderId: o.name,
+          pharmacyName: o.pharmacy_id ? o.pharmacy_id[1] : 'MediLink Pharmacy',
+          total: o.amount_total,
+          status: o.status || uiStatus,
+          createdAt: o.date_order ? new Date(o.date_order) : new Date(),
+        };
+      });
 
-        // Sort by createdAt descending in JavaScript to avoid composite index requirement
-        fetchedOrders.sort((a, b) => {
-          const getTime = (val) => {
-            if (!val) return 0;
-            if (typeof val.toMillis === 'function') return val.toMillis();
-            if (val.seconds) return val.seconds * 1000;
-            if (val instanceof Date) return val.getTime();
-            if (typeof val === 'number') return val;
-            const parsed = new Date(val).getTime();
-            return isNaN(parsed) ? 0 : parsed;
-          };
-          return getTime(b.createdAt) - getTime(a.createdAt);
-        });
+      // Sort by createdAt descending
+      fetchedOrders.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
-        setOrders(fetchedOrders);
-        setIsLoading(false);
-        setIsRefreshing(false);
-      },
-      (error) => {
-        console.error('Error fetching customer orders:', error);
-        setErrorMessage('Failed to load orders in real time. Please try again.');
-        setIsLoading(false);
-        setIsRefreshing(false);
-      }
-    );
+      setOrders(fetchedOrders);
+      setIsLoading(false);
+      setIsRefreshing(false);
+    } catch (error) {
+      console.error('Error fetching customer orders from Odoo:', error);
+      setErrorMessage('Failed to load orders. Please try again.');
+      setIsLoading(false);
+      setIsRefreshing(false);
+    }
+  };
 
-    return () => unsubscribe();
-  }, [currentUser?.uid]);
+  useEffect(() => {
+    fetchOdooOrders();
+  }, []);
 
   const onRefresh = useCallback(() => {
     setIsRefreshing(true);
-    // Snapshot updates automatically, but we reset state indicator
-    setTimeout(() => setIsRefreshing(false), 800);
+    fetchOdooOrders();
   }, []);
 
   // Filter orders by tab and search query
@@ -244,7 +234,7 @@ export default function MyOrdersScreen({ onBack, onSelectOrder, onOpenPharmacyMa
         ) : null}
 
         {/* Content Body */}
-        <ScrollView
+        <ScrollView style={{ width: '100%' }}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
           refreshControl={
@@ -353,7 +343,8 @@ export default function MyOrdersScreen({ onBack, onSelectOrder, onOpenPharmacyMa
   );
 }
 
-const styles = StyleSheet.create({
+const styles = 
+StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#F8FAFC',
@@ -364,76 +355,76 @@ const styles = StyleSheet.create({
   },
   headerBar: {
     width: '100%',
-    maxWidth: 420,
-    height: 56,
+    maxWidth: scale(420),
+    height: verticalScale(56),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
+    paddingHorizontal: scale(16),
     backgroundColor: colors.surfaceContainerLowest,
-    borderBottomWidth: 1,
+    borderBottomWidth: scale(1),
     borderBottomColor: '#E2E8F0',
   },
   backBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: scale(36),
+    height: verticalScale(36),
+    borderRadius: scale(18),
     backgroundColor: '#F1F5F9',
     justifyContent: 'center',
     alignItems: 'center',
   },
   headerTitle: {
-    fontSize: 17,
+    fontSize: moderateScale(17),
     fontWeight: '700',
     color: colors.onSurface,
     fontFamily: Platform.OS === 'web' ? 'Inter, sans-serif' : undefined,
   },
   searchWrapper: {
     width: '100%',
-    maxWidth: 420,
+    maxWidth: scale(420),
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.surfaceContainerLowest,
-    borderWidth: 1,
+    borderWidth: scale(1),
     borderColor: '#CBD5E1',
-    borderRadius: 12,
-    height: 44,
-    paddingHorizontal: 12,
-    marginVertical: 10,
+    borderRadius: scale(12),
+    height: verticalScale(44),
+    paddingHorizontal: scale(12),
+    marginVertical: verticalScale(10),
   },
   searchIcon: {
-    marginRight: 8,
+    marginRight: scale(8),
   },
   searchInput: {
     flex: 1,
     height: '100%',
-    fontSize: 13.5,
+    fontSize: moderateScale(13.5),
     color: colors.onSurface,
   },
   tabsWrapper: {
     width: '100%',
-    maxWidth: 420,
-    paddingBottom: 8,
+    maxWidth: scale(420),
+    paddingBottom: verticalScale(8),
   },
   tabsContainer: {
     flexDirection: 'row',
-    gap: 8,
-    paddingHorizontal: 16,
+    gap: scale(8),
+    paddingHorizontal: scale(16),
   },
   tabButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 14,
-    paddingVertical: 7,
-    borderRadius: 20,
+    paddingHorizontal: scale(14),
+    paddingVertical: verticalScale(7),
+    borderRadius: scale(20),
     backgroundColor: '#F1F5F9',
-    gap: 6,
+    gap: scale(6),
   },
   tabButtonActive: {
     backgroundColor: colors.primary,
   },
   tabText: {
-    fontSize: 13,
+    fontSize: moderateScale(13),
     fontWeight: '600',
     color: colors.onSurfaceVariant,
   },
@@ -441,19 +432,19 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   tabBadgeCircle: {
-    minWidth: 18,
-    height: 18,
-    borderRadius: 9,
+    minWidth: scale(18),
+    height: verticalScale(18),
+    borderRadius: scale(9),
     backgroundColor: '#CBD5E1',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 4,
+    paddingHorizontal: scale(4),
   },
   tabBadgeCircleActive: {
     backgroundColor: 'rgba(255, 255, 255, 0.3)',
   },
   tabBadgeText: {
-    fontSize: 10.5,
+    fontSize: moderateScale(10.5),
     fontWeight: '700',
     color: colors.onSurface,
   },
@@ -462,72 +453,72 @@ const styles = StyleSheet.create({
   },
   errorBanner: {
     width: '100%',
-    maxWidth: 420,
+    maxWidth: scale(420),
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FEE2E2',
     borderColor: '#FCA5A5',
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 10,
-    marginBottom: 8,
-    gap: 8,
+    borderWidth: scale(1),
+    borderRadius: scale(10),
+    padding: scale(10),
+    marginBottom: verticalScale(8),
+    gap: scale(8),
   },
   errorText: {
-    fontSize: 13,
+    fontSize: moderateScale(13),
     color: '#991B1B',
     flex: 1,
   },
   scrollContent: {
     width: '100%',
-    maxWidth: 420,
-    paddingHorizontal: 16,
-    paddingBottom: 24,
+    maxWidth: scale(420),
+    paddingHorizontal: scale(16),
+    paddingBottom: verticalScale(24),
   },
   loadingBox: {
-    paddingVertical: 40,
+    paddingVertical: verticalScale(40),
     alignItems: 'center',
-    gap: 12,
+    gap: scale(12),
   },
   loadingText: {
-    fontSize: 14,
+    fontSize: moderateScale(14),
     color: colors.onSurfaceVariant,
   },
   emptyBox: {
     alignItems: 'center',
-    paddingVertical: 48,
-    gap: 10,
+    paddingVertical: verticalScale(48),
+    gap: scale(10),
   },
   emptyIconCircle: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
+    width: scale(72),
+    height: verticalScale(72),
+    borderRadius: scale(36),
     backgroundColor: '#F1F5F9',
     justifyContent: 'center',
     alignItems: 'center',
   },
   emptyTitle: {
-    fontSize: 16,
+    fontSize: moderateScale(16),
     fontWeight: '700',
     color: colors.onSurface,
   },
   emptySubtext: {
-    fontSize: 13,
+    fontSize: moderateScale(13),
     color: colors.onSurfaceVariant,
     textAlign: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: scale(20),
   },
   orderListContainer: {
-    gap: 12,
-    marginTop: 4,
+    gap: scale(12),
+    marginTop: verticalScale(4),
   },
   orderCard: {
     backgroundColor: colors.surfaceContainerLowest,
-    borderRadius: 14,
-    borderWidth: 1,
+    borderRadius: scale(14),
+    borderWidth: scale(1),
     borderColor: '#E2E8F0',
-    padding: 14,
-    gap: 10,
+    padding: scale(14),
+    gap: scale(10),
   },
   cardHeader: {
     flexDirection: 'row',
@@ -535,68 +526,68 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   orderIdText: {
-    fontSize: 15,
+    fontSize: moderateScale(15),
     fontWeight: '700',
     color: colors.onSurface,
   },
   orderDateText: {
-    fontSize: 11.5,
+    fontSize: moderateScale(11.5),
     color: colors.onSurfaceVariant,
-    marginTop: 2,
+    marginTop: verticalScale(2),
   },
   statusBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 9,
-    paddingVertical: 4,
-    borderRadius: 12,
-    borderWidth: 1,
+    paddingHorizontal: scale(9),
+    paddingVertical: verticalScale(4),
+    borderRadius: scale(12),
+    borderWidth: scale(1),
   },
   statusBadgeText: {
-    fontSize: 11.5,
+    fontSize: moderateScale(11.5),
     fontWeight: '700',
   },
   cardDivider: {
-    height: 1,
+    height: verticalScale(1),
     backgroundColor: '#F1F5F9',
   },
   pharmacyRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: scale(8),
   },
   pharmacyNameText: {
-    fontSize: 14,
+    fontSize: moderateScale(14),
     fontWeight: '600',
     color: colors.onSurface,
   },
   addressRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: scale(6),
   },
   addressText: {
-    fontSize: 12.5,
+    fontSize: moderateScale(12.5),
     color: colors.onSurfaceVariant,
     flex: 1,
   },
   metaRow: {
     flexDirection: 'row',
-    gap: 10,
+    gap: scale(10),
   },
   metaBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#F8FAFC',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-    borderWidth: 1,
+    paddingHorizontal: scale(8),
+    paddingVertical: verticalScale(4),
+    borderRadius: scale(6),
+    borderWidth: scale(1),
     borderColor: '#E2E8F0',
-    gap: 4,
+    gap: scale(4),
   },
   metaText: {
-    fontSize: 11.5,
+    fontSize: moderateScale(11.5),
     color: colors.onSurfaceVariant,
     fontWeight: '500',
   },
@@ -604,19 +595,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 4,
-    paddingTop: 8,
-    borderTopWidth: 1,
+    marginTop: verticalScale(4),
+    paddingTop: verticalScale(8),
+    borderTopWidth: scale(1),
     borderTopColor: '#F1F5F9',
   },
   totalLabel: {
-    fontSize: 11,
+    fontSize: moderateScale(11),
     color: colors.onSurfaceVariant,
     textTransform: 'uppercase',
     fontWeight: '600',
   },
   totalValue: {
-    fontSize: 16,
+    fontSize: moderateScale(16),
     fontWeight: '800',
     color: colors.primary,
   },
@@ -624,13 +615,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.primary,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 10,
-    gap: 4,
+    paddingHorizontal: scale(14),
+    paddingVertical: verticalScale(8),
+    borderRadius: scale(10),
+    gap: scale(4),
   },
   detailsBtnText: {
-    fontSize: 13,
+    fontSize: moderateScale(13),
     fontWeight: '700',
     color: '#FFFFFF',
   },

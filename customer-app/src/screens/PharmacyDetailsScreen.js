@@ -13,12 +13,13 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../theme/colors';
 import { useCart } from '../context/CartContext';
-import { db } from '../config/firebase';
-import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import {
   getDeliveryStatus,
   formatDistanceText,
 } from '../utils/pharmacyValidation';
+import odooApi from '../config/odooApi';
+import { scale, verticalScale, moderateScale, wp, hp } from '../utils/responsive';
+
 
 const CATEGORY_CHIPS = ['All', 'Tablet', 'Capsule', 'Syrup', 'Injection', 'Ointment', 'Supplements'];
 
@@ -43,7 +44,7 @@ export default function PharmacyDetailsScreen({
   const distText = formatDistanceText(pharmacyData?.distance);
   const deliveryInfo = getDeliveryStatus(pharmacyData?.distance, pharmacyData?.deliveryRadius);
 
-  // 1. Subscribe to medicines for this pharmacy with cleanup (Safeguard #1)
+  // 1. Fetch medicines from Odoo API instead of Firestore
   useEffect(() => {
     setIsLoading(true);
     if (!pUid) {
@@ -51,25 +52,42 @@ export default function PharmacyDetailsScreen({
       return;
     }
 
-    const q = query(collection(db, 'medicines'), where('pharmacyUid', '==', pUid));
-
-    const unsubscribe = onSnapshot(
-      q,
-      (snapshot) => {
-        const docs = snapshot.docs
-          .map((d) => ({ id: d.id, medicineId: d.id, ...d.data() }))
-          .filter((m) => m.isActive !== false && (m.stock || 0) > 0);
+    const fetchMedicines = async () => {
+      try {
+        const result = await odooApi.searchRead(
+          'product.product',
+          [['sale_ok', '=', true], ['pharmacy_id', '=', pUid]],
+          ['name', 'list_price', 'generic_name', 'strength', 'prescription_required']
+        );
+        
+        const docs = result.records.map((m) => {
+          const price = Number(m.list_price ?? 0);
+          return {
+            id: m.id,
+            medicineId: m.id,
+            medicineName: m.name,
+            name: m.name,
+            price: price,
+            unitPrice: price,
+            genericName: m.generic_name || '',
+            generic: m.generic_name || '',
+            strength: m.strength || '',
+            prescriptionRequired: !!m.prescription_required,
+            stock: 100, // Mock high stock since it's verified on Odoo side
+            isActive: true,
+            category: 'Tablet' // Default category chip mapping
+          };
+        });
 
         setMedicines(docs);
         setIsLoading(false);
-      },
-      (err) => {
-        console.error('Error loading pharmacy medicines:', err);
+      } catch (err) {
+        console.error('Error loading pharmacy medicines from Odoo:', err);
         setIsLoading(false);
       }
-    );
+    };
 
-    return () => unsubscribe();
+    fetchMedicines();
   }, [pUid]);
 
   const handleAddToCartPress = (medicine) => {
@@ -124,7 +142,7 @@ export default function PharmacyDetailsScreen({
         </View>
 
         {/* Scrollable Content */}
-        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <ScrollView style={{ width: '100%' }} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
           <View style={styles.cardContainer}>
             {/* Hero Card */}
             <View style={styles.heroCard}>
@@ -368,7 +386,8 @@ export default function PharmacyDetailsScreen({
   );
 }
 
-const styles = StyleSheet.create({
+const styles = 
+StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#F8FAFC',
@@ -379,64 +398,65 @@ const styles = StyleSheet.create({
   },
   headerBar: {
     width: '100%',
-    maxWidth: 390,
-    height: 54,
+    maxWidth: scale(390),
+    height: verticalScale(54),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 14,
+    paddingHorizontal: scale(14),
     backgroundColor: colors.surfaceContainerLowest,
-    borderBottomWidth: 1,
+    borderBottomWidth: scale(1),
     borderBottomColor: '#E2E8F0',
     zIndex: 10,
   },
   backButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: scale(4),
     backgroundColor: 'rgba(0, 106, 94, 0.1)',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
-    borderWidth: 1,
+    paddingHorizontal: scale(12),
+    paddingVertical: verticalScale(6),
+    borderRadius: scale(20),
+    borderWidth: scale(1),
     borderColor: 'rgba(0, 106, 94, 0.2)',
   },
   backButtonText: {
-    fontSize: 13,
+    fontSize: moderateScale(13),
     fontWeight: '700',
     color: colors.primary,
   },
   headerTitle: {
-    fontSize: 15,
+    fontSize: moderateScale(15),
     fontWeight: '700',
     color: colors.onSurface,
-    maxWidth: 200,
+    maxWidth: scale(200),
   },
   headerRightPlaceholder: {
-    width: 60,
+    width: scale(60),
   },
   scrollContent: {
+    width: '100%',
     flexGrow: 1,
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 80,
+    paddingHorizontal: scale(16),
+    paddingTop: verticalScale(16),
+    paddingBottom: verticalScale(80),
   },
   cardContainer: {
     width: '100%',
-    maxWidth: 390,
+    maxWidth: scale(390),
   },
   heroCard: {
     backgroundColor: colors.surfaceContainerLowest,
-    borderRadius: 16,
+    borderRadius: scale(16),
     overflow: 'hidden',
-    borderWidth: 1,
+    borderWidth: scale(1),
     borderColor: '#E2E8F0',
-    marginBottom: 14,
+    marginBottom: verticalScale(14),
   },
   bannerBackground: {
-    height: 90,
+    height: verticalScale(90),
     backgroundColor: colors.primary,
-    padding: 12,
+    padding: scale(12),
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
@@ -445,61 +465,61 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 16,
-    gap: 4,
+    paddingHorizontal: scale(10),
+    paddingVertical: verticalScale(5),
+    borderRadius: scale(16),
+    gap: scale(4),
   },
   bannerBackText: {
-    fontSize: 12,
+    fontSize: moderateScale(12),
     fontWeight: '700',
     color: colors.primary,
   },
   pharmacyDetailsHeader: {
-    padding: 14,
-    paddingTop: 0,
+    padding: scale(14),
+    paddingTop: verticalScale(0),
     alignItems: 'center',
     marginTop: -30,
-    gap: 6,
+    gap: scale(6),
   },
   logoBadge: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: scale(60),
+    height: verticalScale(60),
+    borderRadius: scale(30),
     backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 3,
+    borderWidth: scale(3),
     borderColor: '#FFFFFF',
     elevation: 3,
   },
   titleBadgeRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    marginTop: 4,
+    gap: scale(6),
+    marginTop: verticalScale(4),
   },
   pharmacyNameText: {
-    fontSize: 17,
+    fontSize: moderateScale(17),
     fontWeight: '800',
     color: colors.onSurface,
     textAlign: 'center',
   },
   addressText: {
-    fontSize: 12,
+    fontSize: moderateScale(12),
     color: colors.onSurfaceVariant,
     textAlign: 'center',
   },
   statsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    marginTop: 4,
+    gap: scale(12),
+    marginTop: verticalScale(4),
   },
   statusTag: {
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 6,
+    paddingHorizontal: scale(8),
+    paddingVertical: verticalScale(3),
+    borderRadius: scale(6),
   },
   bgOpen: {
     backgroundColor: '#D1FAE5',
@@ -507,7 +527,7 @@ const styles = StyleSheet.create({
   textOpen: {
     color: '#065F46',
     fontWeight: '700',
-    fontSize: 11.5,
+    fontSize: moderateScale(11.5),
   },
   bgClosed: {
     backgroundColor: '#FEF2F2',
@@ -515,32 +535,32 @@ const styles = StyleSheet.create({
   textClosed: {
     color: '#991B1B',
     fontWeight: '700',
-    fontSize: 11.5,
+    fontSize: moderateScale(11.5),
   },
   statItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: scale(4),
   },
   statValue: {
-    fontSize: 12,
+    fontSize: moderateScale(12),
     fontWeight: '700',
     color: colors.primary,
   },
   deliveryBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 8,
-    gap: 4,
-    marginTop: 4,
+    paddingHorizontal: scale(10),
+    paddingVertical: verticalScale(4),
+    borderRadius: scale(8),
+    gap: scale(4),
+    marginTop: verticalScale(4),
   },
   badge_success: {
     backgroundColor: '#D1FAE5',
   },
   badgeText_success: {
-    fontSize: 11.5,
+    fontSize: moderateScale(11.5),
     color: '#065F46',
     fontWeight: '600',
   },
@@ -548,7 +568,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FEE2E2',
   },
   badgeText_danger: {
-    fontSize: 11.5,
+    fontSize: moderateScale(11.5),
     color: '#991B1B',
     fontWeight: '600',
   },
@@ -556,7 +576,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FEF3C7',
   },
   badgeText_warning: {
-    fontSize: 11.5,
+    fontSize: moderateScale(11.5),
     color: '#92400E',
     fontWeight: '600',
   },
@@ -564,7 +584,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#E0F2FE',
   },
   badgeText_info: {
-    fontSize: 11.5,
+    fontSize: moderateScale(11.5),
     color: '#0369A1',
     fontWeight: '600',
   },
@@ -573,65 +593,65 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#FEF2F2',
     borderColor: '#FCA5A5',
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 10,
-    marginBottom: 14,
-    gap: 8,
+    borderWidth: scale(1),
+    borderRadius: scale(10),
+    padding: scale(10),
+    marginBottom: verticalScale(14),
+    gap: scale(8),
   },
   warningBannerText: {
     flex: 1,
-    fontSize: 12,
+    fontSize: moderateScale(12),
     color: '#991B1B',
-    lineHeight: 16,
+    lineHeight: moderateScale(16),
   },
   infoBanner: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#D1FAE5',
     borderColor: '#A7F3D0',
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 10,
-    marginBottom: 14,
-    gap: 8,
+    borderWidth: scale(1),
+    borderRadius: scale(10),
+    padding: scale(10),
+    marginBottom: verticalScale(14),
+    gap: scale(8),
   },
   infoText: {
     flex: 1,
     color: '#065F46',
-    fontSize: 12.5,
+    fontSize: moderateScale(12.5),
     fontWeight: '500',
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.surfaceContainerLowest,
-    borderWidth: 1,
+    borderWidth: scale(1),
     borderColor: '#CBD5E1',
-    borderRadius: 12,
-    height: 44,
-    paddingHorizontal: 12,
-    marginBottom: 12,
+    borderRadius: scale(12),
+    height: verticalScale(44),
+    paddingHorizontal: scale(12),
+    marginBottom: verticalScale(12),
   },
   searchIcon: {
-    marginRight: 8,
+    marginRight: scale(8),
   },
   searchInput: {
     flex: 1,
     height: '100%',
-    fontSize: 13,
+    fontSize: moderateScale(13),
     color: colors.onSurface,
   },
   chipsContainer: {
-    gap: 8,
-    paddingBottom: 14,
+    gap: scale(8),
+    paddingBottom: verticalScale(14),
   },
   chip: {
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: 20,
+    paddingHorizontal: scale(14),
+    paddingVertical: verticalScale(6),
+    borderRadius: scale(20),
     backgroundColor: colors.surfaceContainerLowest,
-    borderWidth: 1,
+    borderWidth: scale(1),
     borderColor: '#CBD5E1',
   },
   chipSelected: {
@@ -639,7 +659,7 @@ const styles = StyleSheet.create({
     borderColor: colors.primary,
   },
   chipText: {
-    fontSize: 12.5,
+    fontSize: moderateScale(12.5),
     fontWeight: '600',
     color: colors.onSurfaceVariant,
   },
@@ -647,50 +667,50 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   medicinesSection: {
-    gap: 10,
+    gap: scale(10),
   },
   sectionTitle: {
-    fontSize: 15,
+    fontSize: moderateScale(15),
     fontWeight: '700',
     color: colors.onSurface,
   },
   emptyBox: {
-    padding: 24,
+    padding: scale(24),
     backgroundColor: colors.surfaceContainerLowest,
-    borderRadius: 14,
-    borderWidth: 1,
+    borderRadius: scale(14),
+    borderWidth: scale(1),
     borderColor: '#E2E8F0',
     alignItems: 'center',
-    marginTop: 4,
-    gap: 6,
+    marginTop: verticalScale(4),
+    gap: scale(6),
   },
   emptyTitle: {
-    fontSize: 14,
+    fontSize: moderateScale(14),
     fontWeight: '700',
     color: colors.onSurface,
   },
   emptySubtext: {
-    fontSize: 12,
+    fontSize: moderateScale(12),
     color: colors.onSurfaceVariant,
     textAlign: 'center',
   },
   medicinesList: {
-    gap: 10,
+    gap: scale(10),
   },
   medicineCard: {
     flexDirection: 'row',
     backgroundColor: colors.surfaceContainerLowest,
-    borderRadius: 14,
-    borderWidth: 1,
+    borderRadius: scale(14),
+    borderWidth: scale(1),
     borderColor: '#E2E8F0',
-    padding: 12,
-    gap: 10,
+    padding: scale(12),
+    gap: scale(10),
     alignItems: 'center',
   },
   medicineIconBox: {
-    width: 44,
-    height: 44,
-    borderRadius: 10,
+    width: scale(44),
+    height: verticalScale(44),
+    borderRadius: scale(10),
     backgroundColor: 'rgba(0, 106, 94, 0.08)',
     justifyContent: 'center',
     alignItems: 'center',
@@ -704,39 +724,39 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   medicineName: {
-    fontSize: 14,
+    fontSize: moderateScale(14),
     fontWeight: '700',
     color: colors.onSurface,
   },
   stockBadge: {
     backgroundColor: '#D1FAE5',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 6,
+    paddingHorizontal: scale(6),
+    paddingVertical: verticalScale(2),
+    borderRadius: scale(6),
   },
   stockBadgeText: {
-    fontSize: 10.5,
+    fontSize: moderateScale(10.5),
     fontWeight: '700',
     color: '#065F46',
   },
   genericText: {
-    fontSize: 11.5,
+    fontSize: moderateScale(11.5),
     color: colors.onSurfaceVariant,
-    marginTop: 2,
+    marginTop: verticalScale(2),
   },
   strengthText: {
-    fontSize: 11,
+    fontSize: moderateScale(11),
     color: colors.onSurfaceVariant,
-    marginTop: 1,
+    marginTop: verticalScale(1),
   },
   medicineFooterRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 6,
+    marginTop: verticalScale(6),
   },
   priceText: {
-    fontSize: 14,
+    fontSize: moderateScale(14),
     fontWeight: '800',
     color: colors.primary,
   },
@@ -744,68 +764,68 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.primary,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 8,
-    gap: 4,
+    paddingHorizontal: scale(10),
+    paddingVertical: verticalScale(5),
+    borderRadius: scale(8),
+    gap: scale(4),
   },
   btnDisabled: {
     backgroundColor: '#CBD5E1',
   },
   addToCartText: {
-    fontSize: 11.5,
+    fontSize: moderateScale(11.5),
     fontWeight: '700',
     color: colors.onPrimary,
   },
   floatingCartContainer: {
     position: 'absolute',
-    bottom: 12,
-    left: 16,
-    right: 16,
+    bottom: verticalScale(12),
+    left: scale(16),
+    right: scale(16),
     alignItems: 'center',
   },
   floatingCartButton: {
     width: '100%',
-    maxWidth: 390,
-    height: 52,
+    maxWidth: scale(390),
+    height: verticalScale(52),
     backgroundColor: colors.primary,
-    borderRadius: 14,
+    borderRadius: scale(14),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
+    paddingHorizontal: scale(16),
     elevation: 4,
   },
   floatingCartLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: scale(10),
   },
   cartIconCircle: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: scale(32),
+    height: verticalScale(32),
+    borderRadius: scale(16),
     backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
   },
   cartItemsText: {
-    fontSize: 12,
+    fontSize: moderateScale(12),
     color: 'rgba(255, 255, 255, 0.85)',
     fontWeight: '600',
   },
   cartTotalText: {
-    fontSize: 14,
+    fontSize: moderateScale(14),
     fontWeight: '800',
     color: '#FFFFFF',
   },
   viewCartAction: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: scale(4),
   },
   viewCartText: {
-    fontSize: 13,
+    fontSize: moderateScale(13),
     fontWeight: '700',
     color: colors.onPrimary,
   },

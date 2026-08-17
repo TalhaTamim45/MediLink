@@ -13,8 +13,10 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../theme/colors';
-import { db } from '../config/firebase';
-import { collection, addDoc, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import odooApi from '../config/odooApi';
+import { scale, verticalScale, moderateScale, wp, hp } from '../utils/responsive';
+
+
 
 const CATEGORIES = [
   'Tablet',
@@ -80,36 +82,27 @@ export default function AddEditMedicineScreen({ pharmacy, medicineToEdit, onBack
     setIsLoading(true);
 
     try {
-      const pUid = pharmacy?.uid;
-      const pName = pharmacy?.pharmacyName || 'MediLink Pharmacy';
-
-      if (!pUid) {
-        throw new Error('Pharmacy UID missing.');
+      const pId = pharmacy?.id;
+      if (!pId) {
+        throw new Error('Pharmacy partner ID missing.');
       }
 
-      const medicineData = {
-        pharmacyUid: pUid,
-        pharmacyName: pName,
-        medicineName: medicineName.trim(),
-        genericName: genericName.trim(),
-        brand: brand.trim() || 'Generic Brand',
-        category: category.trim(),
+      const odooMedicineData = {
+        name: medicineName.trim(),
+        generic_name: genericName.trim(),
         strength: strength.trim(),
-        dosageForm: dosageForm.trim(),
-        description: description.trim(),
-        price: Number(price),
+        prescription_required: !!prescriptionRequired,
+        pharmacy_id: pId,
         stock: Math.floor(Number(stock)),
-        prescriptionRequired: !!prescriptionRequired,
-        isActive: !!isActive,
-        updatedAt: serverTimestamp(),
+        list_price: Number(price),
+        active: !!isActive,
+        sale_ok: true,
       };
 
       if (isEditing) {
-        const medRef = doc(db, 'medicines', medicineToEdit.id);
-        await updateDoc(medRef, medicineData);
+        await odooApi.write('product.template', medicineToEdit.id, odooMedicineData);
       } else {
-        medicineData.createdAt = serverTimestamp();
-        await addDoc(collection(db, 'medicines'), medicineData);
+        await odooApi.create('product.template', odooMedicineData);
       }
 
       if (onSaveSuccess) {
@@ -138,7 +131,7 @@ export default function AddEditMedicineScreen({ pharmacy, medicineToEdit, onBack
           <View style={{ width: 60 }} />
         </View>
 
-        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        <ScrollView style={{ width: '100%' }} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
           <View style={styles.cardContainer}>
             {/* Error Alert */}
             {errorMsg ? (
@@ -301,7 +294,8 @@ export default function AddEditMedicineScreen({ pharmacy, medicineToEdit, onBack
   );
 }
 
-const styles = StyleSheet.create({
+const styles = 
+StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: colors.background,
@@ -312,113 +306,114 @@ const styles = StyleSheet.create({
   },
   headerBar: {
     width: '100%',
-    maxWidth: 700,
-    height: 54,
+    maxWidth: scale(700),
+    height: verticalScale(54),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
+    paddingHorizontal: scale(16),
     backgroundColor: colors.surfaceContainerLowest,
-    borderBottomWidth: 1,
+    borderBottomWidth: scale(1),
     borderBottomColor: '#E2E8F0',
   },
   backBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: scale(4),
     backgroundColor: 'rgba(0, 106, 94, 0.1)',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
+    paddingHorizontal: scale(12),
+    paddingVertical: verticalScale(6),
+    borderRadius: scale(20),
   },
   backBtnText: {
-    fontSize: 13,
+    fontSize: moderateScale(13),
     fontWeight: '700',
     color: colors.primary,
   },
   headerTitle: {
-    fontSize: 16,
+    fontSize: moderateScale(16),
     fontWeight: '700',
     color: colors.onSurface,
   },
   scrollContent: {
+    width: '100%',
     flexGrow: 1,
-    paddingHorizontal: 16,
-    paddingVertical: 20,
+    paddingHorizontal: scale(16),
+    paddingVertical: verticalScale(20),
     alignItems: 'center',
   },
   cardContainer: {
     width: '100%',
-    maxWidth: 700,
+    maxWidth: scale(700),
   },
   errorBanner: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FEE2E2',
     borderColor: '#FCA5A5',
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 14,
-    gap: 8,
+    borderWidth: scale(1),
+    borderRadius: scale(10),
+    padding: scale(12),
+    marginBottom: verticalScale(14),
+    gap: scale(8),
   },
   errorText: {
     color: '#991B1B',
-    fontSize: 13,
+    fontSize: moderateScale(13),
     fontWeight: '500',
     flex: 1,
   },
   formCard: {
     backgroundColor: colors.surfaceContainerLowest,
-    borderRadius: 16,
-    padding: 20,
-    borderWidth: 1,
+    borderRadius: scale(16),
+    padding: scale(20),
+    borderWidth: scale(1),
     borderColor: '#E2E8F0',
   },
   formTitle: {
-    fontSize: 16,
+    fontSize: moderateScale(16),
     fontWeight: '700',
     color: colors.onSurface,
-    marginBottom: 14,
+    marginBottom: verticalScale(14),
   },
   formGroup: {
-    gap: 12,
+    gap: scale(12),
   },
   fieldLabel: {
-    fontSize: 12.5,
+    fontSize: moderateScale(12.5),
     fontWeight: '600',
     color: colors.onSurfaceVariant,
     marginBottom: -4,
   },
   input: {
     backgroundColor: '#F8FAFC',
-    borderWidth: 1,
+    borderWidth: scale(1),
     borderColor: '#CBD5E1',
-    borderRadius: 10,
-    height: 44,
-    paddingHorizontal: 12,
-    fontSize: 13.5,
+    borderRadius: scale(10),
+    height: verticalScale(44),
+    paddingHorizontal: scale(12),
+    fontSize: moderateScale(13.5),
     color: colors.onSurface,
   },
   textArea: {
-    height: 72,
-    paddingVertical: 8,
+    height: verticalScale(72),
+    paddingVertical: verticalScale(8),
   },
   twoColRow: {
     flexDirection: 'row',
-    gap: 10,
+    gap: scale(10),
   },
   chipsRow: {
     flexDirection: 'row',
-    gap: 8,
-    paddingVertical: 4,
+    gap: scale(8),
+    paddingVertical: verticalScale(4),
   },
   chip: {
     backgroundColor: '#F1F5F9',
-    borderRadius: 16,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderWidth: 1,
+    borderRadius: scale(16),
+    paddingHorizontal: scale(12),
+    paddingVertical: verticalScale(6),
+    borderWidth: scale(1),
     borderColor: '#CBD5E1',
   },
   chipActive: {
@@ -426,7 +421,7 @@ const styles = StyleSheet.create({
     borderColor: colors.primary,
   },
   chipText: {
-    fontSize: 12,
+    fontSize: moderateScale(12),
     fontWeight: '600',
     color: colors.onSurfaceVariant,
   },
@@ -435,44 +430,44 @@ const styles = StyleSheet.create({
   },
   switchBox: {
     backgroundColor: '#F8FAFC',
-    borderRadius: 12,
-    padding: 14,
-    borderWidth: 1,
+    borderRadius: scale(12),
+    padding: scale(14),
+    borderWidth: scale(1),
     borderColor: '#E2E8F0',
-    gap: 12,
-    marginVertical: 4,
+    gap: scale(12),
+    marginVertical: verticalScale(4),
   },
   switchRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    gap: 10,
+    gap: scale(10),
   },
   switchTitle: {
-    fontSize: 13.5,
+    fontSize: moderateScale(13.5),
     fontWeight: '700',
     color: colors.onSurface,
   },
   switchSub: {
-    fontSize: 11.5,
+    fontSize: moderateScale(11.5),
     color: colors.onSurfaceVariant,
   },
   saveBtn: {
-    height: 48,
+    height: verticalScale(48),
     backgroundColor: colors.primary,
-    borderRadius: 12,
+    borderRadius: scale(12),
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: 8,
-    marginTop: 8,
+    gap: scale(8),
+    marginTop: verticalScale(8),
   },
   saveBtnDisabled: {
     opacity: 0.6,
   },
   saveBtnText: {
     color: '#FFFFFF',
-    fontSize: 15,
+    fontSize: moderateScale(15),
     fontWeight: '700',
   },
 });

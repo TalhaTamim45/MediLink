@@ -12,12 +12,13 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../theme/colors';
-import { db } from '../config/firebase';
-import { doc, updateDoc } from 'firebase/firestore';
+import odooApi from '../config/odooApi';
 import PharmacyOrdersScreen from './PharmacyOrdersScreen';
+import { scale, verticalScale, moderateScale, wp, hp } from '../utils/responsive';
+
 
 export default function PharmacyDashboardScreen({ pharmacy, onLogout, onOpenLocation, onOpenMedicines }) {
-  const [isOpen, setIsOpen] = useState(pharmacy?.isOpen !== false);
+  const [isOpen, setIsOpen] = useState(pharmacy?.is_open !== false);
   const [isTogglingStore, setIsTogglingStore] = useState(false);
   const [orders, setOrders] = useState([]);
 
@@ -27,11 +28,9 @@ export default function PharmacyDashboardScreen({ pharmacy, onLogout, onOpenLoca
     setIsTogglingStore(true);
 
     try {
-      if (pharmacy?.uid) {
-        const pharmacyRef = doc(db, 'pharmacies', pharmacy.uid);
-        await updateDoc(pharmacyRef, {
-          isOpen: newValue,
-          updatedAt: new Date(),
+      if (pharmacy?.id) {
+        await odooApi.write('res.partner', pharmacy.id, {
+          is_open: newValue,
         });
       }
     } catch (err) {
@@ -125,7 +124,7 @@ export default function PharmacyDashboardScreen({ pharmacy, onLogout, onOpenLoca
         </View>
 
         {/* Scrollable Mobile Body */}
-        <ScrollView
+        <ScrollView style={{ width: '100%' }}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
@@ -196,7 +195,8 @@ export default function PharmacyDashboardScreen({ pharmacy, onLogout, onOpenLoca
   );
 }
 
-const styles = StyleSheet.create({
+const styles = 
+StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: colors.background,
@@ -208,14 +208,14 @@ const styles = StyleSheet.create({
   },
   mobileHeaderBar: {
     width: '100%',
-    maxWidth: 430,
-    paddingHorizontal: 16,
-    paddingTop: 12,
-    paddingBottom: 10,
+    maxWidth: scale(430),
+    paddingHorizontal: scale(16),
+    paddingTop: verticalScale(12),
+    paddingBottom: verticalScale(10),
     backgroundColor: colors.surfaceContainerLowest,
-    borderBottomWidth: 1,
+    borderBottomWidth: scale(1),
     borderBottomColor: '#E2E8F0',
-    gap: 10,
+    gap: scale(10),
     zIndex: 10,
   },
   headerTopRow: {
@@ -226,53 +226,53 @@ const styles = StyleSheet.create({
   headerLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: scale(10),
     flex: 1,
   },
   logoBadge: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
+    width: scale(38),
+    height: verticalScale(38),
+    borderRadius: scale(19),
     backgroundColor: 'rgba(0, 106, 94, 0.1)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   pharmacyTitle: {
-    fontSize: 15.5,
+    fontSize: moderateScale(15.5),
     fontWeight: '700',
     color: colors.primary,
   },
   ownerRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    marginTop: 1,
+    gap: scale(6),
+    marginTop: verticalScale(1),
   },
   ownerText: {
-    fontSize: 12,
+    fontSize: moderateScale(12),
     color: colors.onSurfaceVariant,
     fontWeight: '500',
-    maxWidth: 120,
+    maxWidth: scale(120),
   },
   approvedBadge: {
     backgroundColor: '#D1FAE5',
     borderColor: '#A7F3D0',
-    borderWidth: 1,
-    paddingHorizontal: 6,
-    paddingVertical: 1,
-    borderRadius: 6,
+    borderWidth: scale(1),
+    paddingHorizontal: scale(6),
+    paddingVertical: verticalScale(1),
+    borderRadius: scale(6),
   },
   approvedBadgeText: {
-    fontSize: 10,
+    fontSize: moderateScale(10),
     fontWeight: '700',
     color: '#065F46',
   },
   logoutIconButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: scale(36),
+    height: verticalScale(36),
+    borderRadius: scale(18),
     backgroundColor: '#FEF2F2',
-    borderWidth: 1,
+    borderWidth: scale(1),
     borderColor: '#FCA5A5',
     justifyContent: 'center',
     alignItems: 'center',
@@ -280,34 +280,34 @@ const styles = StyleSheet.create({
   actionPillsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: scale(8),
   },
   actionPillBtn: {
     flex: 1,
-    height: 34,
+    height: verticalScale(34),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'rgba(0, 106, 94, 0.08)',
     borderColor: colors.primary,
-    borderWidth: 1,
-    borderRadius: 8,
-    gap: 4,
+    borderWidth: scale(1),
+    borderRadius: scale(8),
+    gap: scale(4),
   },
   actionPillText: {
-    fontSize: 12,
+    fontSize: moderateScale(12),
     fontWeight: '700',
     color: colors.primary,
   },
   statusTogglePill: {
     flex: 1.2,
-    height: 34,
+    height: verticalScale(34),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 8,
-    borderRadius: 8,
-    borderWidth: 1,
+    paddingHorizontal: scale(8),
+    borderRadius: scale(8),
+    borderWidth: scale(1),
   },
   pillOpen: {
     backgroundColor: '#E0F2FE',
@@ -318,7 +318,7 @@ const styles = StyleSheet.create({
     borderColor: '#E2E8F0',
   },
   statusPillText: {
-    fontSize: 11.5,
+    fontSize: moderateScale(11.5),
     fontWeight: '700',
   },
   textOpen: {
@@ -329,32 +329,32 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingHorizontal: scale(16),
+    paddingVertical: verticalScale(14),
     alignItems: 'center',
     width: '100%',
   },
   mainContainer: {
     width: '100%',
-    maxWidth: 430,
+    maxWidth: scale(430),
   },
   metricsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 10,
-    marginBottom: 16,
+    gap: scale(10),
+    marginBottom: verticalScale(16),
   },
   summaryCard: {
     width: '47%',
     flexGrow: 1,
     backgroundColor: colors.surfaceContainerLowest,
-    borderRadius: 12,
-    padding: 12,
-    borderWidth: 1,
+    borderRadius: scale(12),
+    padding: scale(12),
+    borderWidth: scale(1),
     borderColor: '#E2E8F0',
-    borderLeftWidth: 4,
+    borderLeftWidth: scale(4),
     shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 1 },
+    shadowOffset: { width: scale(0), height: verticalScale(1) },
     shadowOpacity: 0.04,
     shadowRadius: 4,
     elevation: 2,
@@ -363,38 +363,38 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 6,
+    marginBottom: verticalScale(6),
   },
   cardLabel: {
-    fontSize: 11.5,
+    fontSize: moderateScale(11.5),
     fontWeight: '600',
     color: colors.onSurfaceVariant,
   },
   cardIconCircle: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
+    width: scale(28),
+    height: verticalScale(28),
+    borderRadius: scale(14),
     justifyContent: 'center',
     alignItems: 'center',
   },
   cardValue: {
-    fontSize: 22,
+    fontSize: moderateScale(22),
     fontWeight: '800',
     color: colors.onSurface,
   },
   cardSubtext: {
-    fontSize: 10.5,
+    fontSize: moderateScale(10.5),
     color: colors.onSurfaceVariant,
-    marginTop: 2,
+    marginTop: verticalScale(2),
   },
   sectionHeaderRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    marginBottom: 10,
+    gap: scale(6),
+    marginBottom: verticalScale(10),
   },
   sectionTitle: {
-    fontSize: 15,
+    fontSize: moderateScale(15),
     fontWeight: '700',
     color: colors.onSurface,
   },
