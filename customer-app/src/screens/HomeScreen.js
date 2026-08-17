@@ -490,43 +490,41 @@ export default function HomeScreen({
                 <Text style={styles.emptyTitle}>No medicines listed yet.</Text>
               </View>
             ) : (
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.medicinesScroll}
-                style={{ width: '100%', marginBottom: 12 }}
-              >
+              <View style={styles.medicinesGrid}>
                 {liveMedicines.map((med) => {
                   return (
                     <TouchableOpacity
                       key={med.id}
-                      style={styles.medicineCardHome}
+                      style={styles.medicineGridCard}
                       onPress={() => handleMedicineClick(med)}
                       activeOpacity={0.85}
                     >
                       <Image
                         source={{ uri: `http://localhost:8069/web/image/product.product/${med.id}/image_256` }}
-                        style={styles.medicineImageHome}
+                        style={styles.medicineGridImage}
                         defaultSource={require('../../assets/favicon.png')}
                       />
-                      <View style={styles.medicineInfoHome}>
-                        <Text style={styles.medicineNameHome} numberOfLines={1}>
+                      <View style={styles.medicineGridInfo}>
+                        <Text style={styles.medicineGridName} numberOfLines={1}>
                           {med.name}
                         </Text>
-                        <Text style={styles.medicineGenericHome} numberOfLines={1}>
+                        <Text style={styles.medicineGridGeneric} numberOfLines={1}>
                           {med.genericName} {med.strength}
                         </Text>
-                        <Text style={styles.medicineStoreHome} numberOfLines={1}>
+                        <Text style={styles.medicineGridStore} numberOfLines={1}>
                           🏪 {med.pharmacyName}
                         </Text>
-                        <Text style={styles.medicinePriceHome}>
-                          ৳{med.price.toFixed(2)}
-                        </Text>
+                        <View style={styles.medicineGridFooter}>
+                          <Text style={styles.medicineGridPrice}>৳{med.price.toFixed(2)}</Text>
+                          <View style={styles.detailsIconCircle}>
+                            <Ionicons name="add" size={16} color="#FFFFFF" />
+                          </View>
+                        </View>
                       </View>
                     </TouchableOpacity>
                   );
                 })}
-              </ScrollView>
+              </View>
             )}
 
             {/* ALL APPROVED PHARMACIES SECTION */}
@@ -1162,61 +1160,73 @@ StyleSheet.create({
     fontWeight: '700',
     color: colors.primary,
   },
-  medicinesScroll: {
-    paddingLeft: scale(4),
-    paddingRight: scale(16),
-    paddingVertical: verticalScale(4),
+  medicinesGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    paddingHorizontal: scale(2),
+    width: '100%',
   },
-  medicineCardHome: {
-    width: scale(142),
+  medicineGridCard: {
+    width: '48.5%',
     backgroundColor: '#FFFFFF',
-    borderRadius: scale(14),
+    borderRadius: scale(12),
     borderWidth: 1,
     borderColor: '#E2E8F0',
     padding: scale(10),
-    marginRight: scale(12),
+    marginBottom: verticalScale(12),
     alignItems: 'center',
     shadowColor: '#0F172A',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 3,
-    elevation: 2,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.03,
+    shadowRadius: 2,
+    elevation: 1,
   },
-  medicineImageHome: {
-    width: scale(72),
-    height: scale(72),
-    borderRadius: scale(36),
+  medicineGridImage: {
+    width: scale(80),
+    height: scale(80),
+    borderRadius: scale(40),
     backgroundColor: '#F8FAFC',
-    marginBottom: verticalScale(8),
+    marginBottom: verticalScale(6),
   },
-  medicineInfoHome: {
+  medicineGridInfo: {
     width: '100%',
-    alignItems: 'flex-start',
   },
-  medicineNameHome: {
+  medicineGridName: {
     fontSize: moderateScale(13),
     fontWeight: '700',
     color: colors.onSurface,
-    width: '100%',
   },
-  medicineGenericHome: {
+  medicineGridGeneric: {
     fontSize: moderateScale(10),
     color: colors.onSurfaceVariant,
-    width: '100%',
     marginTop: verticalScale(1),
   },
-  medicineStoreHome: {
-    fontSize: moderateScale(10),
+  medicineGridStore: {
+    fontSize: moderateScale(9),
     color: colors.primary,
     fontWeight: '600',
-    width: '100%',
     marginTop: verticalScale(4),
   },
-  medicinePriceHome: {
+  medicineGridFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: verticalScale(6),
+    width: '100%',
+  },
+  medicineGridPrice: {
     fontSize: moderateScale(13),
     fontWeight: '700',
     color: colors.onSurface,
-    marginTop: verticalScale(4),
+  },
+  detailsIconCircle: {
+    width: scale(22),
+    height: verticalScale(22),
+    borderRadius: scale(11),
+    backgroundColor: colors.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   bottomNavContainer: {
     position: 'absolute',
